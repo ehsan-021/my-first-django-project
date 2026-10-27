@@ -1,0 +1,492 @@
+(function () {
+  'use strict';
+
+  let activeAudio = null;
+  let activeAudioOwner = null;
+
+  function setOwnerPlaying(owner, playing) {
+    if (!owner) {
+      return;
+    }
+    owner.classList.toggle('is-playing', Boolean(playing));
+    const button = owner.querySelector('[data-audio-toggle]');
+    if (button) {
+      button.setAttribute('aria-pressed', playing ? 'true' : 'false');
+    }
+  }
+
+  function stopActiveAudio(resetTime) {
+    const audio = activeAudio;
+    const owner = activeAudioOwner;
+
+    activeAudio = null;
+    activeAudioOwner = null;
+
+    if (audio) {
+      audio.pause();
+      if (resetTime !== false) {
+        try {
+          audio.currentTime = 0;
+        } catch (error) {
+          // Some browsers do not allow seeking before metadata is loaded.
+        }
+      }
+    }
+    setOwnerPlaying(owner, false);
+  }
+
+  function playAudio(audio, owner) {
+    if (!audio || !owner || !audio.getAttribute('src')) {
+      return;
+    }
+
+    if (activeAudio === audio && !audio.paused) {
+      stopActiveAudio(false);
+      return;
+    }
+
+    stopActiveAudio(true);
+    activeAudio = audio;
+    activeAudioOwner = owner;
+    setOwnerPlaying(owner, true);
+
+    const promise = audio.play();
+    if (promise && typeof promise.catch === 'function') {
+      promise.catch(function () {
+        if (activeAudio === audio) {
+          stopActiveAudio(false);
+        }
+      });
+    }
+  }
+
+  function initDragScroll(scope) {
+    scope.querySelectorAll('[data-drag-scroll]').forEach(function (viewport) {
+      if (viewport.dataset.marsDragReady === 'yes') {
+        return;
+      }
+      viewport.dataset.marsDragReady = 'yes';
+
+      let dragging = false;
+      let moved = false;
+      let startX = 0;
+      let startScroll = 0;
+      let lastX = 0;
+      let lastTime = 0;
+      let velocity = 0;
+      let frame = 0;
+      let desiredScroll = viewport.scrollLeft;
+      const isRtl = window.getComputedStyle(viewport).direction === 'rtl';
+
+      function cancelFrame() {
+        if (frame) {
+          cancelAnimationFrame(frame);
+          frame = 0;
+        }
+        viewport.classList.remove('is-gliding');
+      }
+
+      function glide() {
+        const difference = desiredScroll - viewport.scrollLeft;
+        if (Math.abs(difference) < 0.35) {
+          viewport.scrollLeft = desiredScroll;
+          frame = 0;
+          viewport.classList.remove('is-gliding');
+          return;
+        }
+        const previousScroll = viewport.scrollLeft;
+        viewport.scrollLeft += difference * 0.24;
+        if (Math.abs(viewport.scrollLeft - previousScroll) < 0.05) {
+          desiredScroll = viewport.scrollLeft;
+          frame = 0;
+          viewport.classList.remove('is-gliding');
+          return;
+        }
+        frame = requestAnimationFrame(glide);
+      }
+
+      function animateTo(value) {
+        desiredScroll = value;
+        viewport.classList.add('is-gliding');
+        if (!frame) {
+          frame = requestAnimationFrame(glide);
+        }
+      }
+
+      viewport.addEventListener('pointerdown', function (event) {
+        if (event.target.closest('[data-no-drag], [data-audio-player], button, audio, input, select, textarea')) {
+          return;
+        }
+        if (event.pointerType !== 'mouse' || event.button !== 0) {
+          return;
+        }
+        cancelFrame();
+        dragging = true;
+        moved = false;
+        startX = event.clientX;
+        startScroll = viewport.scrollLeft;
+        lastX = event.clientX;
+        lastTime = performance.now();
+        velocity = 0;
+        desiredScroll = viewport.scrollLeft;
+        viewport.classList.add('is-dragging');
+        if (viewport.setPointerCapture) {
+          viewport.setPointerCapture(event.pointerId);
+        }
+      });
+
+      viewport.addEventListener('pointermove', function (event) {
+        if (!dragging) {
+          return;
+        }
+        const delta = event.clientX - startX;
+        if (Math.abs(delta) > 4) {
+          moved = true;
+        }
+        const now = performance.now();
+        const elapsed = Math.max(1, now - lastTime);
+        const pointerMovement = event.clientX - lastX;
+        const scrollMovement = isRtl ? pointerMovement : -pointerMovement;
+        velocity = scrollMovement / elapsed;
+        lastX = event.clientX;
+        lastTime = now;
+        viewport.scrollLeft = startScroll + (isRtl ? delta : -delta);
+        desiredScroll = viewport.scrollLeft;
+      });
+
+      function finish(event) {
+        if (!dragging) {
+          return;
+        }
+        dragging = false;
+        viewport.classList.remove('is-dragging');
+        if (event && viewport.hasPointerCapture && viewport.hasPointerCapture(event.pointerId)) {
+          viewport.releasePointerCapture(event.pointerId);
+        }
+        if (moved && Math.abs(velocity) > 0.08) {
+          animateTo(viewport.scrollLeft + (velocity * 190));
+        }
+      }
+
+      viewport.addEventListener('pointerup', finish);
+      viewport.addEventListener('pointercancel', finish);
+      viewport.addEventListener('dragstart', function (event) { event.preventDefault(); });
+      viewport.addEventListener('click', function (event) {
+        if (moved) {
+          event.preventDefault();
+          event.stopPropagation();
+          moved = false;
+        }
+      }, true);
+    });
+  }
+
+  function initAudioTestimonials(scope) {
+    scope.querySelectorAll('[data-mars-audio-testimonials]').forEach(function (root) {
+      if (root.dataset.marsAudioReady === 'yes') {
+        return;
+      }
+      root.dataset.marsAudioReady = 'yes';
+
+      root.querySelectorAll('[data-audio-card]').forEach(function (card) {
+        const audio = card.querySelector('audio');
+        const button = card.querySelector('[data-audio-toggle]');
+        const player = card.querySelector('[data-audio-player]');
+        if (!audio || !button || !player) {
+          return;
+        }
+
+        button.setAttribute('aria-pressed', 'false');
+
+        function toggleAudio(event) {
+          if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          playAudio(audio, card);
+        }
+
+        button.addEventListener('pointerdown', function (event) {
+          event.stopPropagation();
+        });
+        button.addEventListener('touchstart', function (event) {
+          event.stopPropagation();
+        }, { passive: true });
+        button.addEventListener('click', toggleAudio);
+
+        player.addEventListener('click', function (event) {
+          if (event.target.closest('[data-audio-toggle]')) {
+            return;
+          }
+          toggleAudio(event);
+        });
+
+        audio.addEventListener('ended', function () {
+          if (activeAudio === audio) {
+            stopActiveAudio(true);
+          }
+        });
+        audio.addEventListener('pause', function () {
+          if (activeAudio === audio && !audio.ended) {
+            setOwnerPlaying(card, false);
+          }
+        });
+        audio.addEventListener('play', function () {
+          if (activeAudio === audio) {
+            setOwnerPlaying(card, true);
+          }
+        });
+      });
+    });
+  }
+
+  function formatAudioTime(seconds) {
+    if (!Number.isFinite(seconds) || seconds < 0) {
+      return '00:00';
+    }
+    const rounded = Math.floor(seconds);
+    const minutes = Math.floor(rounded / 60);
+    const remaining = rounded % 60;
+    return String(minutes).padStart(2, '0') + ':' + String(remaining).padStart(2, '0');
+  }
+
+  function initAudioIntroduction(scope) {
+    scope.querySelectorAll('[data-mars-audio-intro]').forEach(function (root) {
+      if (root.dataset.marsAudioIntroReady === 'yes') {
+        return;
+      }
+      root.dataset.marsAudioIntroReady = 'yes';
+
+      const audio = root.querySelector('audio');
+      const button = root.querySelector('[data-audio-toggle]');
+      const wave = root.querySelector('[data-audio-wave]');
+      const current = root.querySelector('[data-audio-current]');
+      const duration = root.querySelector('[data-audio-duration]');
+      const bars = wave ? Array.from(wave.querySelectorAll('i')) : [];
+
+      if (!audio || !button || !wave) {
+        return;
+      }
+
+      function updateProgress() {
+        const total = Number.isFinite(audio.duration) && audio.duration > 0 ? audio.duration : 0;
+        const elapsed = Number.isFinite(audio.currentTime) ? audio.currentTime : 0;
+        const fraction = total ? Math.min(1, Math.max(0, elapsed / total)) : 0;
+        const playedBars = Math.round(fraction * bars.length);
+
+        bars.forEach(function (bar, index) {
+          bar.classList.toggle('is-played', index < playedBars);
+        });
+        wave.setAttribute('aria-valuenow', String(Math.round(fraction * 100)));
+        if (current) {
+          current.textContent = formatAudioTime(elapsed);
+        }
+        if (duration) {
+          duration.textContent = formatAudioTime(total);
+        }
+      }
+
+      function seekToFraction(fraction, shouldPlay) {
+        if (!Number.isFinite(audio.duration) || audio.duration <= 0) {
+          return;
+        }
+        const safeFraction = Math.min(1, Math.max(0, fraction));
+        audio.currentTime = safeFraction * audio.duration;
+        updateProgress();
+        if (shouldPlay && audio.paused) {
+          playAudio(audio, root);
+        }
+      }
+
+      function seekFromPointer(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        const rect = wave.getBoundingClientRect();
+        const fraction = rect.width ? (event.clientX - rect.left) / rect.width : 0;
+        seekToFraction(fraction, true);
+      }
+
+      button.addEventListener('pointerdown', function (event) {
+        event.stopPropagation();
+      });
+      button.addEventListener('click', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        playAudio(audio, root);
+      });
+
+      wave.addEventListener('click', seekFromPointer);
+      wave.addEventListener('keydown', function (event) {
+        const keys = ['ArrowLeft', 'ArrowRight', 'Home', 'End', 'Enter', ' '];
+        if (keys.indexOf(event.key) === -1) {
+          return;
+        }
+        event.preventDefault();
+        if (event.key === 'Enter' || event.key === ' ') {
+          playAudio(audio, root);
+          return;
+        }
+        if (!Number.isFinite(audio.duration) || audio.duration <= 0) {
+          return;
+        }
+        if (event.key === 'Home') {
+          seekToFraction(0, false);
+        } else if (event.key === 'End') {
+          seekToFraction(1, false);
+        } else {
+          const delta = event.key === 'ArrowRight' ? 5 : -5;
+          audio.currentTime = Math.min(audio.duration, Math.max(0, audio.currentTime + delta));
+          updateProgress();
+        }
+      });
+
+      audio.addEventListener('loadedmetadata', updateProgress);
+      audio.addEventListener('durationchange', updateProgress);
+      audio.addEventListener('timeupdate', updateProgress);
+      audio.addEventListener('play', function () {
+        if (activeAudio === audio) {
+          setOwnerPlaying(root, true);
+        }
+      });
+      audio.addEventListener('pause', function () {
+        if (activeAudio === audio && !audio.ended) {
+          setOwnerPlaying(root, false);
+        }
+      });
+      audio.addEventListener('ended', function () {
+        if (activeAudio === audio) {
+          stopActiveAudio(true);
+          updateProgress();
+        }
+      });
+
+      updateProgress();
+    });
+  }
+
+  function initPortfolio(scope) {
+    scope.querySelectorAll('[data-mars-portfolio]').forEach(function (root) {
+      if (root.dataset.marsPortfolioReady === 'yes') {
+        return;
+      }
+      root.dataset.marsPortfolioReady = 'yes';
+
+      const buttons = Array.from(root.querySelectorAll('[data-portfolio-filter]'));
+      const items = Array.from(root.querySelectorAll('[data-portfolio-item]'));
+      const viewport = root.querySelector('.mars-portfolio__viewport');
+      if (!buttons.length || !items.length) {
+        return;
+      }
+
+      function applyFilter(filter) {
+        buttons.forEach(function (button) {
+          const active = button.getAttribute('data-portfolio-filter') === filter;
+          button.classList.toggle('is-active', active);
+          button.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
+        items.forEach(function (item) {
+          const type = item.getAttribute('data-portfolio-type') || '';
+          item.hidden = filter !== '*' && type !== filter;
+        });
+        if (viewport) {
+          try {
+            viewport.scrollTo({ left: 0, behavior: 'smooth' });
+          } catch (error) {
+            viewport.scrollLeft = 0;
+          }
+        }
+      }
+
+      buttons.forEach(function (button) {
+        button.addEventListener('click', function () {
+          applyFilter(button.getAttribute('data-portfolio-filter') || '*');
+        });
+      });
+
+      const activeButton = buttons.find(function (button) { return button.classList.contains('is-active'); }) || buttons[0];
+      applyFilter(activeButton.getAttribute('data-portfolio-filter') || '*');
+    });
+  }
+
+  function initModernFaq(scope) {
+    scope.querySelectorAll('[data-mars-modern-faq]').forEach(function (root) {
+      if (root.dataset.marsModernFaqReady === 'yes') {
+        return;
+      }
+      root.dataset.marsModernFaqReady = 'yes';
+
+      const items = Array.from(root.querySelectorAll('.mars-modern-faq__item'));
+      items.forEach(function (item) {
+        const button = item.querySelector('[data-modern-faq-button]');
+        const panel = item.querySelector('[data-modern-faq-panel]');
+        if (!button || !panel) {
+          return;
+        }
+
+        button.addEventListener('click', function () {
+          const shouldOpen = !item.classList.contains('is-open');
+          items.forEach(function (other) {
+            const otherButton = other.querySelector('[data-modern-faq-button]');
+            const otherPanel = other.querySelector('[data-modern-faq-panel]');
+            other.classList.remove('is-open');
+            if (otherButton) {
+              otherButton.setAttribute('aria-expanded', 'false');
+            }
+            if (otherPanel) {
+              otherPanel.setAttribute('aria-hidden', 'true');
+            }
+          });
+
+          if (shouldOpen) {
+            item.classList.add('is-open');
+            button.setAttribute('aria-expanded', 'true');
+            panel.setAttribute('aria-hidden', 'false');
+          } else {
+            panel.setAttribute('aria-hidden', 'true');
+          }
+        });
+      });
+    });
+  }
+
+  function init(scope) {
+    const root = scope && scope.querySelectorAll ? scope : document;
+    initDragScroll(root);
+    initAudioTestimonials(root);
+    initAudioIntroduction(root);
+    initPortfolio(root);
+    initModernFaq(root);
+  }
+
+  window.marsInitExtensionWidgets = init;
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { init(document); });
+  } else {
+    init(document);
+  }
+
+  window.addEventListener('load', function () { init(document); });
+
+  if (window.jQuery) {
+    window.jQuery(window).on('elementor/frontend/init', function () {
+      if (!window.elementorFrontend || !window.elementorFrontend.hooks) {
+        return;
+      }
+      [
+        'mars_services_list',
+        'mars_audio_testimonials',
+        'mars_insurance_logos',
+        'mars_modern_faq',
+        'mars_company_intro_circles',
+        'mars_audio_introduction',
+        'mars_portfolio_showcase',
+        'mars_contact_banner'
+      ].forEach(function (widget) {
+        window.elementorFrontend.hooks.addAction('frontend/element_ready/' + widget + '.default', function ($scope) {
+          init($scope[0] || document);
+        });
+      });
+    });
+  }
+}());

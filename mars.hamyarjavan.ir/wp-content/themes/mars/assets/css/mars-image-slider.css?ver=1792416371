@@ -1,0 +1,299 @@
+/* Mars responsive image-only slider. */
+.elementor-widget-mars_image_slider .elementor-widget-container {
+  overflow: visible;
+}
+
+.mars-image-slider {
+  --mars-slider-height: 320px;
+  --mars-slider-gap: 16px;
+  --mars-slider-per-view: 1;
+  --mars-slider-arrow-bg: #ffffff;
+  --mars-slider-arrow-color: #0f172a;
+  --mars-slider-dot: #ffffff;
+  --mars-slider-dot-active: #22c978;
+  --mars-slider-frame-bg: #e9eef3;
+  --mars-slider-radius: 24px;
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  margin-inline: auto;
+  direction: rtl;
+  isolation: isolate;
+}
+
+.mars-image-slider__viewport {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-radius: var(--mars-slider-radius);
+  scroll-behavior: smooth;
+  transition: height .24s ease;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  cursor: grab;
+  touch-action: pan-x pan-y pinch-zoom;
+}
+
+.mars-image-slider__viewport::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.mars-image-slider__viewport:focus-visible {
+  outline: 2px solid var(--mars-slider-dot-active);
+  outline-offset: 4px;
+}
+
+.mars-image-slider.is-dragging .mars-image-slider__viewport {
+  cursor: grabbing;
+  scroll-behavior: auto;
+  scroll-snap-type: none;
+  user-select: none;
+}
+
+.mars-image-slider--drag-disabled .mars-image-slider__viewport {
+  cursor: default;
+}
+
+.mars-image-slider__track {
+  display: flex;
+  align-items: stretch;
+  gap: var(--mars-slider-gap);
+  min-width: 100%;
+  direction: rtl;
+}
+
+.mars-image-slider__slide {
+  position: relative;
+  display: block;
+  flex: 0 0 calc((100% - (var(--mars-slider-gap) * (var(--mars-slider-per-view) - 1))) / var(--mars-slider-per-view));
+  min-width: 0;
+  height: var(--mars-slider-height);
+  overflow: hidden;
+  border-radius: var(--mars-slider-radius);
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  background: var(--mars-slider-frame-bg);
+}
+
+.mars-image-slider__slide picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--mars-slider-radius);
+}
+
+.mars-image-slider__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--mars-slider-radius);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+
+
+/* Natural mode preserves each source image ratio and never crops it. */
+.mars-image-slider--sizing-natural .mars-image-slider__track {
+  align-items: flex-start;
+}
+
+.mars-image-slider--sizing-natural .mars-image-slider__slide {
+  height: auto;
+  aspect-ratio: var(--mars-slide-ratio-desktop, auto);
+  background: transparent;
+}
+
+.mars-image-slider--sizing-natural .mars-image-slider__slide picture {
+  height: 100%;
+}
+
+.mars-image-slider--sizing-natural .mars-image-slider__image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain !important;
+}
+
+/* Fixed mode uses one stable frame, so mismatched images crop consistently. */
+.mars-image-slider--sizing-fixed .mars-image-slider__slide,
+.mars-image-slider--sizing-fixed .mars-image-slider__slide picture,
+.mars-image-slider--sizing-fixed .mars-image-slider__image {
+  height: var(--mars-slider-height);
+}
+
+.mars-image-slider__arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  transform: translateY(-50%);
+  border: 0;
+  border-radius: 50%;
+  color: var(--mars-slider-arrow-color);
+  background: var(--mars-slider-arrow-bg);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, .16);
+  cursor: pointer;
+  opacity: .94;
+  transition: transform .18s ease, opacity .18s ease, box-shadow .18s ease;
+}
+
+.mars-image-slider__arrow:hover,
+.mars-image-slider__arrow:focus-visible {
+  transform: translateY(-50%) scale(1.05);
+  opacity: 1;
+  box-shadow: 0 13px 34px rgba(15, 23, 42, .21);
+  outline: 0;
+}
+
+.mars-image-slider__arrow:disabled {
+  opacity: .35;
+  cursor: default;
+}
+
+.mars-image-slider__arrow svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mars-image-slider__arrow--prev { left: 16px; }
+.mars-image-slider__arrow--next { right: 16px; }
+
+.mars-image-slider__dots {
+  position: absolute;
+  right: 0;
+  bottom: 14px;
+  left: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  pointer-events: none;
+}
+
+.mars-image-slider__dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--mars-slider-dot);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, .24);
+  opacity: .9;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: width .2s ease, background-color .2s ease, transform .2s ease;
+}
+
+.mars-image-slider__dot.is-active {
+  width: 20px;
+  background: var(--mars-slider-dot-active);
+}
+
+.mars-image-slider--no-arrows .mars-image-slider__arrow,
+.mars-image-slider--hide-arrows-desktop .mars-image-slider__arrow,
+.mars-image-slider--no-dots .mars-image-slider__dots,
+.mars-image-slider--hide-dots-desktop .mars-image-slider__dots {
+  display: none;
+}
+
+.mars-image-slider__editor-placeholder {
+  padding: 24px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 16px;
+  color: #475569;
+  background: #f8fafc;
+  text-align: center;
+  direction: rtl;
+}
+
+html.dark .mars-image-slider__slide {
+  background: #111827;
+}
+
+@media (max-width: 767px) {
+  .mars-image-slider--sizing-natural .mars-image-slider__slide {
+    aspect-ratio: var(--mars-slide-ratio-mobile, var(--mars-slide-ratio-desktop, auto));
+  }
+
+  .mars-image-slider {
+    --mars-slider-height: 340px;
+    --mars-slider-gap: 10px;
+  }
+
+  .mars-image-slider__arrow {
+    width: 30px;
+    height: 30px;
+  }
+
+  .mars-image-slider__arrow--prev { left: 10px; }
+  .mars-image-slider__arrow--next { right: 10px; }
+
+  .mars-image-slider__dots {
+    bottom: 12px;
+  }
+
+  .mars-image-slider--hide-arrows-desktop:not(.mars-image-slider--hide-arrows-mobile) .mars-image-slider__arrow {
+    display: grid;
+  }
+
+  .mars-image-slider--hide-dots-desktop:not(.mars-image-slider--hide-dots-mobile) .mars-image-slider__dots {
+    display: flex;
+  }
+
+  .mars-image-slider--hide-arrows-mobile .mars-image-slider__arrow,
+  .mars-image-slider--hide-dots-mobile .mars-image-slider__dots {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mars-image-slider__viewport {
+    scroll-behavior: auto;
+  }
+
+  .mars-image-slider *,
+  .mars-image-slider *::before,
+  .mars-image-slider *::after {
+    transition-duration: .01ms !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .mars-image-slider--no-arrows .mars-image-slider__arrow,
+  .mars-image-slider--no-dots .mars-image-slider__dots {
+    display: none !important;
+  }
+}
+
+
+/* Consistent radius enforcement for all Image Slider layers. */
+.elementor-widget-mars_image_slider .mars-image-slider,
+.elementor-widget-mars_image_slider .mars-image-slider__viewport,
+.elementor-widget-mars_image_slider .mars-image-slider__slide,
+.elementor-widget-mars_image_slider .mars-image-slider__slide picture,
+.elementor-widget-mars_image_slider .mars-image-slider__image{
+	border-radius:var(--mars-slider-radius)!important;
+}
+.elementor-widget-mars_image_slider .mars-image-slider__viewport,
+.elementor-widget-mars_image_slider .mars-image-slider__slide,
+.elementor-widget-mars_image_slider .mars-image-slider__slide picture{
+	overflow:hidden!important;
+	clip-path:inset(0 round var(--mars-slider-radius));
+}

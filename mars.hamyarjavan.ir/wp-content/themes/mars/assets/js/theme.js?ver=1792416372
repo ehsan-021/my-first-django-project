@@ -1,0 +1,388 @@
+(function(){
+  'use strict';
+  const root=document.documentElement;
+  const key='mars-color-mode';
+  function systemMode(){return window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
+  function resolveMode(){const saved=localStorage.getItem(key);if(saved==='light'||saved==='dark')return saved;const d=root.dataset.marsDefaultMode||'system';return d==='system'?systemMode():d;}
+  function applyMode(mode){root.dataset.theme=mode;root.classList.toggle('dark',mode==='dark');root.style.colorScheme=mode;}
+  applyMode(resolveMode());
+
+  document.addEventListener('click',function(e){
+    const toggle=e.target.closest('.mars-theme-toggle');
+    if(toggle){
+      const next=root.dataset.theme==='dark'?'light':'dark';
+      localStorage.setItem(key,next);
+      applyMode(next);
+      return;
+    }
+  });
+
+  const drawer=document.getElementById('mars-mobile-drawer');
+  const overlay=document.querySelector('.mars-mobile-overlay');
+  const openBtn=document.querySelector('.mars-menu-toggle');
+  const closeBtn=document.querySelector('.mars-menu-close');
+  function openMenu(){if(!drawer)return;drawer.classList.add('is-open');drawer.setAttribute('aria-hidden','false');if(overlay){overlay.hidden=false;requestAnimationFrame(()=>overlay.classList.add('is-open'));}document.body.classList.add('mars-menu-open');if(openBtn)openBtn.setAttribute('aria-expanded','true');}
+  function closeMenu(){if(!drawer)return;drawer.classList.remove('is-open');drawer.setAttribute('aria-hidden','true');if(overlay){overlay.classList.remove('is-open');setTimeout(()=>overlay.hidden=true,180);}document.body.classList.remove('mars-menu-open');if(openBtn)openBtn.setAttribute('aria-expanded','false');}
+  if(openBtn)openBtn.addEventListener('click',openMenu);
+  if(closeBtn)closeBtn.addEventListener('click',closeMenu);
+  if(overlay)overlay.addEventListener('click',closeMenu);
+
+  document.querySelectorAll('.mars-mobile-menu .menu-item-has-children').forEach(function(li){
+    const a=li.querySelector(':scope > a'); if(!a)return;
+    const b=document.createElement('button');
+    b.type='button';
+    b.className='mars-submenu-toggle';
+    b.setAttribute('aria-label','باز کردن زیرمنو');
+    b.setAttribute('aria-expanded','false');
+    b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg>';
+    a.after(b);
+    b.addEventListener('click',function(){const open=li.classList.toggle('submenu-open');b.setAttribute('aria-expanded',open?'true':'false');});
+  });
+
+  document.querySelectorAll('.mars-header-nav-panel .mars-menu > li > .sub-menu > li.menu-item-has-children').forEach(function(group){
+    const titleLink=group.querySelector(':scope > a');
+    const childMenu=group.querySelector(':scope > .sub-menu');
+    if(!titleLink||!childMenu)return;
+    childMenu.querySelectorAll(':scope > .mars-mega-view-all-item').forEach(function(stale){stale.remove();});
+    const li=document.createElement('li');
+    li.className='mars-mega-view-all-item';
+    const a=document.createElement('a');
+    a.className='mars-mega-view-all';
+    a.href=titleLink.href;
+    a.innerHTML='<span>مشاهده همه</span><span class="mars-view-all-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M19 12H5M11 18l-6-6 6-6"/></svg></span>';
+    li.appendChild(a);
+    childMenu.appendChild(li);
+  });
+
+
+  /* Desktop mega menus: the visible trigger content is the only opener. */
+  const desktopMegaItems=Array.from(document.querySelectorAll('.mars-header-nav-panel .mars-menu > li.menu-item-has-children'));
+  const megaTimers=new WeakMap();
+  const desktopMq=window.matchMedia('(min-width: 1141px)');
+
+  function cancelMegaClose(item){
+    const timer=megaTimers.get(item);
+    if(timer){window.clearTimeout(timer);megaTimers.delete(item);}
+  }
+  function closeMega(item){
+    cancelMegaClose(item);
+    item.classList.remove('mars-mega-open');
+  }
+  function closeAllMega(except){
+    desktopMegaItems.forEach(function(item){if(item!==except)closeMega(item);});
+  }
+  function openMega(item){
+    if(!desktopMq.matches)return;
+    cancelMegaClose(item);
+    closeAllMega(item);
+    item.classList.add('mars-mega-open');
+  }
+  function scheduleMegaClose(item){
+    cancelMegaClose(item);
+    const timer=window.setTimeout(function(){
+      item.classList.remove('mars-mega-open');
+      megaTimers.delete(item);
+    },140);
+    megaTimers.set(item,timer);
+  }
+
+  desktopMegaItems.forEach(function(item){
+    const submenu=item.querySelector(':scope > .sub-menu');
+    const link=item.querySelector(':scope > a');
+    if(!submenu||!link)return;
+
+    /* A tight hitbox: label and optional icon only, never the LI/nav/page area. */
+    let hitTargets=Array.from(link.querySelectorAll(':scope > .mars-menu-item-label, :scope > .mars-menu-item-icon'));
+    if(!hitTargets.length)hitTargets=[link];
+
+    hitTargets.forEach(function(target){
+      target.addEventListener('pointerenter',function(e){
+        if(e.pointerType==='touch')return;
+        openMega(item);
+      });
+      target.addEventListener('mouseenter',function(){openMega(item);});
+    });
+
+    /* Keyboard access remains on the real anchor. */
+    link.addEventListener('focus',function(){openMega(item);});
+    link.addEventListener('blur',function(){scheduleMegaClose(item);});
+
+    /* Leaving the full anchor or panel starts a short bridge; entering the
+       actual panel cancels it. No invisible pseudo-element is interactive. */
+    link.addEventListener('pointerleave',function(){if(desktopMq.matches)scheduleMegaClose(item);});
+    link.addEventListener('mouseleave',function(){if(desktopMq.matches)scheduleMegaClose(item);});
+    submenu.addEventListener('pointerenter',function(){if(desktopMq.matches){cancelMegaClose(item);item.classList.add('mars-mega-open');}});
+    submenu.addEventListener('mouseenter',function(){if(desktopMq.matches){cancelMegaClose(item);item.classList.add('mars-mega-open');}});
+    submenu.addEventListener('pointerleave',function(){if(desktopMq.matches)scheduleMegaClose(item);});
+    submenu.addEventListener('mouseleave',function(){if(desktopMq.matches)scheduleMegaClose(item);});
+  });
+
+  /* Normal top-level items close a previously open mega menu as soon as their
+     visible label/icon is entered. */
+  document.querySelectorAll('.mars-header-nav-panel .mars-menu > li:not(.menu-item-has-children) > a').forEach(function(link){
+    const targets=Array.from(link.querySelectorAll(':scope > .mars-menu-item-label, :scope > .mars-menu-item-icon'));
+    (targets.length?targets:[link]).forEach(function(target){
+      target.addEventListener('pointerenter',function(){if(desktopMq.matches)closeAllMega();});
+      target.addEventListener('mouseenter',function(){if(desktopMq.matches)closeAllMega();});
+    });
+  });
+
+  /*
+   * Fit the desktop header only after the primary navigation has finished
+   * rendering and web fonts are ready. Compact styles are based on real
+   * available width, never on an early/partial menu-item count.
+   */
+  function clamp(value,min,max){return Math.max(min,Math.min(max,value));}
+  function px(value){const n=parseFloat(value);return Number.isFinite(n)?n:0;}
+  function gapOf(el){
+    if(!el)return 0;
+    const cs=window.getComputedStyle(el);
+    return px(cs.columnGap||cs.gap);
+  }
+  function topMenuItems(menu){
+    return menu?Array.from(menu.children).filter(function(el){return el.tagName==='LI';}):[];
+  }
+  function menuNaturalWidth(nav,menu){
+    if(!nav||!menu)return 0;
+    /* The visible rounded panel owns the inline padding/border, not the nav
+       wrapper. Counting the panel chrome prevents the final menu item from
+       being squeezed against the left edge when the sticky row is crowded. */
+    const panel=nav.querySelector('.mars-header-nav-panel')||nav;
+    const ps=window.getComputedStyle(panel);
+    const ms=window.getComputedStyle(menu);
+    const items=topMenuItems(menu);
+    const menuGap=gapOf(menu);
+    let linksWidth=0;
+    items.forEach(function(li){
+      const link=li.querySelector(':scope > a');
+      if(!link)return;
+      const ls=window.getComputedStyle(li);
+      linksWidth+=link.getBoundingClientRect().width+px(ls.marginLeft)+px(ls.marginRight);
+    });
+    return Math.ceil(linksWidth+(Math.max(0,items.length-1)*menuGap)+px(ms.paddingLeft)+px(ms.paddingRight)+px(ps.paddingLeft)+px(ps.paddingRight)+px(ps.borderLeftWidth)+px(ps.borderRightWidth));
+  }
+  function fitDesktopHeader(){
+    const bottom=document.querySelector('.mars-header__bottom');
+    if(!bottom)return;
+    const nav=bottom.querySelector('.mars-primary-nav');
+    const menu=nav&&nav.querySelector(':scope .mars-menu');
+    const search=bottom.querySelector('.mars-header-search');
+    const actions=bottom.querySelector('.mars-header-actions');
+
+    if(!window.matchMedia('(min-width: 1141px)').matches){
+      bottom.style.removeProperty('--mars-search-width');
+      bottom.classList.remove('mars-menu-compact','mars-menu-ultra-compact','mars-single-level-overflow','mars-menu-emergency-compact','mars-search-hidden-for-fit','mars-header-fit-ready');
+      if(nav)nav.removeAttribute('data-mars-fit-ready');
+      return;
+    }
+    if(!nav||!menu||!actions)return;
+
+    /* Always measure the complete menu at its full/default size first. */
+    bottom.classList.remove('mars-menu-compact','mars-menu-ultra-compact','mars-single-level-overflow','mars-menu-emergency-compact','mars-search-hidden-for-fit');
+    bottom.style.setProperty('--mars-search-width','205px');
+    void bottom.offsetWidth;
+
+    const items=topMenuItems(menu);
+    const hasDropdown=items.some(function(li){return !!li.querySelector(':scope > .sub-menu');});
+    const total=Math.floor(bottom.clientWidth);
+    const rowGap=gapOf(bottom)||20;
+    const toolsGap=search?gapOf(bottom.querySelector('.mars-header-tools'))||12:0;
+    const fitSafety=18;
+    let actionsWidth=Math.ceil(actions.getBoundingClientRect().width);
+    let natural=menuNaturalWidth(nav,menu);
+    let minSearch=search?96:0;
+    let maxSearch=search?200:0;
+    let availableSearch=total-natural-actionsWidth-rowGap-toolsGap-fitSafety;
+
+    /* Give the menu room by shrinking only the search first. */
+    if(search){
+      bottom.style.setProperty('--mars-search-width',clamp(availableSearch,minSearch,maxSearch)+'px');
+      void bottom.offsetWidth;
+    }
+
+    /* Compact the menu/tools only when the complete, full-size layout truly cannot fit. */
+    if(availableSearch<minSearch){
+      bottom.classList.add('mars-menu-compact');
+      minSearch=search?86:0;
+      maxSearch=search?145:0;
+      void bottom.offsetWidth;
+      actionsWidth=Math.ceil(actions.getBoundingClientRect().width);
+      natural=menuNaturalWidth(nav,menu);
+      availableSearch=total-natural-actionsWidth-rowGap-toolsGap-fitSafety;
+      if(search)bottom.style.setProperty('--mars-search-width',clamp(availableSearch,minSearch,maxSearch)+'px');
+    }
+
+    if(availableSearch<minSearch){
+      bottom.classList.add('mars-menu-ultra-compact');
+      minSearch=search?74:0;
+      maxSearch=search?108:0;
+      void bottom.offsetWidth;
+      actionsWidth=Math.ceil(actions.getBoundingClientRect().width);
+      natural=menuNaturalWidth(nav,menu);
+      availableSearch=total-natural-actionsWidth-rowGap-toolsGap-fitSafety;
+      if(search)bottom.style.setProperty('--mars-search-width',clamp(availableSearch,minSearch,maxSearch)+'px');
+    }
+
+    /* If the menu still needs room, hide search completely before squeezing
+       menu labels any further. This is especially important in the sticky row. */
+    if(search&&availableSearch<minSearch){
+      bottom.classList.add('mars-search-hidden-for-fit');
+      bottom.style.setProperty('--mars-search-width','0px');
+      void bottom.offsetWidth;
+      actionsWidth=Math.ceil(actions.getBoundingClientRect().width);
+      natural=menuNaturalWidth(nav,menu);
+      availableSearch=total-natural-actionsWidth-rowGap-fitSafety;
+      minSearch=0;
+    }
+
+    /* Keep mega-menu top-level items inside the rounded panel even in unusually
+       crowded headers. Search is already gone at this point, so compact the
+       remaining chrome without changing or hiding the account label. */
+    if(hasDropdown&&availableSearch<0){
+      bottom.classList.add('mars-menu-emergency-compact');
+      void bottom.offsetWidth;
+      actionsWidth=Math.ceil(actions.getBoundingClientRect().width);
+      natural=menuNaturalWidth(nav,menu);
+      availableSearch=total-natural-actionsWidth-rowGap-fitSafety;
+    }
+
+    /* Single-level menus may scroll only as the final fallback. Mega menus stay
+       overflow-visible so their dropdown panels are never clipped. */
+    if(!hasDropdown&&availableSearch<0){
+      bottom.classList.add('mars-single-level-overflow');
+    }
+
+    bottom.classList.add('mars-header-fit-ready');
+    nav.setAttribute('data-mars-fit-ready','true');
+  }
+
+  let fitRequest=0;
+  let stabilityFrame=0;
+  let previousSignature='';
+  function navSignature(){
+    const nav=document.querySelector('.mars-primary-nav');
+    const menu=nav&&nav.querySelector(':scope .mars-menu');
+    if(!nav||!menu)return 'missing';
+    return topMenuItems(menu).length+'|'+Math.round(menu.scrollWidth)+'|'+Math.round(nav.scrollHeight)+'|'+Math.round(menu.scrollHeight);
+  }
+  function fitAfterStableLayout(){
+    window.cancelAnimationFrame(fitRequest);
+    window.cancelAnimationFrame(stabilityFrame);
+    let stableFrames=0;
+    previousSignature='';
+    function sample(){
+      const signature=navSignature();
+      if(signature===previousSignature){stableFrames+=1;}else{stableFrames=0;previousSignature=signature;}
+      if(stableFrames>=2){fitDesktopHeader();return;}
+      stabilityFrame=window.requestAnimationFrame(sample);
+    }
+    fitRequest=window.requestAnimationFrame(sample);
+  }
+  function whenPageAndFontsReady(callback){
+    const pageReady=document.readyState==='complete'
+      ? Promise.resolve()
+      : new Promise(function(resolve){window.addEventListener('load',resolve,{once:true});});
+    const fontsReady=(document.fonts&&document.fonts.ready)?document.fonts.ready.catch(function(){}):Promise.resolve();
+    Promise.all([pageReady,fontsReady]).then(function(){
+      window.requestAnimationFrame(function(){window.requestAnimationFrame(callback);});
+    });
+  }
+
+  whenPageAndFontsReady(fitAfterStableLayout);
+  let resizeTimer=0;
+  window.addEventListener('resize',function(){
+    window.clearTimeout(resizeTimer);
+    resizeTimer=window.setTimeout(fitAfterStableLayout,90);
+  },{passive:true});
+
+  const primaryMenu=document.querySelector('.mars-primary-nav .mars-menu');
+  if(primaryMenu&&'MutationObserver' in window){
+    const menuObserver=new MutationObserver(function(){
+      const bottom=document.querySelector('.mars-header__bottom');
+      if(bottom){bottom.classList.remove('mars-menu-compact','mars-menu-ultra-compact','mars-single-level-overflow','mars-menu-emergency-compact','mars-search-hidden-for-fit','mars-header-fit-ready');bottom.style.setProperty('--mars-search-width','205px');}
+      const nav=document.querySelector('.mars-primary-nav');
+      if(nav)nav.removeAttribute('data-mars-fit-ready');
+      window.clearTimeout(resizeTimer);
+      resizeTimer=window.setTimeout(fitAfterStableLayout,120);
+    });
+    menuObserver.observe(primaryMenu,{childList:true,subtree:true,characterData:true});
+  }
+
+  /* Theme CSS is now fully available; release the critical pre-paint submenu guard. */
+  window.requestAnimationFrame(function(){ document.documentElement.classList.remove('mars-nav-loading'); });
+
+  /* Sticky desktop bottom row only: the top brand/support row scrolls away normally. */
+  (function initBottomOnlySticky(){
+    const header=document.querySelector('.mars-header.mars-header--bottom-sticky');
+    const bottom=header&&header.querySelector('.mars-header__bottom');
+    const shell=header&&header.querySelector('.mars-header__shell');
+    if(!header||!bottom||!shell)return;
+
+    const placeholder=document.createElement('div');
+    placeholder.className='mars-header__bottom-sticky-placeholder';
+    placeholder.setAttribute('aria-hidden','true');
+    bottom.parentNode.insertBefore(placeholder,bottom);
+
+    let threshold=0;
+    let ticking=false;
+    const desktopStickyMq=window.matchMedia('(min-width: 1141px)');
+
+    function adminOffset(){
+      const bar=document.getElementById('wpadminbar');
+      if(!bar)return 0;
+      const cs=window.getComputedStyle(bar);
+      return cs.position==='fixed'?Math.ceil(bar.getBoundingClientRect().height):0;
+    }
+    function release(){
+      bottom.classList.remove('mars-bottom-is-fixed');
+      placeholder.classList.remove('is-active');
+      bottom.style.removeProperty('--mars-sticky-top');
+      bottom.style.removeProperty('--mars-sticky-left');
+      bottom.style.removeProperty('--mars-sticky-width');
+      placeholder.style.removeProperty('--mars-sticky-height');
+    }
+    function measure(){
+      if(!desktopStickyMq.matches){release();threshold=0;return;}
+      const wasFixed=bottom.classList.contains('mars-bottom-is-fixed');
+      if(wasFixed)release();
+      const rect=bottom.getBoundingClientRect();
+      threshold=Math.round(rect.top+window.scrollY-adminOffset());
+      if(wasFixed)update();
+    }
+    function pin(){
+      const shellRect=shell.getBoundingClientRect();
+      const top=adminOffset();
+      bottom.style.setProperty('--mars-sticky-top',top+'px');
+      bottom.style.setProperty('--mars-sticky-left',Math.round(shellRect.left)+'px');
+      bottom.style.setProperty('--mars-sticky-width',Math.round(shellRect.width)+'px');
+      bottom.classList.add('mars-bottom-is-fixed');
+      placeholder.style.setProperty('--mars-sticky-height',Math.ceil(bottom.getBoundingClientRect().height)+'px');
+      placeholder.classList.add('is-active');
+    }
+    function update(){
+      ticking=false;
+      if(!desktopStickyMq.matches){release();return;}
+      if(window.scrollY>=threshold){
+        pin();
+      }else{
+        release();
+      }
+    }
+    function requestUpdate(){
+      if(ticking)return;
+      ticking=true;
+      window.requestAnimationFrame(update);
+    }
+    whenPageAndFontsReady(function(){measure();update();});
+    window.addEventListener('scroll',requestUpdate,{passive:true});
+    window.addEventListener('resize',function(){window.setTimeout(function(){measure();update();},120);},{passive:true});
+    if(desktopStickyMq.addEventListener)desktopStickyMq.addEventListener('change',function(){measure();update();});
+  })();
+
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){
+      closeMenu();
+      desktopMegaItems.forEach(function(item){cancelMegaClose(item);item.classList.remove('mars-mega-open');});
+    }
+  });
+})();

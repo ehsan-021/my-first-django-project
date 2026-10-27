@@ -1,0 +1,210 @@
+(function(window, document, $){
+  'use strict';
+
+  var config = window.MarsVariationDependencies || {};
+  var cache = {};
+
+  function qa(selector, root){ return Array.prototype.slice.call((root || document).querySelectorAll(selector)); }
+
+  function canonicalValue(value){
+    value = value === null || value === undefined ? '' : String(value);
+    try { value = decodeURIComponent(value); } catch(e) {}
+    return value.trim();
+  }
+
+  function productIdFromForm(form){
+    var input = form.querySelector('input[name="product_id"],input[name="add-to-cart"]');
+    if (input && parseInt(input.value, 10)) return parseInt(input.value, 10);
+    var fromData = parseInt(form.getAttribute('data-product_id') || form.getAttribute('data-product-id') || '0', 10);
+    return fromData || 0;
+  }
+
+  function normalizeRows(rows){
+    if (!Array.isArray(rows)) return [];
+    return rows.map(function(row){
+      if (!row || typeof row !== 'object') return null;
+      var attrs = row.attributes && typeof row.attributes === 'object' ? row.attributes : {};
+      var normalized = {};
+      Object.keys(attrs).forEach(function(key){
+        if (String(key).indexOf('attribute_') !== 0) return;
+        normalized[String(key)] = canonicalValue(attrs[key]);
+      });
+      if (!Object.keys(normalized).length) return null;
+      return {
+        variation_id: parseInt(row.variation_id || row.id || 0, 10) || 0,
+        attributes: normalized
+      };
+    }).filter(Boolean);
+  }
+
+  function embeddedRows(form){
+    var rows = null;
+
+    if ($) {
+      try { rows = $(form).data('product_variations'); } catch(e) {}
+    }
+
+    if (Array.isArray(rows)) return normalizeRows(rows);
+
+    var raw = form.getAttribute('data-product_variations');
+    if (!raw || raw === 'false') return [];
+    try {
+      rows = JSON.parse(raw);
+      return normalizeRows(rows);
+    } catch(e) {
+      return [];
+    }
+  }
+
+  function fetchRows(productId){
+    if (!productId || !config.ajaxUrl || !config.nonce || !window.fetch) return Promise.resolve([]);
+    if (cache[productId]) return cache[productId];
+
+    var body = new URLSearchParams();
+    body.append('action', 'mars_variation_dependency_matrix');
+    body.append('nonce', config.nonce);
+    body.append('product_id', String(productId));
+
+    cache[productId] = window.fetch(config.ajaxUrl, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'},
+      body: body.toString()
+    }).then(function(response){ return response.json(); })
+      .then(function(payload){
+        if (!payload || !payload.success || !payload.data) return [];
+        return normalizeRows(payload.data.variations || []);
+      })
+      .catch(function(){ return []; });
+
+    return cache[productId];
+  }
+
+  function selectName(select){ return String(select.getAttribute('name') || ''); }
+
+  function rowMatches(row, selects, targetSelect, candidate){
+    var attrs = row.attributes || {};
+    for (var i = 0; i < selects.length; i++) {
+      var select = selects[i];
+      var key = selectName(select);
+      if (!key) continue;
+
+      var selected = select === targetSelect ? candidate : canonicalValue(select.value);
+      if (!selected) continue;
+
+      var expected = Object.prototype.hasOwnProperty.call(attrs, key) ? canonicalValue(attrs[key]) : '';
+      // Empty variation attributes are WooCommerce's "Any ..." wildcard.
+      if (expected && expected !== selected) return false;
+    }
+    return true;
+  }
+
+  function candidateExists(rows, selects, targetSelect, candidate){
+    candidate = canonicalValue(candidate);
+    if (!candidate) return true;
+    for (var i = 0; i < rows.length; i++) {
+      if (rowMatches(rows[i], selects, targetSelect, candidate)) return true;
+    }
+    return false;
+  }
+
+  function applyMatrix(form, rows){
+    if (!rows.length) return;
+    var selects = qa('table.variations select[name^="attribute_"]', form);
+    if (!selects.length) return;
+
+    var cleared = false;
+
+    selects.forEach(function(select){
+      var current = canonicalValue(select.value);
+      var currentAllowed = !current;
+
+      Array.prototype.slice.call(select.options).forEach(function(option){
+        if (!option.value) {
+          option.removeAttribute('data-mars-dependency-hidden');
+          return;
+        }
+
+        var allowed = candidateExists(rows, selects, select, option.value);
+        option.dataset.marsDependencyHidden = allowed ? '0' : '1';
+        option.hidden = !allowed;
+        if (allowed && canonicalValue(option.value) === current) currentAllowed = true;
+      });
+
+      if (current && !currentAllowed) {
+        select.value = '';
+        cleared = true;
+      }
+    });
+
+    // Mars' button renderer listens to this event and mirrors the dependency
+    // state immediately without waiting for another user interaction.
+    if ($) {
+      $(form).trigger('mars_variation_dependencies_updated');
+    } else {
+      try { form.dispatchEvent(new CustomEvent('mars_variation_dependencies_updated', {bubbles:true})); } catch(e) {}
+    }
+
+    // Clearing an invalid dependent value must go back through WooCommerce so
+    // variation_id, price, stock and add-to-cart state are recalculated.
+    if (cleared) {
+      window.setTimeout(function(){
+        if ($) $(form).trigger('check_variations');
+      }, 0);
+    }
+  }
+
+  function initForm(form){
+    if (form.dataset.marsDependencyReady === '1') return;
+    form.dataset.marsDependencyReady = '1';
+
+    var selects = qa('table.variations select[name^="attribute_"]', form);
+    if (selects.length < 2) return;
+
+    var rows = embeddedRows(form);
+    var productId = productIdFromForm(form);
+    var applying = false;
+    var queued = false;
+
+    function run(){
+      if (!rows.length || applying) return;
+      applying = true;
+      applyMatrix(form, rows);
+      applying = false;
+    }
+
+    function schedule(){
+      if (queued) return;
+      queued = true;
+      window.setTimeout(function(){ queued = false; run(); }, 10);
+    }
+
+    selects.forEach(function(select){ select.addEventListener('change', schedule); });
+
+    if ($) {
+      $(form).on(
+        'woocommerce_update_variation_values.marsDependencies woocommerce_variation_has_changed.marsDependencies found_variation.marsDependencies reset_data.marsDependencies hide_variation.marsDependencies',
+        schedule
+      );
+    }
+
+    if (rows.length) {
+      schedule();
+      return;
+    }
+
+    fetchRows(productId).then(function(fetched){
+      rows = fetched;
+      schedule();
+    });
+  }
+
+  function initAll(){ qa('form.variations_form').forEach(initForm); }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAll);
+  else initAll();
+
+  if ($) {
+    $(document.body).on('wc_fragments_loaded updated_wc_div mars:inline-product-ready', initAll);
+  }
+})(window, document, window.jQuery);

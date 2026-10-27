@@ -1,0 +1,64 @@
+(function($){
+  'use strict';
+  var cfg=window.MarsCartAjax||{};
+  var qtyTimers={};
+
+  function faCount(value){
+    return String(value||0).replace(/\d/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[d];});
+  }
+  function setLoading(state){
+    $('.mars-cart-page').toggleClass('is-ajax-loading',!!state).attr('aria-busy',state?'true':'false');
+  }
+  function replaceCart(data){
+    if(!data||!data.html)return;
+    var $current=$('.mars-cart-page').first();
+    var $wrapper=$('<div></div>').html(data.html);
+    var $next=$wrapper.find('.mars-cart-page').first();
+    if(!$next.length&&$wrapper.children('.mars-cart-page').length)$next=$wrapper.children('.mars-cart-page').first();
+    if(!$current.length||!$next.length){fail(cfg.error||'بروزرسانی سبد خرید انجام نشد.');return;}
+    $current.replaceWith($next);
+    $('.mars-cart-count').text(faCount(data.count||0));
+    $(document.body).trigger('wc_fragments_refreshed');
+  }
+  function fail(message){
+    var text=message||cfg.error||'بروزرسانی سبد خرید انجام نشد.';
+    var $toast=$('<div class="mars-cart-ajax-toast" role="alert"></div>').text(text).appendTo(document.body);
+    requestAnimationFrame(function(){$toast.addClass('is-visible');});
+    setTimeout(function(){$toast.removeClass('is-visible');setTimeout(function(){$toast.remove();},220);},3200);
+  }
+  function request(payload){
+    if(!cfg.ajaxUrl||!cfg.nonce)return $.Deferred().reject().promise();
+    payload=payload||{};payload.action='mars_cart_ajax';payload.nonce=cfg.nonce;
+    setLoading(true);
+    return $.ajax({url:cfg.ajaxUrl,method:'POST',data:payload,dataType:'json',cache:false,headers:{'Cache-Control':'no-cache, no-store, max-age=0','Pragma':'no-cache'}})
+      .done(function(resp){if(resp&&resp.success)replaceCart(resp.data);else fail(resp&&resp.data&&resp.data.message);})
+      .fail(function(xhr){var r=xhr.responseJSON;fail(r&&r.data&&r.data.message);})
+      .always(function(){setLoading(false);});
+  }
+
+  $(document).on('click','.mars-cart-remove',function(e){
+    e.preventDefault();
+    var key=$(this).data('cartItemKey');
+    if(key)request({operation:'remove',cart_item_key:key});
+  });
+  $(document).on('click','[data-mars-clear-cart]',function(e){
+    e.preventDefault();
+    if(window.confirm('همه محصولات از سبد خرید حذف شوند؟'))request({operation:'clear'});
+  });
+  $(document).on('change','.mars-cart-quantity input.qty',function(){
+    var $input=$(this),key=$input.closest('.mars-cart-quantity').data('cartItemKey'),qty=$input.val();
+    if(!key)return;
+    clearTimeout(qtyTimers[key]);
+    qtyTimers[key]=setTimeout(function(){request({operation:'set_quantity',cart_item_key:key,quantity:qty});},260);
+  });
+  $(document).on('click','.mars-cart-item .plus,.mars-cart-item .minus',function(){
+    var $input=$(this).closest('.mars-cart-quantity').find('input.qty');
+    if($input.length)setTimeout(function(){$input.trigger('change');},80);
+  });
+  $(document).on('click','.mars-cart-update',function(e){
+    e.preventDefault();
+    var data={operation:'update',cart:{}};
+    $('.mars-cart-quantity input.qty').each(function(){var key=$(this).closest('.mars-cart-quantity').data('cartItemKey');if(key)data.cart[key]={qty:$(this).val()};});
+    request(data);
+  });
+})(jQuery);

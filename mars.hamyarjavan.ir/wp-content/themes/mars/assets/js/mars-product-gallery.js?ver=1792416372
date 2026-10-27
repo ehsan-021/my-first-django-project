@@ -1,0 +1,159 @@
+(function($){
+  'use strict';
+
+  function setupGalleryLightbox(){
+    var modal = document.querySelector('[data-mars-gallery-lightbox]');
+    var open = document.querySelector('[data-mars-gallery-open]');
+    if (!modal || !open) return;
+    var dialog = modal.querySelector('.mars-gallery-lightbox__dialog');
+    var stage = modal.querySelector('.mars-gallery-lightbox__stage');
+    var image = modal.querySelector('[data-mars-gallery-image]');
+    var count = modal.querySelector('[data-mars-gallery-count]');
+    var prev = modal.querySelector('[data-mars-gallery-prev]');
+    var next = modal.querySelector('[data-mars-gallery-next]');
+    var items = [];
+    var index = 0;
+    try { items = JSON.parse(modal.getAttribute('data-images') || '[]'); } catch(e){}
+    if (!items.length) return;
+
+    function fitDialog(){
+      if (!image || !dialog || !stage || !image.naturalWidth || !image.naturalHeight) return;
+      var compact = window.innerWidth <= 768;
+      var horizontalRoom = compact ? 44 : 84;
+      var verticalRoom = compact ? 132 : 164;
+      var maxW = Math.max(220, window.innerWidth - horizontalRoom);
+      var maxH = Math.max(180, window.innerHeight - verticalRoom);
+      var scale = Math.min(maxW / image.naturalWidth, maxH / image.naturalHeight, 1);
+      var stageW = Math.max(180, Math.round(image.naturalWidth * scale));
+      var stageH = Math.max(120, Math.round(image.naturalHeight * scale));
+      if (stageW > maxW) stageW = maxW;
+      if (stageH > maxH) stageH = maxH;
+      var pad = compact ? 20 : 32;
+      dialog.style.setProperty('width', Math.min(window.innerWidth - (compact ? 24 : 44), stageW + pad) + 'px', 'important');
+      stage.style.setProperty('width', stageW + 'px', 'important');
+      stage.style.setProperty('height', stageH + 'px', 'important');
+      stage.style.setProperty('min-height', '0', 'important');
+      image.style.setProperty('max-height', stageH + 'px', 'important');
+    }
+
+    function render(){
+      var item = items[index] || items[0];
+      if (image) {
+        image.classList.add('is-switching');
+        image.onload = function(){ fitDialog(); image.classList.remove('is-switching'); };
+        image.src = item.src || '';
+        image.alt = item.alt || '';
+        if (image.complete && image.naturalWidth) {
+          window.requestAnimationFrame(function(){ fitDialog(); image.classList.remove('is-switching'); });
+        }
+      }
+      if (count) count.textContent = (index + 1) + ' / ' + items.length;
+      if (prev) prev.disabled = items.length < 2;
+      if (next) next.disabled = items.length < 2;
+    }
+    function show(){
+      index = 0;
+      modal.hidden = false;
+      modal.setAttribute('aria-hidden','false');
+      document.body.classList.add('mars-gallery-open');
+      render();
+      var close = modal.querySelector('.mars-gallery-lightbox__close');
+      if (close) close.focus();
+    }
+    function hide(){
+      modal.hidden = true;
+      modal.setAttribute('aria-hidden','true');
+      document.body.classList.remove('mars-gallery-open');
+      if (dialog) dialog.style.removeProperty('width');
+      if (stage) {
+        stage.style.removeProperty('width');
+        stage.style.removeProperty('height');
+        stage.style.removeProperty('min-height');
+      }
+      if (image) image.style.removeProperty('max-height');
+      open.focus();
+    }
+    open.addEventListener('click', show);
+    modal.querySelectorAll('[data-mars-gallery-close]').forEach(function(el){ el.addEventListener('click', hide); });
+    if (prev) prev.addEventListener('click', function(){ index = (index - 1 + items.length) % items.length; render(); });
+    if (next) next.addEventListener('click', function(){ index = (index + 1) % items.length; render(); });
+    window.addEventListener('resize', function(){ if (!modal.hidden) fitDialog(); });
+    document.addEventListener('keydown', function(e){
+      if (modal.hidden) return;
+      if (e.key === 'Escape') hide();
+      if (e.key === 'ArrowLeft' && next) next.click();
+      if (e.key === 'ArrowRight' && prev) prev.click();
+    });
+  }
+
+  function mainProductImage(form){
+    return document.querySelector('.mars-service-media .woocommerce-product-gallery .woocommerce-product-gallery__image:first-child img, .mars-service-media .woocommerce-product-gallery img.wp-post-image');
+  }
+
+  function applyVariationImage(img, variation){
+    if (!img || !variation || !variation.image || !variation.image.src) return;
+    var data = variation.image;
+    img.src = data.full_src || data.src;
+    if (data.srcset) img.srcset = data.srcset; else img.removeAttribute('srcset');
+    if (data.sizes) img.sizes = data.sizes;
+    if (data.alt) img.alt = data.alt;
+    if (data.title) img.title = data.title;
+    var parent = img.closest('a');
+    if (parent && data.full_src) parent.href = data.full_src;
+  }
+
+  function setupVariationAnimation(){
+    if (!$) return;
+    $('.variations_form').each(function(){
+      var form = this;
+      var $form = $(form);
+      if ($form.data('marsGalleryAnimation')) return;
+      $form.data('marsGalleryAnimation', true);
+      var timer = null;
+      var ghost = null;
+
+      function beginTransition(){
+        var img = mainProductImage(form);
+        if (!img) return;
+        if (ghost && ghost.parentNode) ghost.parentNode.removeChild(ghost);
+        var frame = img.closest('.woocommerce-product-gallery__image');
+        if (!frame) return;
+        ghost = img.cloneNode(true);
+        ghost.removeAttribute('srcset');
+        ghost.removeAttribute('sizes');
+        ghost.className = 'mars-variation-image-ghost';
+        ghost.setAttribute('aria-hidden','true');
+        frame.appendChild(ghost);
+      }
+
+      function finishTransition(variation){
+        var img = mainProductImage(form);
+        if (img && variation) applyVariationImage(img, variation);
+        if (!ghost) return;
+        var currentGhost = ghost;
+        ghost = null;
+        requestAnimationFrame(function(){ currentGhost.classList.add('is-leaving'); });
+        window.setTimeout(function(){ if (currentGhost.parentNode) currentGhost.parentNode.removeChild(currentGhost); },340);
+      }
+
+      form.querySelectorAll('.variations select').forEach(function(select){
+        select.addEventListener('change', beginTransition, true);
+      });
+
+      $form.on('found_variation', function(e, variation){
+        window.clearTimeout(timer);
+        timer = window.setTimeout(function(){ finishTransition(variation); },35);
+      });
+
+      $form.on('reset_data hide_variation', function(){
+        window.clearTimeout(timer);
+        timer = window.setTimeout(function(){ finishTransition(null); },60);
+      });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    setupGalleryLightbox();
+    setupVariationAnimation();
+  });
+})(window.jQuery);

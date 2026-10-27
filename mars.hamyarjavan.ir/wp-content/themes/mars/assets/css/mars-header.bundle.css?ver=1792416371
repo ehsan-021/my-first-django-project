@@ -1,0 +1,1154 @@
+/* Mars header bundle — ordered component cascade in one request. */
+
+/* Header component layer. */
+/* Mars — unified container, aligned header and refined mega/mobile menus */
+:root{
+  --mars-container:1280px;
+  --mars-font-fa:"Mars Peyda","PeydaWebFaNum",Tahoma,"Segoe UI",Arial,sans-serif;
+  --mars-font-latin:"Mars Inter",Inter,Arial,sans-serif;
+}
+html,body{width:100%;max-width:100%;overflow-x:clip}
+body,button,input,select,textarea{font-family:var(--mars-font-fa)!important}
+body{font-weight:500;font-feature-settings:"ss01" 1,"ss02" 1}
+code,kbd,pre,.mars-latin{font-family:var(--mars-font-latin)!important}
+.mars-container{width:min(calc(100% - 40px),var(--mars-container))!important;max-width:var(--mars-container)!important;margin-inline:auto!important;padding-inline:0!important}
+.mars-header--accountpro>.mars-container.mars-header__shell{width:min(calc(100% - 40px),var(--mars-container))!important;max-width:var(--mars-container)!important;margin-inline:auto!important;padding-inline:0!important}
+.mars-header,.mars-header *{box-sizing:border-box}
+body.admin-bar .mars-header.is-sticky{top:32px}
+
+/* Header frame */
+.mars-header--accountpro{position:relative!important;width:100%!important;max-width:100%!important;margin:0!important;padding:30px 0 30px!important;background:var(--mars-header-bg,var(--mars-bg))!important;border:0!important;overflow:visible!important;box-shadow:none!important;backdrop-filter:none!important;z-index:1000!important}
+.mars-header__shell,.mars-header__desktop,.mars-header__top,.mars-header__bottom{width:100%!important;max-width:100%!important;min-width:0!important}
+.mars-header__desktop{display:block!important}
+
+/* One shared 3-column geometry for both rows: left / center / right. */
+.mars-header__top{display:flex!important;align-items:flex-start!important;justify-content:space-between!important;gap:24px!important;margin:0 0 22px!important;direction:rtl!important}
+.mars-brand-block{flex:0 0 auto!important;min-width:0!important;display:grid!important;justify-items:end!important;gap:7px!important;direction:rtl!important}
+.mars-brand{display:flex!important;justify-content:flex-end!important;max-width:100%!important;min-width:0!important}
+.mars-brand__link{display:inline-flex!important;align-items:center!important;justify-content:flex-end!important;width:auto!important;max-width:min(var(--mars-logo-width,210px),100%)!important;line-height:1!important}
+.mars-brand__link img{display:block!important;width:auto!important;height:auto!important;max-width:100%!important;max-height:76px!important;object-fit:contain!important}
+.mars-brand__link .mars-logo-dark{display:none!important}
+html[data-theme=dark] .mars-brand__link .mars-logo-light{display:none!important}
+html[data-theme=dark] .mars-brand__link .mars-logo-dark{display:block!important}
+.mars-brand__link .mars-logo-universal{display:block!important}
+.mars-brand__text{font-size:28px!important;font-weight:900!important;color:var(--mars-menu-text,var(--mars-text))!important;white-space:nowrap!important}
+.mars-brand-block__tagline{margin:0!important;font-size:14px!important;font-weight:500!important;line-height:1.9!important;color:color-mix(in srgb,var(--mars-menu-text,var(--mars-text)) 62%,transparent)!important}
+
+.mars-support-card{flex:0 0 280px!important;width:280px!important;display:flex!important;align-items:center!important;gap:12px!important;min-width:240px!important;max-width:310px!important;padding:12px 15px!important;border-radius:24px!important;background:color-mix(in srgb,var(--mars-surface-2) 20%,transparent)!important;border:1px solid color-mix(in srgb,var(--mars-header-border,var(--mars-line)) 30%,transparent)!important;color:var(--mars-menu-text,var(--mars-text))!important;box-shadow:0 10px 28px rgba(0,0,0,.035)!important;backdrop-filter:blur(18px) saturate(110%)!important;-webkit-backdrop-filter:blur(18px) saturate(110%)!important;text-decoration:none!important;direction:rtl!important;transition:background-color .18s,border-color .18s!important}
+.mars-support-card:hover{background:color-mix(in srgb,var(--mars-surface-2) 30%,transparent)!important;border-color:color-mix(in srgb,var(--mars-accent) 28%,transparent)!important;color:var(--mars-menu-text,var(--mars-text))!important}
+.mars-support-card__icon{display:grid!important;place-items:center!important;flex:0 0 56px!important;width:56px!important;height:56px!important}
+.mars-support-card__icon img{display:block!important;width:56px!important;height:56px!important;object-fit:contain!important}
+.mars-support-card__copy{display:grid!important;gap:2px!important;min-width:0!important;text-align:right!important}
+.mars-support-card__copy strong{font-size:15px!important;font-weight:900!important;line-height:1.55!important;white-space:nowrap!important;color:inherit!important}
+.mars-support-card__copy span{font-size:13px!important;font-weight:700!important;line-height:1.75!important;white-space:nowrap!important;color:color-mix(in srgb,currentColor 82%,transparent)!important}
+html[data-theme=dark] .mars-support-card{background:rgba(255,255,255,.035)!important;border-color:rgba(255,255,255,.055)!important}
+
+/* Bottom row: right menu + left tool cluster, matching the reference alignment. */
+.mars-header__bottom{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:28px!important;direction:rtl!important;min-width:0!important}
+.mars-primary-nav{flex:0 1 auto!important;min-width:0!important;width:max-content!important;max-width:calc(100% - 610px)!important;direction:rtl!important}
+.mars-header-tools{flex:0 0 auto!important;display:flex!important;align-items:center!important;gap:12px!important;direction:rtl!important;min-width:0!important;margin:0!important}
+.mars-header-nav-panel{position:relative!important;min-width:0!important;width:max-content!important;max-width:100%!important;padding:0 14px!important;border-radius:25px!important;background:color-mix(in srgb,var(--mars-surface-2) 67%,transparent)!important;border:1px solid color-mix(in srgb,var(--mars-header-border,var(--mars-line)) 32%,transparent)!important;box-shadow:none!important;backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important;direction:rtl!important;overflow:visible!important}
+.mars-header-nav-panel .mars-menu,.mars-header-nav-panel .mars-menu ul{list-style:none!important;margin:0!important;padding:0!important}
+.mars-header-nav-panel .mars-menu{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:3px!important;min-height:62px!important;max-width:100%!important;direction:rtl!important;white-space:nowrap!important;overflow:visible!important}
+.mars-header-nav-panel .mars-menu>li{position:static!important;flex:0 0 auto!important;margin:0!important}
+.mars-header-nav-panel .mars-menu>li>a{display:flex!important;align-items:center!important;gap:7px!important;padding:10px 13px!important;border-radius:17px!important;background:transparent!important;color:var(--mars-menu-text,var(--mars-text))!important;font-size:13px!important;font-weight:800!important;line-height:1.75!important;white-space:nowrap!important;transition:background-color .18s,color .18s!important;direction:rtl!important}
+.mars-header-nav-panel .mars-menu>li:hover>a,.mars-header-nav-panel .mars-menu>li:focus-within>a,.mars-header-nav-panel .mars-menu>.current-menu-item>a,.mars-header-nav-panel .mars-menu>.current-menu-parent>a,.mars-header-nav-panel .mars-menu>.current-menu-ancestor>a{background:color-mix(in srgb,var(--mars-menu-hover-bg,var(--mars-surface-2)) 68%,transparent)!important;color:var(--mars-menu-hover,var(--mars-accent))!important}
+.mars-header-nav-panel .mars-menu>.current-menu-item>a{font-weight:900!important}
+.mars-header-nav-panel .mars-menu>li.menu-item-has-children>a:after{content:""!important;display:inline-block!important;width:8px!important;height:8px!important;margin-right:4px!important;border-right:2px solid currentColor!important;border-bottom:2px solid currentColor!important;transform:rotate(45deg) translateY(-2px)!important;flex:0 0 auto!important}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>a:after,.mars-header-nav-panel .mars-menu>li>.sub-menu>li>a:before{content:none!important;display:none!important}
+.mars-menu-item-icon{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:17px!important;height:17px!important;flex:0 0 17px!important;color:currentColor!important}
+.mars-menu-item-icon svg{width:100%!important;height:100%!important;fill:currentColor!important;stroke:none!important}
+.mars-pack-icon[data-mars-icon="chatgpt"] svg,.mars-pack-icon[data-mars-icon="ai"] svg,.mars-pack-icon[data-mars-icon="sparkles-ai"] svg{fill:none!important;stroke:currentColor!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+.mars-pack-icon[data-mars-icon="chatgpt"] svg{stroke-width:4.2!important}
+.mars-pack-icon[data-mars-icon="ai"] svg,.mars-pack-icon[data-mars-icon="sparkles-ai"] svg{stroke-width:4!important}
+
+/* Mega menu: light uses light surfaces; dark follows dark theme variables. */
+.mars-header-nav-panel .mars-menu>li>.sub-menu{--mars-mega-cols:4;--mars-mega-width:1040px;position:absolute!important;top:calc(100% + 14px)!important;right:0!important;left:auto!important;width:min(var(--mars-mega-width),var(--mars-container),calc(100vw - 40px))!important;max-width:calc(100vw - 40px)!important;min-width:0!important;display:grid!important;grid-template-columns:repeat(var(--mars-mega-cols),minmax(0,1fr))!important;align-items:stretch!important;gap:18px!important;padding:20px!important;border-radius:28px!important;background:color-mix(in srgb,var(--mars-surface) 96%,var(--mars-bg))!important;border:1px solid color-mix(in srgb,var(--mars-line) 88%,transparent)!important;box-shadow:0 26px 72px rgba(30,48,39,.13)!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;transform:translateY(8px)!important;transition:opacity .18s,visibility .18s,transform .18s!important;z-index:90!important;overflow-x:hidden!important;direction:rtl!important}
+.mars-header-nav-panel .mars-menu>li.mars-mega-columns-1>.sub-menu{--mars-mega-cols:1;--mars-mega-width:270px}
+.mars-header-nav-panel .mars-menu>li.mars-mega-columns-2>.sub-menu{--mars-mega-cols:2;--mars-mega-width:530px}
+.mars-header-nav-panel .mars-menu>li.mars-mega-columns-3>.sub-menu{--mars-mega-cols:3;--mars-mega-width:790px}
+.mars-header-nav-panel .mars-menu>li.mars-mega-columns-4>.sub-menu{--mars-mega-cols:4;--mars-mega-width:1040px}
+.mars-header-nav-panel .mars-menu>li.mars-mega-overflow>.sub-menu{max-height:560px!important;overflow-y:auto!important;overscroll-behavior:contain!important;scrollbar-width:thin!important;scrollbar-color:color-mix(in srgb,var(--mars-accent) 65%,transparent) transparent!important}
+.mars-header-nav-panel .mars-menu>li.mars-mega-overflow>.sub-menu::-webkit-scrollbar{width:6px}
+.mars-header-nav-panel .mars-menu>li.mars-mega-overflow>.sub-menu::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--mars-accent) 65%,transparent);border-radius:999px}
+.mars-header-nav-panel .mars-menu>li:hover>.sub-menu,.mars-header-nav-panel .mars-menu>li:focus-within>.sub-menu{opacity:1!important;visibility:visible!important;pointer-events:auto!important;transform:none!important}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li{display:flex!important;flex-direction:column!important;min-width:0!important;min-height:355px!important;padding:0!important;margin:0!important;border-radius:0!important;background:transparent!important;color:var(--mars-text)!important;direction:rtl!important;text-align:right!important}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>a{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:10px!important;min-height:52px!important;margin:0!important;padding:0 8px 10px!important;border-radius:0!important;background:transparent!important;color:var(--mars-text)!important;font-size:14px!important;font-weight:700!important;line-height:1.8!important;white-space:normal!important;direction:rtl!important;text-align:right!important}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>a:hover{color:var(--mars-accent)!important}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>a .mars-menu-item-icon{width:20px!important;height:20px!important;flex-basis:20px!important;color:var(--mars-accent)!important}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu{position:static!important;display:flex!important;flex-direction:column!important;flex:1 1 auto!important;gap:0!important;min-width:0!important;min-height:300px!important;padding:18px 18px 16px!important;margin:0!important;border:1px solid color-mix(in srgb,var(--mars-line) 70%,transparent)!important;border-radius:18px!important;background:color-mix(in srgb,var(--mars-accent) 4%,var(--mars-surface-2))!important;box-shadow:none!important;opacity:1!important;visibility:visible!important;pointer-events:auto!important;transform:none!important;overflow:hidden!important;direction:rtl!important;text-align:right!important}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>li{position:static!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important;text-align:right!important}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>li>a{display:block!important;padding:5px 0!important;border-radius:0!important;background:transparent!important;color:color-mix(in srgb,var(--mars-text) 90%,transparent)!important;font-size:13px!important;font-weight:500!important;line-height:1.9!important;white-space:normal!important;transition:color .16s!important;text-align:right!important;direction:rtl!important}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>li>a:hover{color:var(--mars-accent)!important}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>.mars-mega-view-all-item{margin-top:auto!important;padding-top:18px!important}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>.mars-mega-view-all-item>a{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:8px!important;color:var(--mars-text)!important;font-size:13px!important;font-weight:700!important;direction:rtl!important;text-align:right!important}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>.mars-mega-view-all-item>a .mars-view-all-arrow{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:18px!important;height:18px!important;color:var(--mars-accent)!important;line-height:1!important;flex:0 0 18px!important}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>.mars-mega-view-all-item>a .mars-view-all-arrow svg{display:block!important;width:18px!important;height:18px!important;fill:none!important;stroke:currentColor!important;stroke-width:2!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>.mars-mega-view-all-item>a:hover{color:var(--mars-accent)!important}
+html[data-theme=dark] .mars-header-nav-panel .mars-menu>li>.sub-menu{background:color-mix(in srgb,var(--mars-submenu-bg,var(--mars-surface)) 96%,#0b0d0c)!important;border-color:rgba(255,255,255,.055)!important;box-shadow:0 30px 80px rgba(0,0,0,.30)!important}
+html[data-theme=dark] .mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu{background:rgba(255,255,255,.035)!important;border-color:rgba(255,255,255,.045)!important}
+
+/* Search sits immediately beside the left action group. */
+.mars-header-search{flex:0 0 300px!important;position:static!important;inset:auto!important;z-index:auto!important;width:300px!important;max-width:300px!important;min-width:230px!important;height:62px!important;display:grid!important;grid-template-columns:42px minmax(0,1fr)!important;align-items:center!important;gap:8px!important;padding:0 14px!important;margin:0!important;border-radius:23px!important;background:color-mix(in srgb,var(--mars-surface-2) 67%,transparent)!important;border:1px solid color-mix(in srgb,var(--mars-header-border,var(--mars-line)) 32%,transparent)!important;box-shadow:none!important;backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important;direction:ltr!important}
+.mars-header-search button{display:grid!important;place-items:center!important;width:40px!important;height:40px!important;padding:0!important;margin:0!important;border:0!important;border-radius:13px!important;background:transparent!important;color:var(--mars-icon-color,var(--mars-text))!important;cursor:pointer!important}
+.mars-header-search button:hover{background:var(--mars-icon-hover-bg,var(--mars-surface-2))!important;color:var(--mars-icon-hover,var(--mars-accent))!important}
+.mars-header-search button .mars-icon{width:19px!important;height:19px!important}
+.mars-header-search input{display:block!important;width:100%!important;min-width:0!important;height:auto!important;margin:0!important;padding:0!important;border:0!important;outline:0!important;background:transparent!important;box-shadow:none!important;color:var(--mars-menu-text,var(--mars-text))!important;font:inherit!important;font-size:13px!important;font-weight:700!important;line-height:1.8!important;text-align:right!important;direction:rtl!important}
+.mars-header-search input::placeholder{color:color-mix(in srgb,var(--mars-menu-text,var(--mars-text)) 52%,transparent)!important;opacity:1!important}
+
+/* Actions align vertically with the support card above. */
+.mars-header-actions{flex:0 0 280px!important;width:280px!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:8px!important;direction:rtl!important;min-width:0!important;white-space:nowrap!important;margin:0!important}
+.mars-account-button{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;height:52px!important;min-height:52px!important;padding:0 16px!important;margin:0!important;border-radius:18px!important;border:1px solid color-mix(in srgb,var(--mars-header-border,var(--mars-line)) 32%,transparent)!important;background:color-mix(in srgb,var(--mars-account-bg,var(--mars-surface-2)) 78%,transparent)!important;color:var(--mars-account-text,#fff)!important;box-shadow:none!important;backdrop-filter:blur(12px)!important;font-size:13px!important;font-weight:900!important;line-height:1!important;transition:background-color .18s,color .18s!important}
+.mars-account-button:hover{background:var(--mars-account-hover,var(--mars-account-bg))!important;color:var(--mars-account-text,#fff)!important;transform:none!important}
+.mars-account-button .mars-icon{width:19px!important;height:19px!important}
+.mars-icon-button{position:relative!important;display:grid!important;place-items:center!important;width:52px!important;height:52px!important;min-width:52px!important;min-height:52px!important;padding:0!important;margin:0!important;border-radius:18px!important;border:1px solid color-mix(in srgb,var(--mars-header-border,var(--mars-line)) 32%,transparent)!important;background:color-mix(in srgb,var(--mars-icon-bg,var(--mars-surface-2)) 70%,transparent)!important;color:var(--mars-icon-color,var(--mars-text))!important;box-shadow:none!important;backdrop-filter:blur(12px)!important;cursor:pointer!important;transition:background-color .18s,color .18s!important}
+.mars-icon-button:hover{background:var(--mars-icon-hover-bg,var(--mars-surface-2))!important;color:var(--mars-icon-hover,var(--mars-accent))!important;transform:none!important}
+.mars-icon-button>.mars-icon{display:flex!important;align-items:center!important;justify-content:center!important;width:20px!important;height:20px!important;margin:0!important}
+.mars-theme-toggle{position:relative!important;overflow:hidden!important}
+.mars-theme-toggle .mars-theme-icon-light,.mars-theme-toggle .mars-theme-icon-dark{position:absolute!important;inset:0!important;display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;height:100%!important;margin:0!important;padding:0!important;line-height:1!important}
+.mars-theme-toggle .mars-theme-icon-dark{display:none!important}
+html[data-theme=dark] .mars-theme-toggle .mars-theme-icon-light{display:none!important}
+html[data-theme=dark] .mars-theme-toggle .mars-theme-icon-dark{display:flex!important}
+.mars-theme-toggle .mars-icon{display:flex!important;align-items:center!important;justify-content:center!important;width:20px!important;height:20px!important;margin:0!important;transform:none!important}
+.mars-cart-count{position:absolute!important;top:-5px!important;left:-5px!important;display:grid!important;place-items:center!important;min-width:21px!important;height:21px!important;padding:0 5px!important;border-radius:999px!important;background:var(--mars-accent)!important;color:#06100c!important;font-size:10px!important;font-weight:900!important;line-height:1!important}
+
+/* Mobile drawer */
+.mars-mobile-header{display:none!important}
+.mars-mobile-overlay{position:fixed!important;inset:0!important;background:rgba(0,0,0,.5)!important;backdrop-filter:blur(4px)!important;opacity:0!important;transition:.18s!important;z-index:10000!important}
+.mars-mobile-overlay.is-open{opacity:1!important}
+.mars-mobile-drawer{display:block!important;position:fixed!important;top:0!important;right:0!important;left:auto!important;width:min(88vw,370px)!important;max-width:370px!important;height:100dvh!important;padding:18px!important;background:var(--mars-header-bg,var(--mars-surface))!important;color:var(--mars-menu-text,var(--mars-text))!important;border:0!important;border-left:1px solid var(--mars-header-border,var(--mars-line))!important;box-shadow:-24px 0 70px rgba(0,0,0,.28)!important;transform:translateX(105%)!important;transition:transform .2s!important;z-index:10001!important;overflow-y:auto!important;overflow-x:hidden!important}
+.mars-mobile-drawer.is-open{transform:none!important}
+.mars-mobile-drawer__head{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;margin-bottom:14px!important;direction:rtl!important}
+.mars-mobile-drawer__logo .mars-brand__link{max-width:var(--mars-mobile-logo-width,138px)!important}
+.mars-mobile-drawer__logo img{display:block!important;max-width:100%!important;max-height:52px!important;object-fit:contain!important}
+.mars-mobile-drawer__tagline{margin:0 0 12px!important;color:var(--mars-muted)!important;font-size:12px!important;line-height:1.9!important}
+.mars-mobile-search{display:grid!important;grid-template-columns:38px minmax(0,1fr)!important;gap:8px!important;align-items:center!important;height:52px!important;margin:0 0 14px!important;padding:0 12px!important;border-radius:16px!important;background:color-mix(in srgb,var(--mars-surface-2) 72%,transparent)!important;border:1px solid color-mix(in srgb,var(--mars-header-border,var(--mars-line)) 34%,transparent)!important;direction:ltr!important}
+.mars-mobile-search button{display:grid!important;place-items:center!important;width:36px!important;height:36px!important;border:0!important;background:transparent!important;color:var(--mars-icon-color,var(--mars-text))!important}
+.mars-mobile-search input{width:100%!important;min-width:0!important;border:0!important;outline:0!important;background:transparent!important;color:var(--mars-menu-text,var(--mars-text))!important;font:inherit!important;font-size:13px!important;text-align:right!important;direction:rtl!important}
+.mars-mobile-drawer__account{padding:0!important;margin:0 0 14px!important}
+.mars-mobile-drawer__account .mars-account-button{display:flex!important;width:100%!important;height:50px!important;min-height:50px!important;border-radius:15px!important}
+.mars-mobile-menu,.mars-mobile-menu ul{list-style:none!important;padding:0!important;margin:0!important}
+.mars-mobile-menu li{position:relative!important;direction:rtl!important;text-align:right!important}
+.mars-mobile-menu>li{border-bottom:1px solid color-mix(in srgb,var(--mars-header-border,var(--mars-line)) 45%,transparent)!important}
+.mars-mobile-menu a{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:8px!important;width:100%!important;min-width:0!important;color:var(--mars-menu-text,var(--mars-text))!important;text-align:right!important;direction:rtl!important}
+.mars-mobile-menu>li>a{padding:14px 4px 14px 48px!important;font-size:14px!important;font-weight:800!important;line-height:1.8!important}
+.mars-mobile-menu>li>.sub-menu{display:none!important;padding:5px 0 11px!important;background:transparent!important}
+.mars-mobile-menu>li.submenu-open>.sub-menu{display:block!important}
+.mars-mobile-menu>li>.sub-menu>li{margin:5px 0!important;border:0!important;border-radius:17px!important;background:color-mix(in srgb,var(--mars-accent) 4%,var(--mars-surface-2))!important;overflow:visible!important}
+.mars-mobile-menu>li>.sub-menu>li>a{min-height:50px!important;padding:12px 14px 12px 48px!important;font-size:13px!important;font-weight:700!important;line-height:1.8!important;border-radius:17px!important}
+.mars-mobile-menu>li>.sub-menu>li>a:after,.mars-mobile-menu>li>.sub-menu>li>a:before{content:none!important;display:none!important}
+.mars-mobile-menu>li>.sub-menu>li>.sub-menu{display:none!important;margin:0!important;padding:2px 16px 10px!important;background:transparent!important;border-radius:0 0 17px 17px!important}
+.mars-mobile-menu>li>.sub-menu>li.submenu-open>.sub-menu{display:block!important}
+.mars-mobile-menu>li>.sub-menu>li>.sub-menu>li{border-top:1px solid color-mix(in srgb,var(--mars-line) 65%,transparent)!important}
+.mars-mobile-menu>li>.sub-menu>li>.sub-menu>li:first-child{border-top:0!important}
+.mars-mobile-menu>li>.sub-menu>li>.sub-menu>li>a{padding:11px 0!important;font-size:12.5px!important;font-weight:500!important;line-height:1.85!important;color:color-mix(in srgb,var(--mars-menu-text,var(--mars-text)) 88%,transparent)!important}
+.mars-mobile-menu .mars-menu-item-icon{width:18px!important;height:18px!important;flex:0 0 18px!important;color:var(--mars-accent)!important}
+.mars-submenu-toggle{position:absolute!important;left:8px!important;top:10px!important;display:grid!important;place-items:center!important;width:32px!important;height:32px!important;padding:0!important;border:1px solid color-mix(in srgb,var(--mars-header-border,var(--mars-line)) 38%,transparent)!important;border-radius:50%!important;background:color-mix(in srgb,var(--mars-surface) 78%,transparent)!important;color:var(--mars-icon-color,var(--mars-text))!important;box-shadow:0 5px 16px rgba(24,43,34,.06)!important;cursor:pointer!important;z-index:2!important;transition:background-color .18s,border-color .18s,color .18s!important}
+.mars-submenu-toggle:hover{background:var(--mars-icon-hover-bg,var(--mars-surface-2))!important;color:var(--mars-icon-hover,var(--mars-accent))!important;border-color:color-mix(in srgb,var(--mars-accent) 35%,transparent)!important}
+.mars-submenu-toggle svg{display:block!important;width:15px!important;height:15px!important;fill:none!important;stroke:currentColor!important;stroke-width:2!important;stroke-linecap:round!important;stroke-linejoin:round!important;transition:transform .18s!important}
+.mars-submenu-toggle[aria-expanded="true"] svg{transform:rotate(180deg)!important}
+.mars-mobile-menu>li>.sub-menu>li>.mars-submenu-toggle{top:9px!important;left:9px!important}
+.mars-mobile-drawer__footer{display:flex!important;gap:8px!important;margin-top:16px!important}
+.mars-mobile-action{display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;flex:1!important;padding:10px!important;border-radius:13px!important;border:1px solid color-mix(in srgb,var(--mars-header-border,var(--mars-line)) 34%,transparent)!important;background:var(--mars-icon-bg,var(--mars-surface-2))!important;color:var(--mars-menu-text,var(--mars-text))!important;font:inherit!important;font-size:11px!important;cursor:pointer!important}
+html[data-theme=dark] .mars-mobile-menu>li>.sub-menu>li{background:rgba(255,255,255,.035)!important}
+html[data-theme=dark] .mars-submenu-toggle{background:rgba(255,255,255,.045)!important;border-color:rgba(255,255,255,.06)!important}
+
+/* Responsive */
+@media(max-width:1280px){
+  .mars-container{width:min(calc(100% - 32px),var(--mars-container))!important}
+  .mars-header--accountpro>.mars-container.mars-header__shell{width:min(calc(100% - 32px),var(--mars-container))!important}
+  .mars-header__top,.mars-header__bottom{gap:16px!important}
+  .mars-header-tools{gap:10px!important}
+  .mars-header-search{flex-basis:250px!important;width:250px!important;max-width:250px!important;min-width:210px!important}
+  .mars-header-actions{flex-basis:250px!important;width:250px!important}
+  .mars-support-card{flex-basis:250px!important;width:250px!important}
+  .mars-primary-nav{max-width:calc(100% - 540px)!important}
+  .mars-header-nav-panel{padding-inline:9px!important}
+  .mars-header-nav-panel .mars-menu>li>a{padding-inline:9px!important;font-size:12px!important}
+  .mars-account-button{padding-inline:12px!important;font-size:12px!important}
+  .mars-icon-button{width:48px!important;min-width:48px!important;height:48px!important;min-height:48px!important}
+  .mars-account-button{height:48px!important;min-height:48px!important}
+}
+@media(max-width:1140px){
+  .mars-header--accountpro{padding:15px 0!important}
+  .mars-header__desktop{display:none!important}
+  .mars-mobile-header{position:relative!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;direction:rtl!important;min-width:0!important}
+  .mars-mobile-header__brand{position:absolute!important;left:50%!important;transform:translateX(-50%)!important;display:flex!important;align-items:center!important;justify-content:center!important;max-width:42vw!important;min-width:0!important}
+  .mars-mobile-header__brand .mars-brand__link{max-width:min(var(--mars-mobile-logo-width,138px),42vw)!important}
+  .mars-mobile-header__brand img{display:block!important;max-width:100%!important;max-height:48px!important;object-fit:contain!important}
+  .mars-mobile-header__actions{display:flex!important;align-items:center!important;gap:6px!important;direction:rtl!important;margin-right:auto!important}
+  .mars-mobile-header .mars-icon-button{width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;border-radius:14px!important}
+  .mars-menu-toggle{display:grid!important;margin-left:auto!important}
+}
+@media(max-width:782px){body.admin-bar .mars-header.is-sticky{top:46px}}
+@media(max-width:520px){
+  .mars-container{width:min(calc(100% - 20px),var(--mars-container))!important}
+  .mars-header--accountpro>.mars-container.mars-header__shell{width:min(calc(100% - 20px),var(--mars-container))!important}
+  .mars-mobile-header .mars-icon-button{width:40px!important;min-width:40px!important;height:40px!important;min-height:40px!important}
+  .mars-mobile-header__brand{max-width:36vw!important}
+  .mars-mobile-header__brand .mars-brand__link{max-width:min(var(--mars-mobile-logo-width,138px),36vw)!important}
+}
+
+.mars-header--accountpro,.mars-header--accountpro *,.mars-mobile-drawer,.mars-mobile-drawer *{font-family:var(--mars-font-fa)!important}
+.mars-support-card__copy strong,.mars-support-card__copy span,.mars-header-nav-panel a,.mars-header-search input,.mars-account-button{font-family:var(--mars-font-fa)!important}
+
+/* Mars — control-height parity, forgiving mega hover, compact five-item columns and adaptive search */
+:root{--mars-header-control-height:52px;--mars-search-width:300px}
+
+/* Desktop bottom row remains one line; search gives space back to long top-level menus. */
+.mars-header__bottom{gap:20px!important}
+.mars-primary-nav{flex:1 1 auto!important;width:auto!important;max-width:none!important;min-width:0!important}
+.mars-header-nav-panel{width:max-content!important;max-width:100%!important;min-width:0!important}
+.mars-header-tools{flex:0 0 auto!important;gap:12px!important;min-width:0!important}
+.mars-header-search{flex:0 1 var(--mars-search-width)!important;width:var(--mars-search-width)!important;max-width:var(--mars-search-width)!important;min-width:140px!important;height:var(--mars-header-control-height)!important;border-radius:18px!important;padding-inline:12px!important}
+.mars-header-search button{width:36px!important;height:36px!important;border-radius:11px!important}
+.mars-account-button,.mars-icon-button{height:var(--mars-header-control-height)!important;min-height:var(--mars-header-control-height)!important}
+.mars-icon-button{width:var(--mars-header-control-height)!important;min-width:var(--mars-header-control-height)!important}
+
+/* Densify only when JS detects that many one-level items need room. */
+.mars-header__bottom.mars-menu-compact .mars-header-nav-panel{padding-inline:7px!important}
+.mars-header__bottom.mars-menu-compact .mars-header-nav-panel .mars-menu{gap:1px!important}
+.mars-header__bottom.mars-menu-compact .mars-header-nav-panel .mars-menu>li>a{padding-inline:8px!important;font-size:12px!important;gap:5px!important}
+.mars-header__bottom.mars-menu-ultra-compact .mars-header-nav-panel .mars-menu>li>a{padding-inline:6px!important;font-size:11.5px!important}
+.mars-header__bottom.mars-single-level-overflow .mars-header-nav-panel{overflow:hidden!important}
+.mars-header__bottom.mars-single-level-overflow .mars-header-nav-panel .mars-menu{overflow-x:auto!important;overflow-y:hidden!important;scrollbar-width:none!important;overscroll-behavior-inline:contain!important}
+.mars-header__bottom.mars-single-level-overflow .mars-header-nav-panel .mars-menu::-webkit-scrollbar{display:none!important}
+
+/* Make the pointer path from a top-level item to its mega panel forgiving. */
+.mars-header-nav-panel .mars-menu>li>.sub-menu{top:calc(100% + 6px)!important;transform:translateY(4px)!important;transition:opacity .14s ease,visibility 0s linear .22s,transform .14s ease!important}
+.mars-header-nav-panel .mars-menu>li>.sub-menu:before{content:""!important;position:absolute!important;right:0!important;left:0!important;top:-10px!important;height:12px!important;background:transparent!important;pointer-events:auto!important}
+.mars-header-nav-panel .mars-menu>li:hover>.sub-menu,
+.mars-header-nav-panel .mars-menu>li:focus-within>.sub-menu,
+.mars-header-nav-panel .mars-menu>li.mars-mega-open>.sub-menu{opacity:1!important;visibility:visible!important;pointer-events:auto!important;transform:none!important;transition-delay:0s!important}
+
+/* Compact mega columns: title + five visible third-level items; overflow scrolls inside each column. */
+.mars-header-nav-panel .mars-menu>li>.sub-menu{gap:14px!important;padding:16px!important}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li{min-height:0!important;height:282px!important;max-height:282px!important}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>a{min-height:42px!important;height:42px!important;padding:0 7px 7px!important;font-size:13.5px!important;line-height:1.65!important;flex:0 0 42px!important}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu{flex:1 1 auto!important;min-height:0!important;height:230px!important;max-height:230px!important;padding:9px 14px 10px!important;border-radius:16px!important;overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;scrollbar-width:thin!important;scrollbar-color:color-mix(in srgb,var(--mars-accent) 42%,transparent) transparent!important}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu::-webkit-scrollbar{width:5px!important}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--mars-accent) 42%,transparent)!important;border-radius:999px!important}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>li>a{min-height:34px!important;padding:4px 0!important;font-size:12.5px!important;line-height:1.8!important}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>.mars-mega-view-all-item{margin-top:6px!important;padding-top:7px!important;border-top:1px solid color-mix(in srgb,var(--mars-line) 58%,transparent)!important}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>.mars-mega-view-all-item>a{min-height:32px!important;padding-block:3px!important;font-size:12.5px!important}
+
+@media(max-width:1280px){
+  :root{--mars-header-control-height:48px}
+  .mars-header-search{min-width:130px!important}
+  .mars-header-search button{width:34px!important;height:34px!important}
+  .mars-account-button,.mars-icon-button{height:var(--mars-header-control-height)!important;min-height:var(--mars-header-control-height)!important}
+  .mars-icon-button{width:var(--mars-header-control-height)!important;min-width:var(--mars-header-control-height)!important}
+}
+
+/* Header component layer. */
+/* Mars — equal header controls, stable mega hover, six-item columns and full color variables */
+:root{
+  --mars-header-control-height:52px;
+  --mars-mega-column-width:206px;
+}
+
+/* Header controls share exactly the same height. */
+.mars-header-nav-panel,
+.mars-header-search,
+.mars-account-button,
+.mars-icon-button{
+  height:var(--mars-header-control-height)!important;
+  min-height:var(--mars-header-control-height)!important;
+}
+.mars-header-nav-panel{
+  display:flex!important;
+  align-items:center!important;
+  background:color-mix(in srgb,var(--mars-nav-bg) 86%,transparent)!important;
+  border-color:var(--mars-nav-border)!important;
+}
+.mars-header-nav-panel .mars-menu{
+  height:100%!important;
+  min-height:0!important;
+  align-items:center!important;
+}
+.mars-header-nav-panel .mars-menu>li,
+.mars-header-nav-panel .mars-menu>li>a{
+  height:100%!important;
+}
+.mars-header-nav-panel .mars-menu>li>a{
+  align-items:center!important;
+  padding-block:0!important;
+  color:var(--mars-menu-text)!important;
+}
+.mars-menu-item-icon{color:var(--mars-menu-icon)!important}
+.mars-header-nav-panel .mars-menu>li:hover>a,
+.mars-header-nav-panel .mars-menu>li:focus-within>a,
+.mars-header-nav-panel .mars-menu>.current-menu-item>a,
+.mars-header-nav-panel .mars-menu>.current-menu-parent>a,
+.mars-header-nav-panel .mars-menu>.current-menu-ancestor>a{
+  color:var(--mars-menu-hover)!important;
+  background:var(--mars-menu-hover-bg)!important;
+}
+.mars-header-nav-panel .mars-menu>li:hover>a .mars-menu-item-icon,
+.mars-header-nav-panel .mars-menu>li:focus-within>a .mars-menu-item-icon{
+  color:var(--mars-menu-hover)!important;
+}
+
+/* Brand / support / search are fully driven by the Colors tab. */
+.mars-brand__text{color:var(--mars-brand-text)!important}
+.mars-brand-block__tagline{color:var(--mars-brand-subtitle)!important}
+.mars-support-card{
+  color:var(--mars-support-text)!important;
+  background:color-mix(in srgb,var(--mars-support-bg) 58%,transparent)!important;
+  border-color:color-mix(in srgb,var(--mars-support-border) 72%,transparent)!important;
+}
+.mars-support-card:hover{
+  color:var(--mars-support-text)!important;
+  background:color-mix(in srgb,var(--mars-support-bg) 72%,transparent)!important;
+  border-color:color-mix(in srgb,var(--mars-accent) 45%,var(--mars-support-border))!important;
+}
+.mars-support-card__copy strong,.mars-support-card__copy span{color:inherit!important}
+html[data-theme=dark] .mars-support-card{
+  background:color-mix(in srgb,var(--mars-support-bg) 58%,transparent)!important;
+  border-color:color-mix(in srgb,var(--mars-support-border) 72%,transparent)!important;
+}
+.mars-header-search{
+  background:color-mix(in srgb,var(--mars-search-bg) 88%,transparent)!important;
+  border-color:var(--mars-search-border)!important;
+}
+.mars-header-search input{color:var(--mars-search-text)!important}
+.mars-header-search input::placeholder{color:var(--mars-search-placeholder)!important;opacity:1!important}
+.mars-header-search button{color:var(--mars-search-icon)!important}
+.mars-cart-count{background:var(--mars-cart-badge-bg)!important;color:var(--mars-cart-badge-text)!important}
+
+/* Stable hover path: the mega panel is almost flush with its parent and JS adds a 500ms grace period. */
+.mars-header-nav-panel .mars-menu>li>.sub-menu{
+  top:calc(100% + 2px)!important;
+  transform:translateY(2px)!important;
+  transition:opacity .13s ease,visibility 0s linear .48s,transform .13s ease!important;
+}
+.mars-header-nav-panel .mars-menu>li>.sub-menu:before{
+  content:""!important;
+  position:absolute!important;
+  top:-8px!important;
+  right:0!important;
+  left:0!important;
+  height:10px!important;
+  background:transparent!important;
+  pointer-events:auto!important;
+}
+.mars-header-nav-panel .mars-menu>li:hover>.sub-menu,
+.mars-header-nav-panel .mars-menu>li:focus-within>.sub-menu,
+.mars-header-nav-panel .mars-menu>li.mars-mega-open>.sub-menu{
+  transition-delay:0s!important;
+}
+
+/* Mega menu: at most five columns per row. Extra groups continue on the next row. */
+.mars-header-nav-panel .mars-menu>li>.sub-menu{
+  --mars-mega-cols:5;
+  --mars-mega-width:1110px;
+  width:min(var(--mars-mega-width),var(--mars-container),calc(100vw - 40px))!important;
+  grid-template-columns:repeat(var(--mars-mega-cols),minmax(0,var(--mars-mega-column-width)))!important;
+  justify-content:start!important;
+  align-content:start!important;
+  gap:12px!important;
+  padding:14px!important;
+  border-radius:22px!important;
+  background:var(--mars-mega-bg)!important;
+  border-color:var(--mars-mega-border)!important;
+  color:var(--mars-mega-item)!important;
+  overflow-x:hidden!important;
+}
+.mars-header-nav-panel .mars-menu>li.mars-mega-columns-1>.sub-menu{--mars-mega-cols:1;--mars-mega-width:234px}
+.mars-header-nav-panel .mars-menu>li.mars-mega-columns-2>.sub-menu{--mars-mega-cols:2;--mars-mega-width:452px}
+.mars-header-nav-panel .mars-menu>li.mars-mega-columns-3>.sub-menu{--mars-mega-cols:3;--mars-mega-width:670px}
+.mars-header-nav-panel .mars-menu>li.mars-mega-columns-4>.sub-menu{--mars-mega-cols:4;--mars-mega-width:888px}
+.mars-header-nav-panel .mars-menu>li.mars-mega-columns-5>.sub-menu,
+.mars-header-nav-panel .mars-menu>li.mars-mega-multirow>.sub-menu{--mars-mega-cols:5;--mars-mega-width:1106px}
+.mars-header-nav-panel .mars-menu>li.mars-mega-multirow>.sub-menu{
+  max-height:min(650px,calc(100vh - 170px))!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+  scrollbar-width:thin!important;
+  scrollbar-color:color-mix(in srgb,var(--mars-accent) 45%,transparent) transparent!important;
+}
+.mars-header-nav-panel .mars-menu>li.mars-mega-multirow>.sub-menu::-webkit-scrollbar{width:5px!important}
+.mars-header-nav-panel .mars-menu>li.mars-mega-multirow>.sub-menu::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--mars-accent) 45%,transparent)!important;border-radius:999px!important}
+
+/* One group = title + exactly six visible third-level rows + fixed View All footer. */
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li{
+  height:282px!important;
+  min-height:282px!important;
+  max-height:282px!important;
+  color:var(--mars-mega-item)!important;
+}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>a{
+  flex:0 0 40px!important;
+  min-height:40px!important;
+  height:40px!important;
+  padding:0 6px 7px!important;
+  color:var(--mars-mega-title)!important;
+  font-size:13.5px!important;
+  font-weight:750!important;
+  text-align:right!important;
+  justify-content:flex-start!important;
+}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>a:hover{color:var(--mars-mega-item-hover)!important}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>a .mars-menu-item-icon{color:var(--mars-mega-icon)!important}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu{
+  height:242px!important;
+  min-height:0!important;
+  max-height:242px!important;
+  padding:8px 12px 0!important;
+  border-radius:15px!important;
+  background:var(--mars-mega-group-bg)!important;
+  border-color:var(--mars-mega-group-border)!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  scrollbar-width:thin!important;
+  scrollbar-color:color-mix(in srgb,var(--mars-accent) 38%,transparent) transparent!important;
+}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu::-webkit-scrollbar{width:4px!important}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--mars-accent) 38%,transparent)!important;border-radius:999px!important}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>li>a{
+  display:flex!important;
+  align-items:center!important;
+  min-height:30px!important;
+  height:30px!important;
+  padding:0!important;
+  color:var(--mars-mega-item)!important;
+  font-size:12.5px!important;
+  font-weight:500!important;
+  line-height:1.6!important;
+  text-align:right!important;
+}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>li>a:hover{color:var(--mars-mega-item-hover)!important}
+
+/* View All is always the last child and remains pinned at the bottom of its scroll area. */
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>.mars-mega-view-all-item{
+  position:sticky!important;
+  bottom:0!important;
+  z-index:2!important;
+  margin-top:4px!important;
+  padding:5px 0 6px!important;
+  border-top:1px solid var(--mars-mega-group-border)!important;
+  background:var(--mars-mega-group-bg)!important;
+}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>.mars-mega-view-all-item>a{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:7px!important;
+  min-height:30px!important;
+  height:30px!important;
+  padding:0!important;
+  color:var(--mars-mega-view-all)!important;
+  font-size:12.5px!important;
+  font-weight:700!important;
+}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>.mars-mega-view-all-item>a .mars-view-all-arrow{color:inherit!important}
+
+/* Dark mode no longer hard-codes mega colors; all values come from the settings variables. */
+html[data-theme=dark] .mars-header-nav-panel .mars-menu>li>.sub-menu{
+  background:var(--mars-mega-bg)!important;
+  border-color:var(--mars-mega-border)!important;
+}
+html[data-theme=dark] .mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu{
+  background:var(--mars-mega-group-bg)!important;
+  border-color:var(--mars-mega-group-border)!important;
+}
+
+@media(max-width:1280px){
+  :root{--mars-header-control-height:48px;--mars-mega-column-width:190px}
+  .mars-header-nav-panel,.mars-header-search,.mars-account-button,.mars-icon-button{height:var(--mars-header-control-height)!important;min-height:var(--mars-header-control-height)!important}
+  .mars-header-nav-panel .mars-menu{height:100%!important}
+  .mars-header-nav-panel .mars-menu>li,.mars-header-nav-panel .mars-menu>li>a{height:100%!important}
+  .mars-header-nav-panel .mars-menu>li.mars-mega-columns-5>.sub-menu,
+  .mars-header-nav-panel .mars-menu>li.mars-mega-multirow>.sub-menu{--mars-mega-width:1026px}
+}
+
+/* Header component layer. */
+/* Mars — submenu rhythm, anchored View All, unified radii and compact support alignment */
+:root{
+  --mars-header-control-radius:18px;
+}
+
+/* The three primary header controls share the same corner radius. */
+.mars-primary-nav.mars-header-nav-panel,
+.mars-header-search,
+.mars-account-button{
+  border-radius:var(--mars-header-control-radius)!important;
+}
+
+/* Keep the header action group only as wide as its real controls.
+   This lets the cart finish on the exact same left container edge as the support card. */
+.mars-header-actions{
+  flex:0 0 auto!important;
+  width:auto!important;
+  min-width:0!important;
+  justify-content:flex-start!important;
+}
+.mars-header-tools{
+  margin-left:0!important;
+}
+.mars-support-card{
+  flex:0 0 auto!important;
+  width:auto!important;
+  min-width:0!important;
+  max-width:240px!important;
+  margin-left:0!important;
+  padding:10px 13px!important;
+  gap:10px!important;
+}
+.mars-support-card__icon{
+  flex-basis:50px!important;
+  width:50px!important;
+  height:50px!important;
+}
+.mars-support-card__icon img{
+  width:50px!important;
+  height:50px!important;
+}
+.mars-support-card__copy strong{font-size:14px!important}
+.mars-support-card__copy span{font-size:12.5px!important}
+
+/* Normalize list spacing for every desktop submenu. */
+.mars-header-nav-panel ul.sub-menu{
+  margin:0!important;
+  list-style:none!important;
+}
+.mars-header-nav-panel .mars-menu>li>.sub-menu{
+  gap:12px!important;
+  padding:14px!important;
+}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li{
+  display:flex!important;
+  flex-direction:column!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>a{
+  margin:0!important;
+  padding:0 10px 7px!important;
+}
+
+/* Third-level UL: consistent six-row rhythm, with View All always at the true bottom. */
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu{
+  display:flex!important;
+  flex:1 1 auto!important;
+  flex-direction:column!important;
+  gap:0!important;
+  margin:0!important;
+  padding:8px 12px 0!important;
+  min-height:0!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>li{
+  flex:0 0 auto!important;
+  margin:0!important;
+  padding:0!important;
+}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>li:not(.mars-mega-view-all-item){
+  min-height:30px!important;
+}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>li:not(.mars-mega-view-all-item)>a{
+  height:30px!important;
+  min-height:30px!important;
+  margin:0!important;
+  padding:0!important;
+}
+
+/* The footer item is appended last by JS. margin-top:auto fills empty space when there
+   are fewer than six rows; sticky keeps it visible when the list itself scrolls. */
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>.mars-mega-view-all-item{
+  position:sticky!important;
+  bottom:0!important;
+  z-index:3!important;
+  flex:0 0 auto!important;
+  margin-top:auto!important;
+  padding:6px 0 7px!important;
+  border-top:1px solid var(--mars-mega-group-border)!important;
+  background:var(--mars-mega-group-bg)!important;
+}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>.mars-mega-view-all-item>a{
+  height:30px!important;
+  min-height:30px!important;
+  margin:0!important;
+  padding:0!important;
+}
+
+/* Mobile submenu spacing follows the same clean rhythm. */
+.mars-mobile-menu ul.sub-menu{
+  margin:0!important;
+}
+.mars-mobile-menu>li>.sub-menu{
+  padding:6px 0 10px!important;
+}
+.mars-mobile-menu>li>.sub-menu>li{
+  margin:6px 0!important;
+}
+.mars-mobile-menu>li>.sub-menu>li>.sub-menu{
+  padding:4px 16px 10px!important;
+}
+.mars-mobile-menu>li>.sub-menu>li>.sub-menu>li{
+  margin:0!important;
+}
+
+@media(max-width:1280px){
+  .mars-support-card{
+    max-width:225px!important;
+    padding:9px 12px!important;
+  }
+  .mars-support-card__icon,
+  .mars-support-card__icon img{
+    width:46px!important;
+    height:46px!important;
+    flex-basis:46px!important;
+  }
+}
+
+/* Header component layer. */
+/* Mars — visible third-level borders and a safer visual gap below the main menu */
+
+/* Give the Mega Menu a little more breathing room below the main navigation.
+   The transparent bridge keeps the hover path continuous, so the panel does not close while crossing the gap. */
+.mars-header-nav-panel .mars-menu>li>.sub-menu{
+  top:calc(100% + 12px)!important;
+  transform:translateY(4px)!important;
+}
+.mars-header-nav-panel .mars-menu>li>.sub-menu:before{
+  top:-18px!important;
+  height:20px!important;
+  right:0!important;
+  left:0!important;
+  background:transparent!important;
+  pointer-events:auto!important;
+}
+.mars-header-nav-panel .mars-menu>li:hover>.sub-menu,
+.mars-header-nav-panel .mars-menu>li:focus-within>.sub-menu,
+.mars-header-nav-panel .mars-menu>li.mars-mega-open>.sub-menu{
+  transform:none!important;
+}
+
+/* The RTL scrollbar can visually sit on top of the left border of a third-level UL.
+   Draw the border explicitly inside the scroll surface so both sides stay visible. */
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu{
+  position:relative!important;
+  border:1px solid var(--mars-mega-group-border)!important;
+  box-shadow:
+    inset 1px 0 0 var(--mars-mega-group-border),
+    inset -1px 0 0 var(--mars-mega-group-border)!important;
+  background-clip:padding-box!important;
+  scrollbar-gutter:stable!important;
+}
+
+/* Keep the footer background from covering the inner left/right border. */
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>.mars-mega-view-all-item{
+  margin-inline:0!important;
+}
+
+
+/* Mars — restore third-level menu visibility */
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu{
+  display:flex!important;
+  visibility:visible!important;
+  opacity:1!important;
+  position:static!important;
+  flex-direction:column!important;
+  flex:1 1 auto!important;
+  height:auto!important;
+  max-height:none!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>li{
+  display:block!important;
+  visibility:visible!important;
+  opacity:1!important;
+}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>li>a{
+  display:block!important;
+  visibility:visible!important;
+  opacity:1!important;
+}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>.mars-mega-view-all-item{
+  display:block!important;
+}
+
+/* Mars — restore mega column corner clipping */
+.mars-header-nav-panel .mars-menu>li>.sub-menu{
+  overflow:visible!important;
+  clip-path:none!important;
+}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li{
+  overflow:visible!important;
+}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu{
+  border-radius:18px!important;
+  overflow:hidden!important;
+  background-clip:border-box!important;
+}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li:first-child>.sub-menu{
+  border-top-left-radius:18px!important;
+  border-bottom-left-radius:18px!important;
+}
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li:last-child>.sub-menu{
+  border-top-right-radius:18px!important;
+  border-bottom-right-radius:18px!important;
+}
+
+/* Header component layer. */
+/* Mars — reference-style mega menu containment and column geometry */
+
+/*
+ * Keep the mega panel aligned to the right edge of the desktop navigation,
+ * while sizing the actual grid to its own content instead of the nav pill.
+ * Every direct mega column is a minmax(0, 1fr) track so no card can push
+ * outside the rounded parent panel.
+ */
+@media (min-width:1141px){
+  .mars-header-nav-panel{
+    position:relative!important;
+    overflow:visible!important;
+  }
+
+  .mars-header-nav-panel .mars-menu>li>.sub-menu{
+    --mars-mega-cols:5;
+    --mars-mega-width:980px;
+    right:0!important;
+    left:auto!important;
+    width:min(var(--mars-mega-width),calc(100vw - 40px),var(--mars-container))!important;
+    max-width:min(var(--mars-mega-width),calc(100vw - 40px),var(--mars-container))!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+    grid-template-columns:repeat(var(--mars-mega-cols),minmax(0,1fr))!important;
+    grid-auto-columns:minmax(0,1fr)!important;
+    justify-content:stretch!important;
+    align-items:stretch!important;
+    gap:18px!important;
+    padding:18px!important;
+    overflow:visible!important;
+  }
+
+  .mars-header-nav-panel .mars-menu>li.mars-mega-columns-1>.sub-menu{
+    --mars-mega-cols:1;
+    --mars-mega-width:220px;
+  }
+  .mars-header-nav-panel .mars-menu>li.mars-mega-columns-2>.sub-menu{
+    --mars-mega-cols:2;
+    --mars-mega-width:420px;
+  }
+  .mars-header-nav-panel .mars-menu>li.mars-mega-columns-3>.sub-menu{
+    --mars-mega-cols:3;
+    --mars-mega-width:610px;
+  }
+  .mars-header-nav-panel .mars-menu>li.mars-mega-columns-4>.sub-menu{
+    --mars-mega-cols:4;
+    --mars-mega-width:800px;
+  }
+  .mars-header-nav-panel .mars-menu>li.mars-mega-columns-5>.sub-menu,
+  .mars-header-nav-panel .mars-menu>li.mars-mega-multirow>.sub-menu{
+    --mars-mega-cols:5;
+    --mars-mega-width:980px;
+  }
+
+  /* Prevent theme/plugin/global menu rules from giving a mega column its own width. */
+  .mars-header-nav-panel .mars-menu>li>.sub-menu>li{
+    width:auto!important;
+    max-width:none!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+    overflow:hidden!important;
+  }
+
+  .mars-header-nav-panel .mars-menu>li>.sub-menu>li>a,
+  .mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+  }
+
+  .mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu{
+    margin:0!important;
+    overflow:hidden!important;
+  }
+
+  .mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>li,
+  .mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>li>a{
+    max-width:100%!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+  }
+}
+
+/* Slightly tighter five-column panel on smaller desktop widths. */
+@media (min-width:1141px) and (max-width:1280px){
+  .mars-header-nav-panel .mars-menu>li.mars-mega-columns-5>.sub-menu,
+  .mars-header-nav-panel .mars-menu>li.mars-mega-multirow>.sub-menu{
+    --mars-mega-width:940px;
+  }
+}
+
+/* Header component layer. */
+/* Mars — post-load desktop header fitting. */
+@media (min-width:1141px){
+  /* Default state stays full-size until JS confirms the complete menu cannot fit. */
+  .mars-header__bottom:not(.mars-header-fit-ready){
+    --mars-search-width:300px;
+  }
+
+  .mars-header__bottom.mars-menu-compact{
+    --mars-header-control-height:49px;
+  }
+  .mars-header__bottom.mars-menu-compact .mars-header-search{
+    min-width:120px!important;
+    padding-inline:10px!important;
+    border-radius:16px!important;
+  }
+  .mars-header__bottom.mars-menu-compact .mars-header-search input{
+    font-size:12.5px!important;
+  }
+  .mars-header__bottom.mars-menu-compact .mars-header-search button{
+    width:32px!important;
+    height:32px!important;
+  }
+  .mars-header__bottom.mars-menu-compact .mars-account-button{
+    padding-inline:11px!important;
+    font-size:12.5px!important;
+  }
+  .mars-header__bottom.mars-menu-compact .mars-icon-button{
+    width:49px!important;
+    min-width:49px!important;
+  }
+
+  .mars-header__bottom.mars-menu-ultra-compact{
+    --mars-header-control-height:46px;
+    gap:14px!important;
+  }
+  .mars-header__bottom.mars-menu-ultra-compact .mars-header-tools{
+    gap:8px!important;
+  }
+  .mars-header__bottom.mars-menu-ultra-compact .mars-header-search{
+    min-width:105px!important;
+    padding-inline:8px!important;
+    border-radius:15px!important;
+  }
+  .mars-header__bottom.mars-menu-ultra-compact .mars-header-search input{
+    font-size:11.5px!important;
+  }
+  .mars-header__bottom.mars-menu-ultra-compact .mars-header-search button{
+    width:30px!important;
+    height:30px!important;
+  }
+  .mars-header__bottom.mars-menu-ultra-compact .mars-header-nav-panel{
+    padding-inline:5px!important;
+  }
+  .mars-header__bottom.mars-menu-ultra-compact .mars-header-nav-panel .mars-menu>li>a{
+    padding-inline:5px!important;
+    font-size:11px!important;
+    gap:4px!important;
+  }
+  .mars-header__bottom.mars-menu-ultra-compact .mars-account-button{
+    padding-inline:9px!important;
+    font-size:11.5px!important;
+  }
+  .mars-header__bottom.mars-menu-ultra-compact .mars-icon-button{
+    width:46px!important;
+    min-width:46px!important;
+  }
+}
+
+/* Header component layer. */
+/* Mars — menu/list hover surfaces stay transparent. */
+.mars-header-nav-panel .mars-menu>li:hover>a,
+.mars-header-nav-panel .mars-menu>li:focus-within>a,
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>a:hover,
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>a:focus,
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>li>a:hover,
+.mars-header-nav-panel .mars-menu>li>.sub-menu>li>.sub-menu>li>a:focus,
+.mars-mobile-menu li>a:hover,
+.mars-mobile-menu li>a:focus,
+.mars-footer-menu li>a:hover,
+.mars-footer-menu li>a:focus,
+.widget_nav_menu li>a:hover,
+.widget_nav_menu li>a:focus,
+.widget_pages li>a:hover,
+.widget_pages li>a:focus,
+.widget_categories li>a:hover,
+.widget_categories li>a:focus,
+.widget_archive li>a:hover,
+.widget_archive li>a:focus{
+  background:transparent!important;
+  background-color:transparent!important;
+}
+
+/* Keep the active/current state independent from hover. */
+.mars-header-nav-panel .mars-menu>.current-menu-item:hover>a,
+.mars-header-nav-panel .mars-menu>.current-menu-parent:hover>a,
+.mars-header-nav-panel .mars-menu>.current-menu-ancestor:hover>a{
+  background:transparent!important;
+  background-color:transparent!important;
+}
+
+.mars-submenu-toggle:hover,
+.mars-submenu-toggle:focus{
+  background:transparent!important;
+  background-color:transparent!important;
+}
+
+/* Header component layer. */
+/* Mars — mega menu opens only from the actual top-level link. */
+@media (min-width:1141px){
+  /* Neutralize legacy li:hover/focus-within rules. The JS-controlled class is the only opener. */
+  .mars-header-nav-panel .mars-menu>li.menu-item-has-children:hover>.sub-menu,
+  .mars-header-nav-panel .mars-menu>li.menu-item-has-children:focus-within>.sub-menu{
+    opacity:0!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
+    transform:translateY(4px)!important;
+  }
+
+  .mars-header-nav-panel .mars-menu>li.menu-item-has-children.mars-mega-open>.sub-menu,
+  .mars-header-nav-panel .mars-menu>li.menu-item-has-children.mars-mega-open:hover>.sub-menu,
+  .mars-header-nav-panel .mars-menu>li.menu-item-has-children.mars-mega-open:focus-within>.sub-menu{
+    opacity:1!important;
+    visibility:visible!important;
+    pointer-events:auto!important;
+    transform:none!important;
+    transition-delay:0s!important;
+  }
+}
+
+/* Header component layer. */
+/* Mars — strict desktop menu hover hitboxes. */
+@media (min-width:1141px){
+  /*
+   * No submenu may be opened by a broad LI/nav hover rule. Older theme rules
+   * are deliberately neutralized here; JS adds mars-mega-open only after the
+   * pointer enters the visible trigger content itself.
+   */
+  .mars-header-nav-panel .mars-menu li:hover>.sub-menu,
+  .mars-header-nav-panel .mars-menu li:focus-within>.sub-menu,
+  .mars-header-nav-panel:hover .mars-menu>li>.sub-menu,
+  .mars-primary-nav:hover .mars-menu>li>.sub-menu{
+    opacity:0!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
+    transform:translateY(4px)!important;
+  }
+
+  .mars-header-nav-panel .mars-menu>li.menu-item-has-children.mars-mega-open>.sub-menu{
+    opacity:1!important;
+    visibility:visible!important;
+    pointer-events:auto!important;
+    transform:none!important;
+    transition-delay:0s!important;
+  }
+
+  /* Old transparent hover bridges made the interactive area wider than the
+     visible menu. The short JS leave-delay is sufficient for crossing the gap. */
+  .mars-header-nav-panel .mars-menu>li>.sub-menu:before{
+    content:none!important;
+    display:none!important;
+    pointer-events:none!important;
+  }
+
+  /* The anchor keeps its normal layout, but only its actual icon/text is the
+     hover trigger. Padding around the link is intentionally not a hitbox. */
+  .mars-header-nav-panel .mars-menu>li>a>.mars-menu-item-label,
+  .mars-header-nav-panel .mars-menu>li>a>.mars-menu-item-icon{
+    position:relative!important;
+    z-index:1!important;
+  }
+
+  /* Do not visually mark a whole LI merely because an absolutely-positioned
+     child happens to be under the pointer. JS applies this class on real hit. */
+  .mars-header-nav-panel .mars-menu>li:hover>a,
+  .mars-header-nav-panel .mars-menu>li:focus-within>a{
+    background:transparent!important;
+  }
+  .mars-header-nav-panel .mars-menu>li.mars-mega-open>a{
+    color:var(--mars-menu-hover)!important;
+    background:transparent!important;
+  }
+
+  /* Third-level lists are structural columns in the mega panel and stay visible
+     only while their owning top-level mega menu is open. */
+  .mars-header-nav-panel .mars-menu>li.menu-item-has-children:not(.mars-mega-open)>.sub-menu,
+  .mars-header-nav-panel .mars-menu>li.menu-item-has-children:not(.mars-mega-open)>.sub-menu *{
+    pointer-events:none!important;
+  }
+}
+
+/* Header component layer. */
+/* only the bottom desktop header row becomes sticky. */
+.mars-header.mars-header--bottom-sticky{
+  position:relative!important;
+  top:auto!important;
+  left:auto!important;
+  right:auto!important;
+}
+@media(min-width:1141px){
+  .mars-header.mars-header--bottom-sticky .mars-header__top{
+    position:relative!important;
+    top:auto!important;
+    z-index:auto!important;
+  }
+  .mars-header.mars-header--bottom-sticky .mars-header__bottom.mars-bottom-is-fixed{
+    position:fixed!important;
+    top:var(--mars-sticky-top,0px)!important;
+    left:var(--mars-sticky-left,0px)!important;
+    right:auto!important;
+    width:var(--mars-sticky-width,auto)!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+    z-index:1200!important;
+    margin:0!important;
+    padding:10px 12px!important;
+    border:1px solid color-mix(in srgb,var(--mars-header-border,var(--mars-line)) 72%,transparent)!important;
+    border-radius:0 0 22px 22px!important;
+    background:var(--mars-header-bg,var(--mars-bg))!important;
+    box-shadow:0 12px 32px rgba(24,35,58,.10)!important;
+    backdrop-filter:none!important;
+    -webkit-backdrop-filter:none!important;
+  }
+  html[data-theme="dark"] .mars-header.mars-header--bottom-sticky .mars-header__bottom.mars-bottom-is-fixed{
+    background:var(--mars-header-bg,var(--mars-bg))!important;
+    border-color:rgba(255,255,255,.07)!important;
+    box-shadow:0 14px 34px rgba(0,0,0,.28)!important;
+  }
+  body.mars-product-popup-open .mars-header.mars-header--bottom-sticky .mars-header__bottom.mars-bottom-is-fixed{
+    background:var(--mars-header-bg,var(--mars-bg))!important;
+    backdrop-filter:none!important;
+    -webkit-backdrop-filter:none!important;
+  }
+  .mars-header__bottom-sticky-placeholder{display:none;height:0;pointer-events:none}
+  .mars-header__bottom-sticky-placeholder.is-active{display:block;height:var(--mars-sticky-height,0px)}
+}
+
+
+/* Mars — the compact mobile/tablet top menu remains sticky while scrolling. */
+@media(max-width:1024px){
+  .mars-header.mars-header--accountpro{
+    position:sticky!important;
+    top:0!important;
+    z-index:900!important;
+    width:100%!important;
+    background:var(--mars-header-bg,var(--mars-bg))!important;
+    box-shadow:0 9px 26px rgba(15,23,42,.08)!important;
+  }
+  html[data-theme="dark"] .mars-header.mars-header--accountpro{
+    background:var(--mars-header-bg,var(--mars-bg))!important;
+    box-shadow:0 10px 28px rgba(0,0,0,.24)!important;
+  }
+}
+@media(min-width:783px) and (max-width:1024px){body.admin-bar .mars-header.mars-header--accountpro{top:32px!important}}
+@media(max-width:782px){body.admin-bar .mars-header.mars-header--accountpro{top:46px!important}}
+
+/* Header component layer. */
+/* Mars — resilient desktop fitting and neutral active menu surfaces. */
+@media(min-width:1141px){
+  .mars-header-nav-panel .mars-menu>.current-menu-item>a,
+  .mars-header-nav-panel .mars-menu>.current-menu-parent>a,
+  .mars-header-nav-panel .mars-menu>.current-menu-ancestor>a,
+  .mars-header-nav-panel .mars-menu>.current-menu-item:hover>a,
+  .mars-header-nav-panel .mars-menu>.current-menu-parent:hover>a,
+  .mars-header-nav-panel .mars-menu>.current-menu-ancestor:hover>a{
+    background:transparent!important;
+    background-color:transparent!important;
+  }
+  .mars-header__bottom.mars-search-hidden-for-fit .mars-header-search{display:none!important;width:0!important;min-width:0!important;max-width:0!important;flex-basis:0!important;padding:0!important;border:0!important}
+  .mars-header__bottom.mars-search-hidden-for-fit .mars-header-tools{gap:8px!important}
+  .mars-header__bottom.mars-search-hidden-for-fit .mars-primary-nav{flex:1 1 auto!important;min-width:0!important}
+  .mars-header__bottom.mars-search-hidden-for-fit .mars-header-nav-panel{max-width:100%!important}
+  .mars-header__bottom.mars-search-hidden-for-fit.mars-menu-ultra-compact .mars-header-nav-panel .mars-menu>li>a{padding-inline:5px!important}
+}
+
+/* Current/active menu items use text color only; no soft selection surface. */
+.mars-header-nav-panel .current-menu-item>a,
+.mars-header-nav-panel .current-menu-parent>a,
+.mars-header-nav-panel .current-menu-ancestor>a,
+.mars-mobile-menu .current-menu-item>a,
+.mars-mobile-menu .current-menu-parent>a,
+.mars-mobile-menu .current-menu-ancestor>a{
+  background:transparent!important;
+  background-color:transparent!important;
+}
+
+/* Mars — protect both inline edges of crowded/sticky desktop menus. */
+@media(min-width:1141px){
+  .mars-header__bottom .mars-header-nav-panel{padding-inline:14px!important}
+  .mars-header__bottom.mars-menu-compact .mars-header-nav-panel{padding-inline:12px!important}
+  .mars-header__bottom.mars-menu-ultra-compact .mars-header-nav-panel{padding-inline:11px!important}
+  .mars-header__bottom.mars-bottom-is-fixed .mars-header-nav-panel{padding-inline:14px!important;max-width:100%!important}
+  .mars-header__bottom .mars-header-nav-panel .mars-menu{box-sizing:border-box!important;width:max-content!important;max-width:100%!important;min-width:0!important;padding-inline:2px!important}
+  .mars-header__bottom .mars-header-nav-panel .mars-menu>li:first-child>a{margin-inline-start:1px!important}
+  .mars-header__bottom .mars-header-nav-panel .mars-menu>li:last-child>a{margin-inline-end:1px!important}
+  .mars-header__bottom.mars-search-hidden-for-fit .mars-header-nav-panel{padding-inline:13px!important}
+}
+
+/* Header component layer. */
+/* Mars — crowded desktop navigation without changing the account button. */
+:root{--mars-search-width:205px}
+@media(min-width:1141px){
+  .mars-header__bottom:not(.mars-header-fit-ready){--mars-search-width:205px!important}
+  .mars-header-search{min-width:82px!important}
+  .mars-header__bottom .mars-header-nav-panel{padding-inline:20px!important;min-width:0!important}
+  .mars-header__bottom.mars-menu-compact .mars-header-nav-panel{padding-inline:18px!important}
+  .mars-header__bottom.mars-menu-ultra-compact .mars-header-nav-panel{padding-inline:16px!important}
+  .mars-header__bottom.mars-bottom-is-fixed .mars-header-nav-panel{padding-inline:20px!important;max-width:100%!important}
+  .mars-header__bottom.mars-search-hidden-for-fit .mars-header-nav-panel{padding-inline:18px!important}
+  .mars-header__bottom .mars-header-nav-panel .mars-menu{
+    box-sizing:border-box!important;
+    width:max-content!important;
+    max-width:100%!important;
+    min-width:0!important;
+    padding-inline:8px!important;
+  }
+  .mars-header__bottom .mars-header-nav-panel .mars-menu>li:first-child>a{margin-inline-start:2px!important}
+  .mars-header__bottom .mars-header-nav-panel .mars-menu>li:last-child>a{margin-inline-end:2px!important}
+  .mars-header__bottom.mars-single-level-overflow .mars-header-nav-panel .mars-menu{
+    padding-inline:10px!important;
+    scroll-padding-inline:10px!important;
+  }
+  .mars-header__bottom.mars-menu-emergency-compact{gap:10px!important}
+  .mars-header__bottom.mars-menu-emergency-compact .mars-header-tools{gap:6px!important}
+  .mars-header__bottom.mars-menu-emergency-compact .mars-header-nav-panel{padding-inline:14px!important}
+  .mars-header__bottom.mars-menu-emergency-compact .mars-header-nav-panel .mars-menu{gap:0!important;padding-inline:5px!important}
+  .mars-header__bottom.mars-menu-emergency-compact .mars-header-nav-panel .mars-menu>li>a{padding-inline:3px!important;font-size:10.5px!important;gap:3px!important}
+  .mars-header__bottom.mars-menu-emergency-compact .mars-account-button{padding-inline:7px!important;font-size:11px!important}
+}
+
+/* Header component layer. */
+/* Header refinements. */
+@media (min-width:1025px){
+  .mars-header--accountpro .mars-account-button{background:var(--mars-account-bg,#171b1b)!important;color:var(--mars-account-text,#fff)!important;border-color:color-mix(in srgb,var(--mars-header-border,var(--mars-line)) 58%,transparent)!important;box-shadow:0 16px 34px rgba(6,14,11,.14)!important}
+  .mars-header--accountpro .mars-account-button:hover{background:var(--mars-account-hover,var(--mars-account-bg,#171b1b))!important;color:var(--mars-account-text,#fff)!important}
+  .mars-header__bottom .mars-header-search{flex:0 1 210px!important;min-width:145px!important;max-width:230px!important}
+  .mars-header__bottom.mars-menu-tight .mars-header-search{flex-basis:165px!important;max-width:175px!important}
+  .mars-header-nav-panel{padding-inline:22px!important;box-sizing:border-box!important}
+  .mars-primary-nav>ul{padding-inline:6px!important;gap:clamp(2px,.38vw,7px)!important}
+  .mars-primary-nav>ul>li:last-child{margin-inline-end:4px!important}
+}
+
+/* Header component layer. */
+/* Mars — restore friendly light account button while preserving crowded-menu fit */
+@media (min-width:1025px){
+  html:not([data-theme="dark"]) .mars-header--accountpro .mars-account-button{
+    background:var(--mars-account-bg,#f2f6f4)!important;
+    color:var(--mars-account-text,#25332f)!important;
+    border-color:color-mix(in srgb,var(--mars-account-bg,#f2f6f4) 76%,#cbd5d1)!important;
+    box-shadow:none!important;
+  }
+  html:not([data-theme="dark"]) .mars-header--accountpro .mars-account-button:hover{
+    background:var(--mars-account-hover,#e8efeb)!important;color:var(--mars-account-text,#25332f)!important;
+  }
+  .mars-header__bottom .mars-header-search{flex-basis:196px!important;max-width:210px!important;min-width:128px!important}
+  .mars-header__bottom.mars-menu-tight .mars-header-search{flex-basis:150px!important;max-width:158px!important;min-width:112px!important}
+  .mars-header-nav-panel{padding-inline:26px!important}
+  .mars-primary-nav>ul{padding-inline:9px!important}
+  .mars-primary-nav>ul>li:first-child,.mars-primary-nav>ul>li:last-child{margin-inline:3px!important}
+}
+
+/* Mars — keep the mobile navigation above Elementor/footer stacking contexts. */
+.mars-mobile-overlay{z-index:2147483000!important;isolation:isolate!important}
+.mars-mobile-drawer{z-index:2147483001!important;isolation:isolate!important;overscroll-behavior:contain!important}
+body.mars-menu-open{overflow:hidden!important}

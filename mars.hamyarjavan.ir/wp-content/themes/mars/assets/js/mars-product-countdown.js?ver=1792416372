@@ -1,0 +1,56 @@
+(function(){
+  'use strict';
+  function q(s,r){return (r||document).querySelector(s);}
+  function fa(v){return String(v).replace(/[0-9]/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[Number(d)];});}
+  function pad(v){v=Math.max(0,Math.floor(v));return fa(v<10?'0'+v:String(v));}
+  function init(root){
+    var offers=[];
+    try{offers=JSON.parse(root.getAttribute('data-offers')||'[]')||[];}catch(e){offers=[];}
+    if(!offers.length){root.hidden=true;return;}
+    offers=offers.map(function(o){return {id:+o.id||0,variation_id:+o.variation_id||0,start:+o.start||0,end:+o.end||0};}).filter(function(o){return o.end>0;});
+    var selectedVariation=0;
+    var title=q('[data-mars-countdown-title]',root),note=q('[data-mars-countdown-note]',root);
+    var d=q('[data-mars-countdown-days]',root),h=q('[data-mars-countdown-hours]',root),m=q('[data-mars-countdown-minutes]',root),s=q('[data-mars-countdown-seconds]',root);
+
+    function valid(o,now){return o&&o.end>now;}
+    function globalOffer(now){
+      var alive=offers.filter(function(o){return valid(o,now);});
+      var active=alive.filter(function(o){return !o.start||o.start<=now;}).sort(function(a,b){return a.end-b.end;});
+      if(active.length)return active[0];
+      var future=alive.filter(function(o){return o.start>now;}).sort(function(a,b){return a.start-b.start;});
+      return future[0]||null;
+    }
+    function choose(now){
+      if(selectedVariation){
+        var own=offers.find(function(o){return o.variation_id===selectedVariation&&valid(o,now);});
+        if(own)return own;
+      }
+      return globalOffer(now);
+    }
+    function tick(){
+      var now=Math.floor(Date.now()/1000),offer=choose(now);
+      if(!offer){root.hidden=true;return;}
+      root.hidden=false;
+      var future=offer.start&&offer.start>now;
+      var target=future?offer.start:offer.end;
+      var diff=Math.max(0,target-now);
+      var days=Math.floor(diff/86400);diff%=86400;
+      var hours=Math.floor(diff/3600);diff%=3600;
+      var mins=Math.floor(diff/60),secs=diff%60;
+      if(d)d.textContent=pad(days);if(h)h.textContent=pad(hours);if(m)m.textContent=pad(mins);if(s)s.textContent=pad(secs);
+      root.classList.toggle('is-upcoming',!!future);
+      if(title)title.textContent=future?'زمان باقی‌مانده تا شروع پیشنهاد':'زمان باقی‌مانده تا پایان تخفیف';
+      if(note)note.textContent=offer.variation_id?'پیشنهاد زمان‌دار یکی از تنوع‌های این محصول فعال است.':'پیشنهاد زمان‌دار این محصول فعال است.';
+    }
+    tick();window.setInterval(tick,1000);
+    if(window.jQuery){
+      var $form=window.jQuery('form.variations_form');
+      if($form.length){
+        $form.on('found_variation',function(e,v){selectedVariation=v&&v.variation_id?parseInt(v.variation_id,10)||0:0;tick();});
+        $form.on('reset_data hide_variation',function(){selectedVariation=0;tick();});
+      }
+    }
+  }
+  function boot(){document.querySelectorAll('[data-mars-offer-countdown]').forEach(init);}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();

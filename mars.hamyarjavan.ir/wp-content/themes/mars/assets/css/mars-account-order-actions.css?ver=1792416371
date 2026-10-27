@@ -1,0 +1,109 @@
+/* Mars — frontend refinements. */
+
+/* Profile avatar uploader: right aligned, compact, no destructive action. */
+.mars-avatar-upload{display:flex!important;flex-direction:column!important;align-items:flex-start!important;width:min(100%,620px)!important;margin:18px 0 18px auto!important;direction:rtl!important;text-align:right!important}
+.mars-avatar-upload>label{display:grid!important;justify-items:start!important;text-align:right!important}
+.mars-avatar-upload__row{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:12px!important;width:100%!important;margin-right:0!important;margin-left:auto!important;direction:rtl!important;text-align:right!important}
+.mars-avatar-upload__row>img{width:64px!important;height:64px!important;flex:0 0 64px!important}
+.mars-avatar-picker{margin:0!important}
+.mars-avatar-remove{display:none!important}
+
+/* Small action buttons should never collapse into vertical/letter-by-letter text. */
+.mars-pro-small-button{display:inline-flex!important;align-items:center!important;justify-content:center!important;flex:0 0 auto!important;width:auto!important;min-width:88px!important;min-height:40px!important;padding:0 16px!important;box-sizing:border-box!important;white-space:nowrap!important;word-break:normal!important;overflow-wrap:normal!important;writing-mode:horizontal-tb!important;text-orientation:mixed!important;line-height:1!important;font-size:12px!important;letter-spacing:0!important;text-indent:0!important}
+
+/* Currency unit is always on the visual LEFT of the numeric amount. WooCommerce's
+   regular markup is number + symbol, so row + order:-1 moves the symbol left. */
+.mars-checkout-page-wrapper .woocommerce-Price-amount.amount bdi,
+.mars-thankyou-summary .woocommerce-Price-amount.amount bdi,
+.mars-pro-dashboard .woocommerce-Price-amount.amount bdi,
+.mars-pro-orders .woocommerce-Price-amount.amount bdi,
+.mars-pro-order-view .woocommerce-Price-amount.amount bdi{
+  display:inline-flex!important;flex-direction:row!important;align-items:baseline!important;gap:.32em!important;direction:ltr!important;unicode-bidi:isolate!important;white-space:nowrap!important
+}
+.mars-checkout-page-wrapper .woocommerce-Price-amount.amount bdi>.woocommerce-Price-currencySymbol,
+.mars-thankyou-summary .woocommerce-Price-amount.amount bdi>.woocommerce-Price-currencySymbol,
+.mars-pro-dashboard .woocommerce-Price-amount.amount bdi>.woocommerce-Price-currencySymbol,
+.mars-pro-orders .woocommerce-Price-amount.amount bdi>.woocommerce-Price-currencySymbol,
+.mars-pro-order-view .woocommerce-Price-amount.amount bdi>.woocommerce-Price-currencySymbol{order:-1!important;display:inline-block!important}
+.mars-checkout-money{display:inline-flex!important;flex-direction:row!important;align-items:baseline!important;gap:.32em!important;direction:ltr!important;white-space:nowrap!important}
+.mars-checkout-money__unit{order:0!important}.mars-checkout-money__number{order:1!important}
+
+/* System-created tickets are visually distinct without looking like a customer message. */
+.mars-pro-status.is-system{background:#eef2ff!important;color:#4338ca!important}
+.mars-ticket-messages article.is-system,.mars-ticket-admin-thread article.is-system{background:color-mix(in srgb,var(--mup-primary,#3d82f6) 7%,var(--mup-surface,#fff))!important;border:1px dashed color-mix(in srgb,var(--mup-primary,#3d82f6) 34%,var(--mup-border,#e8edf5))!important}
+.mars-system-avatar{display:grid!important;place-items:center!important;width:38px!important;height:38px!important;border-radius:50%!important;background:color-mix(in srgb,var(--mup-primary,#3d82f6) 14%,#fff)!important;color:var(--mup-primary,#3d82f6)!important;font-size:18px!important}
+.mars-pro-nav a.has-unread b{display:inline-grid!important;place-items:center!important;min-width:20px!important;height:20px!important;padding:0 6px!important;margin-inline-start:auto!important;border-radius:999px!important;background:#ef4444!important;color:#fff!important;font-size:10px!important;animation:marsTicketCounterPulse 1.6s ease-in-out infinite}
+@keyframes marsTicketCounterPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.15)}50%{box-shadow:0 0 0 6px rgba(239,68,68,0)}}
+
+/* Order-specific ticket shortcut. */
+.mars-order-view-head{align-items:center!important}
+.mars-order-head-actions{display:flex!important;align-items:center!important;gap:10px!important;flex-wrap:wrap!important}
+.mars-order-ticket-button{display:inline-flex!important;align-items:center!important;gap:7px!important;min-height:42px!important;padding:0 15px!important;border-radius:11px!important;background:var(--mup-primary,#3d82f6)!important;color:#fff!important;text-decoration:none!important;font-weight:900!important}
+.mars-order-ticket-button .mars-pro-icon{width:17px!important;height:17px!important}
+.mars-order-ticket-context{display:flex!important;align-items:center!important;gap:12px!important;padding:14px 16px!important;border:1px solid var(--mup-border)!important;border-radius:13px!important;background:var(--mup-soft)!important}
+.mars-order-ticket-context>span{display:grid!important;place-items:center!important;width:42px!important;height:42px!important;border-radius:11px!important;background:color-mix(in srgb,var(--mup-primary) 12%,var(--mup-surface))!important;color:var(--mup-primary)!important}
+.mars-order-ticket-context>div{display:grid!important;gap:3px!important}.mars-order-ticket-context small{color:var(--mup-muted)!important}
+.is-order-ticket-form>.is-full{grid-column:1/-1!important}
+
+/* The 404 content should sit on the site's own page background, not paint another layer. */
+.mars-404-page.mars-main{background:transparent!important;background-image:none!important}
+
+@media(max-width:700px){
+ .mars-avatar-upload__row{align-items:flex-start!important;flex-wrap:wrap!important}
+ .mars-order-view-head{align-items:stretch!important}.mars-order-head-actions{width:100%!important}.mars-order-ticket-button{width:100%!important;justify-content:center!important}
+}
+
+/* Mars — compact order-ticket action and readable order data. */
+.mars-order-ticket-button{
+  min-height:38px!important;
+  padding:0 13px!important;
+  font-size:12px!important;
+  font-weight:650!important;
+  line-height:1.2!important;
+  white-space:nowrap!important;
+  flex-wrap:nowrap!important;
+}
+.mars-order-ticket-button .mars-pro-icon{width:15px!important;height:15px!important;flex:0 0 15px!important}
+
+.mars-pro-order-detail-item__copy{display:flex!important;align-items:center!important;gap:8px!important;flex-wrap:wrap!important}
+.mars-pro-order-detail-item__copy>strong{font-size:13px!important;font-weight:750!important;line-height:1.7!important}
+.mars-pro-order-detail-item__copy>small{display:inline-flex!important;margin:0!important;padding:3px 8px!important;border-radius:999px!important;background:var(--mup-soft,#f6f8fb)!important;color:var(--mup-muted,#74809a)!important;font-size:10.5px!important;font-weight:600!important;white-space:nowrap!important}
+
+.mars-entered-data{
+  margin-top:14px!important;
+  padding:17px!important;
+  border:1px solid var(--mup-border,#e8edf5)!important;
+  border-radius:16px!important;
+  background:color-mix(in srgb,var(--mup-soft,#f6f8fb) 62%,var(--mup-surface,#fff))!important;
+}
+.mars-entered-data__head{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;margin-bottom:13px!important}
+.mars-entered-data__head strong{margin:0!important;color:var(--mup-text,#16213a)!important;font-size:13.5px!important;font-weight:800!important}
+.mars-entered-data__head small{color:var(--mup-muted,#74809a)!important;font-size:10.5px!important;font-weight:500!important}
+.mars-entered-data dl{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;margin:0!important}
+.mars-entered-data dl>.mars-entered-field{
+  display:flex!important;
+  flex-direction:column!important;
+  gap:5px!important;
+  min-width:0!important;
+  padding:11px 12px!important;
+  border:1px solid color-mix(in srgb,var(--mup-border,#e8edf5) 78%,transparent)!important;
+  border-radius:12px!important;
+  background:var(--mup-surface,#fff)!important;
+}
+.mars-entered-data dl>.mars-entered-field.is-wide{grid-column:1/-1!important}
+.mars-entered-data dt{font-size:10.5px!important;font-weight:600!important;line-height:1.5!important;color:var(--mup-muted,#74809a)!important;opacity:1!important}
+.mars-entered-data dd{margin:0!important;min-width:0!important;color:var(--mup-text,#16213a)!important;font-size:12.5px!important;font-weight:650!important;line-height:1.8!important;overflow-wrap:anywhere!important}
+.mars-data-link{display:inline-block!important;max-width:100%!important;color:var(--mup-primary,#3d82f6)!important;text-decoration:none!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+.mars-foreign-value{display:flex!important;align-items:center!important;gap:9px!important;flex-wrap:wrap!important}
+.mars-foreign-value>b{font-size:12.5px!important;font-weight:750!important}
+.mars-foreign-value>i{font-style:normal!important;color:var(--mup-muted,#74809a)!important;font-weight:500!important}
+.mars-foreign-value>span{display:inline-flex!important;align-items:baseline!important;gap:5px!important}
+.mars-foreign-value em{font-style:normal!important;font-size:10.5px!important;font-weight:600!important;color:var(--mup-muted,#74809a)!important}
+html[data-theme="dark"] .mars-entered-data,html.dark .mars-entered-data{background:color-mix(in srgb,var(--mup-soft,#182235) 72%,transparent)!important}
+
+@media(max-width:700px){
+ .mars-order-ticket-button{width:100%!important;font-size:11.5px!important}
+ .mars-entered-data__head{align-items:flex-start!important;flex-direction:column!important;gap:3px!important}
+ .mars-entered-data dl{grid-template-columns:1fr!important}
+ .mars-entered-data dl>.mars-entered-field{grid-column:1!important}
+}

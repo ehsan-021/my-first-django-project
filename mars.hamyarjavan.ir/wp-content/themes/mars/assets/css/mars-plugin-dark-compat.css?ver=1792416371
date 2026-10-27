@@ -1,0 +1,93 @@
+/* Mars — generic dark-mode bridge for third-party frontend plugin UI.
+ * This intentionally targets common controls/popups rather than rewriting plugin layouts. */
+html[data-theme="dark"]{color-scheme:dark}
+html[data-theme="dark"] body{color:var(--mars-text)}
+
+/* Native and plugin form controls inherit Mars dark surfaces even when inserted dynamically. */
+html[data-theme="dark"] body :where(
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="submit"]):not([type="button"]),
+  textarea,select,
+  .select2-container .select2-selection,
+  .select2-dropdown,.select2-search__field,
+  .choices__inner,.choices__list--dropdown,.choices__list[aria-expanded],
+  .ts-control,.ts-dropdown,
+  .selectize-input,.selectize-dropdown
+){background-color:var(--mars-surface-2)!important;color:var(--mars-text)!important;border-color:var(--mars-line)!important}
+html[data-theme="dark"] body :where(input,textarea)::placeholder{color:var(--mars-muted)!important;opacity:1}
+html[data-theme="dark"] body :where(select option){background:var(--mars-surface)!important;color:var(--mars-text)!important}
+html[data-theme="dark"] body :where(.select2-results__option,.choices__item,.ts-dropdown .option,.selectize-dropdown-content .option){color:var(--mars-text)!important}
+html[data-theme="dark"] body :where(.select2-results__option--highlighted,.choices__item--choice.is-highlighted,.ts-dropdown .active,.selectize-dropdown .active){background:var(--mars-surface-2)!important;color:var(--mars-text)!important}
+
+/* Common plugin dialogs, calendars, menus and dropdown surfaces. */
+html[data-theme="dark"] body :where(
+  [role="dialog"],dialog,
+  .modal-content,.modal-dialog,
+  .swal2-popup,.swal2-container .swal2-popup,
+  .mfp-content,.fancybox__content,
+  .elementor-popup-modal .dialog-widget-content,
+  .flatpickr-calendar,.flatpickr-months,.flatpickr-days,
+  .ui-datepicker,.ui-autocomplete,.ui-menu,
+  .select2-dropdown,.choices__list--dropdown,.ts-dropdown,.selectize-dropdown
+){background-color:var(--mars-surface)!important;color:var(--mars-text)!important;border-color:var(--mars-line)!important}
+html[data-theme="dark"] body :where(.flatpickr-day,.ui-datepicker td a,.ui-datepicker th,.ui-menu-item,.swal2-title,.swal2-html-container){color:var(--mars-text)!important}
+
+/* Tables and generic plugin notices use theme borders/text without changing structure. */
+html[data-theme="dark"] body :where(table,th,td){border-color:var(--mars-line)!important}
+html[data-theme="dark"] body :where(table){color:var(--mars-text)}
+html[data-theme="dark"] body :where(.notice,.alert,.message,.success,.error,.warning,.info,.woocommerce-message,.woocommerce-info,.woocommerce-error){border-color:var(--mars-line)!important;color:var(--mars-text)}
+
+/* Popular form/plugin ecosystems. */
+html[data-theme="dark"] body :where(
+  .wpcf7-form,.wpforms-container,.fluentform,.frm_forms,.gform_wrapper,
+  .mailpoet_form,.mc4wp-form,.woocommerce-form,
+  .tinv-wishlist,.yith-wcwl-form,.wc-block-components-form
+){color:var(--mars-text)}
+html[data-theme="dark"] body :where(
+  .wpforms-field-label,.ff-el-form-label,.frm_primary_label,.gfield_label,
+  .wc-block-components-title,.wc-block-components-product-name
+){color:var(--mars-text)!important}
+html[data-theme="dark"] body :where(
+  .wpforms-field-description,.ff-el-help-message,.frm_description,.gfield_description,
+  .wc-block-components-product-metadata
+){color:var(--mars-muted)!important}
+
+/* Mars — deeper Elementor and dynamically-inserted dark-mode compatibility. */
+html[data-theme="dark"] .elementor{
+  --e-global-color-primary:var(--mars-text);
+  --e-global-color-secondary:var(--mars-muted);
+  --e-global-color-text:var(--mars-text);
+  --e-global-color-accent:var(--mars-accent);
+  color:var(--mars-text);
+}
+html[data-theme="dark"] body :where(
+  .elementor-widget-text-editor,
+  .elementor-widget-theme-post-content,
+  .elementor-widget-heading,
+  .elementor-widget-icon-list,
+  .elementor-widget-toggle,
+  .elementor-widget-accordion,
+  .elementor-widget-tabs,
+  .elementor-widget-testimonial,
+  .elementor-widget-image-box,
+  .elementor-widget-icon-box
+){color:var(--mars-text)!important}
+html[data-theme="dark"] body :where(.elementor-widget-text-editor,.elementor-widget-theme-post-content) :where(p,li,dt,dd,figcaption,caption,blockquote,strong,em,small):not([style*="color"]){color:inherit!important}
+html[data-theme="dark"] body :where(.elementor-widget-text-editor,.elementor-widget-theme-post-content) :where(h1,h2,h3,h4,h5,h6):not([style*="color"]){color:var(--mars-text)!important}
+html[data-theme="dark"] body :where(.elementor-widget-text-editor,.elementor-widget-theme-post-content) a:not([style*="color"]){color:var(--mars-accent)!important}
+html[data-theme="dark"] body :where(.elementor-widget-text-editor,.elementor-widget-theme-post-content) :where(hr,table,th,td,blockquote){border-color:var(--mars-line)!important}
+html[data-theme="dark"] body :where(.elementor-widget-text-editor,.elementor-widget-theme-post-content) :where(code,pre){background:var(--mars-surface-2)!important;color:var(--mars-text)!important;border-color:var(--mars-line)!important}
+html[data-theme="dark"] body :where(.elementor-accordion-item,.elementor-toggle-item,.elementor-tab-content,.elementor-tab-title){border-color:var(--mars-line)!important;color:var(--mars-text)!important}
+html[data-theme="dark"] body :where(.elementor-accordion-title,.elementor-toggle-title,.elementor-tab-title a,.elementor-icon-list-text){color:var(--mars-text)!important}
+html[data-theme="dark"] body :where(.elementor-widget-container) :where(mark){background:color-mix(in srgb,var(--mars-accent) 20%,transparent);color:var(--mars-text)}
+
+/* Mars — Elementor widgets are transparent by default in dark mode. Elementor/user-defined backgrounds can still override this rule. */
+html[data-theme="dark"] .elementor-widget > .elementor-widget-container,
+html.dark .elementor-widget > .elementor-widget-container{background-color:transparent}
+html[data-theme="dark"] :where(.mars-latest-articles,.mars-completed-projects,.mars-image-gallery,.mars-team-management,.mars-our-clients,.mars-contact-us,.mars-modern-faq,.mars-digital-products,.mars-digital-categories,.mars-popular-services,.mars-crypto-rates,.mars-currency-calculator,.mars-payment-steps),
+html.dark :where(.mars-latest-articles,.mars-completed-projects,.mars-image-gallery,.mars-team-management,.mars-our-clients,.mars-contact-us,.mars-modern-faq,.mars-digital-products,.mars-digital-categories,.mars-popular-services,.mars-crypto-rates,.mars-currency-calculator,.mars-payment-steps){background-color:transparent}
+
+/* Mars — Elementor widgets inherit the page background in dark mode by default.
+   A background chosen from Elementor's Style tab is applied to the widget container
+   itself and therefore remains available to the site editor. */
+html[data-theme="dark"] .elementor-widget>.elementor-widget-container>:where([class^="mars-"],[class*=" mars-"]),
+html.dark .elementor-widget>.elementor-widget-container>:where([class^="mars-"],[class*=" mars-"]){background-color:transparent}

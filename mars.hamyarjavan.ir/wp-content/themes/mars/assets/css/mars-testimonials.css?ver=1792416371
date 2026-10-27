@@ -1,0 +1,27 @@
+.mars-testimonials-about{
+  --mta-cols:3;--mta-gap:18px;--mta-radius:20px;--mta-card:#fff;--mta-title:#172033;--mta-text:#4b5563;--mta-muted:#8a94a6;--mta-line:#edf1f5;--mta-accent:#18e1b5;
+  width:100%;color:var(--mta-title);font-family:inherit
+}
+.mars-testimonials-about__head{max-width:700px;margin:0 auto 28px;text-align:center}
+.mars-testimonials-about__head>span{display:inline-flex;align-items:center;min-height:30px;padding:0 11px;border-radius:999px;background:color-mix(in srgb,var(--mta-accent) 12%,transparent);color:var(--mta-accent);font-size:12px;font-weight:850}
+.mars-testimonials-about__head h2{margin:11px 0 8px;color:var(--mta-title);font-size:clamp(24px,3vw,38px);font-weight:900;line-height:1.45}
+.mars-testimonials-about__head p{margin:0;color:var(--mta-muted);font-size:14px;line-height:2}
+.mars-testimonials-about__grid{display:grid;grid-template-columns:repeat(var(--mta-cols),minmax(0,1fr));gap:var(--mta-gap)}
+.mars-testimonial-card{display:flex;flex-direction:column;min-width:0;min-height:230px;padding:22px;border:1px solid var(--mta-line);border-radius:var(--mta-radius);background:var(--mta-card);box-shadow:none}
+.mars-testimonial-card__top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.mars-testimonial-card__quote{color:var(--mta-accent);font-family:Georgia,serif;font-size:48px;font-weight:900;line-height:.7}
+.mars-testimonial-card__rating{direction:ltr;color:#f6b91a;font-size:12px;letter-spacing:1px;white-space:nowrap}.mars-testimonial-card__rating i{color:var(--mta-line);font-style:normal}
+.mars-testimonial-card__text{flex:1;margin:20px 0;color:var(--mta-text);font-size:14px;font-weight:550;line-height:2;text-align:right}
+.mars-testimonial-card__person{display:flex;align-items:center;gap:11px;padding-top:16px;border-top:1px solid var(--mta-line)}
+.mars-testimonial-card__person img,.mars-testimonial-card__avatar{display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;border-radius:14px;object-fit:cover;background:color-mix(in srgb,var(--mta-accent) 16%,var(--mta-card));color:var(--mta-accent);font-size:16px;font-weight:900}
+.mars-testimonial-card__person div{min-width:0}.mars-testimonial-card__person strong{display:block;overflow:hidden;color:var(--mta-title);font-size:13px;font-weight:850;white-space:nowrap;text-overflow:ellipsis}.mars-testimonial-card__person small{display:block;margin-top:3px;overflow:hidden;color:var(--mta-muted);font-size:11px;white-space:nowrap;text-overflow:ellipsis}
+@media(max-width:767px){.mars-testimonials-about__head{margin-bottom:20px}.mars-testimonial-card{min-height:210px;padding:18px}.mars-testimonial-card__text{margin:16px 0;font-size:13px}}
+
+
+/* Mobile testimonial strip: one full card plus a hint of the next card. */
+@media(max-width:767px){
+ .mars-testimonials-about{overflow:hidden}
+ .mars-testimonials-about__grid{display:flex!important;grid-template-columns:none!important;gap:12px!important;width:100%!important;overflow-x:auto!important;overflow-y:hidden!important;direction:rtl;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:2px 0 10px!important}
+ .mars-testimonials-about__grid::-webkit-scrollbar{display:none}
+ .mars-testimonial-card{flex:0 0 86%!important;width:86%!important;min-width:0!important;scroll-snap-align:start}
+}

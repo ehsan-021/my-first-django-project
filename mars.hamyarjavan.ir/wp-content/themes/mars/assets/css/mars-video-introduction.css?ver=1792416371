@@ -1,0 +1,310 @@
+/*
+ * Mars inline Video Introduction.
+ */
+
+.elementor-widget-mars_video_introduction .elementor-widget-container{
+	overflow:visible;
+}
+
+.mars-video-introduction{
+	--mvi-gap:70px;
+	--mvi-radius:28px;
+	--mvi-title:#30333a;
+	--mvi-subtitle:#777d86;
+	--mvi-text:#80858d;
+	--mvi-accent:#18e1b5;
+	--mvi-button-text:#fff;
+	--mvi-frame:#e5e7eb;
+	--mvi-bar:#fff;
+	display:grid;
+	grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+	grid-template-areas:"content media";
+	align-items:center;
+	gap:var(--mvi-gap);
+	width:100%;
+	max-width:100%;
+	direction:rtl;
+}
+
+.mars-video-introduction--media-left{
+	grid-template-areas:"media content";
+}
+
+.mars-video-introduction--media-right{
+	grid-template-areas:"content media";
+}
+
+.mars-video-introduction__content{
+	grid-area:content;
+	display:flex;
+	flex-direction:column;
+	align-items:flex-start;
+	min-width:0;
+	text-align:right;
+}
+
+.mars-video-introduction__logo{
+	display:block!important;
+	width:auto!important;
+	max-width:min(240px,70%)!important;
+	height:auto!important;
+	max-height:76px!important;
+	margin:0 0 8px!important;
+	padding:0!important;
+	border:0!important;
+	object-fit:contain!important;
+	object-position:right center!important;
+}
+
+.mars-video-introduction__content h2{
+	margin:0;
+	color:var(--mvi-title);
+	font-size:31px;
+	font-weight:950;
+	line-height:1.55;
+}
+
+.mars-video-introduction__subtitle{
+	margin:3px 0 20px;
+	color:var(--mvi-subtitle);
+	font-size:15px;
+	font-weight:700;
+	line-height:1.8;
+}
+
+.mars-video-introduction__description{
+	color:var(--mvi-text);
+	font-size:16px;
+	font-weight:600;
+	line-height:2.15;
+}
+
+.mars-video-introduction__description > *:first-child{
+	margin-top:0;
+}
+
+.mars-video-introduction__description > *:last-child{
+	margin-bottom:0;
+}
+
+.mars-video-introduction__button{
+	display:inline-flex;
+	align-items:center;
+	justify-content:center;
+	gap:15px;
+	min-width:152px;
+	min-height:56px;
+	margin-top:24px;
+	padding:0 22px;
+	border-radius:18px 18px 18px 6px;
+	background:var(--mvi-accent);
+	color:var(--mvi-button-text)!important;
+	font-size:14px;
+	font-weight:950;
+	text-decoration:none!important;
+	transition:transform .25s ease,box-shadow .25s ease;
+}
+
+.mars-video-introduction__button:hover{
+	transform:translateY(-2px);
+	box-shadow:0 12px 28px color-mix(in srgb,var(--mvi-accent) 24%,transparent);
+}
+
+.mars-video-introduction__button-icon{
+	width:16px;
+	height:16px;
+	fill:currentColor;
+}
+
+.mars-video-introduction__frame{
+	grid-area:media;
+	min-width:0;
+	padding:14px;
+	overflow:hidden;
+	border:1px solid var(--mvi-frame);
+	border-radius:calc(var(--mvi-radius) + 6px);
+	background:var(--mvi-bar);
+}
+
+.mars-video-introduction__media{
+	position:relative;
+	width:100%;
+	aspect-ratio:16 / 9;
+	overflow:hidden;
+	border-radius:var(--mvi-radius);
+	background:#181818;
+	line-height:0;
+}
+
+.mars-video-introduction__video,
+.mars-video-introduction__cover,
+.mars-video-introduction__cover-only{
+	position:absolute;
+	inset:0;
+	display:block!important;
+	width:100%!important;
+	height:100%!important;
+	max-width:none!important;
+	max-height:none!important;
+	margin:0!important;
+	padding:0!important;
+	border:0!important;
+	border-radius:inherit!important;
+	object-fit:cover!important;
+	object-position:center!important;
+}
+
+.mars-video-introduction__cover{
+	z-index:2;
+	transition:opacity .3s ease,visibility .3s ease;
+}
+
+.mars-video-introduction.is-playing .mars-video-introduction__cover{
+	opacity:0;
+	visibility:hidden;
+	pointer-events:none;
+}
+
+.mars-video-introduction__play{
+	position:absolute;
+	inset:50% auto auto 50%;
+	z-index:4;
+	display:grid;
+	place-items:center;
+	width:58px;
+	height:58px;
+	padding:0;
+	border:0;
+	border-radius:18px;
+	background:#00c853;
+	color:#fff;
+	cursor:pointer;
+	box-shadow:0 12px 30px rgba(0,200,83,.3);
+	transform:translate(-50%,-50%);
+	transition:opacity .25s ease,visibility .25s ease,transform .25s ease;
+}
+
+.mars-video-introduction__play span{
+	width:0;
+	height:0;
+	margin-inline-start:4px;
+	border-top:9px solid transparent;
+	border-bottom:9px solid transparent;
+	border-inline-start:15px solid currentColor;
+}
+
+.mars-video-introduction__play:hover{
+	transform:translate(-50%,-50%) scale(1.06);
+}
+
+.mars-video-introduction.is-playing .mars-video-introduction__play{
+	opacity:0;
+	visibility:hidden;
+	pointer-events:none;
+}
+
+.mars-video-introduction__empty-media{
+	display:grid;
+	place-items:center;
+	width:100%;
+	height:100%;
+	color:#d1d5db;
+	font-size:14px;
+	font-weight:800;
+}
+
+.mars-video-introduction__bar{
+	display:flex;
+	align-items:center;
+	justify-content:space-between;
+	gap:14px;
+	min-height:66px;
+	padding:11px 14px 0;
+	color:var(--mvi-title);
+}
+
+.mars-video-introduction__bar strong{
+	font-size:15px;
+	font-weight:950;
+}
+
+.mars-video-introduction__bar span{
+	display:inline-flex;
+	align-items:center;
+	gap:7px;
+	color:var(--mvi-subtitle);
+	font-size:13px;
+	font-weight:750;
+	direction:ltr;
+}
+
+.mars-video-introduction__clock{
+	width:16px;
+	height:16px;
+	fill:currentColor;
+}
+
+html.dark .mars-video-introduction,
+html[data-theme="dark"] .mars-video-introduction,
+body.dark .mars-video-introduction,
+body[data-theme="dark"] .mars-video-introduction{
+	--mvi-title:#f7f9fc;
+	--mvi-subtitle:#c0cad8;
+	--mvi-text:#dbe3ee;
+	--mvi-accent:#18e1b5;
+	--mvi-button-text:#fff;
+	--mvi-frame:#46566d;
+	--mvi-bar:#29364a;
+}
+
+@media(max-width:900px){
+	.mars-video-introduction,
+	.mars-video-introduction--media-left,
+	.mars-video-introduction--media-right{
+		grid-template-columns:1fr;
+		grid-template-areas:"content" "media";
+		gap:32px;
+	}
+}
+
+@media(max-width:767px){
+	.mars-video-introduction{
+		gap:24px;
+	}
+	.mars-video-introduction__content h2{
+		font-size:25px;
+	}
+	.mars-video-introduction__description{
+		font-size:14px;
+		line-height:2;
+	}
+	.mars-video-introduction__frame{
+		padding:8px;
+		border-radius:calc(var(--mvi-radius) + 3px);
+	}
+	.mars-video-introduction__bar{
+		min-height:58px;
+		padding-inline:9px;
+	}
+	.mars-video-introduction__button{
+		min-height:52px;
+	}
+}
+
+@media(prefers-reduced-motion:reduce){
+	.mars-video-introduction__button,
+	.mars-video-introduction__cover,
+	.mars-video-introduction__play{
+		transition:none!important;
+	}
+}
+
+
+/* Optional pre-play cover treatment. The class is controlled per Elementor widget. */
+.mars-video-introduction--cover-effect:not(.is-playing) .mars-video-introduction__cover{
+  opacity:var(--mvi-cover-opacity,.72);
+  filter:blur(var(--mvi-cover-blur,7px));
+  transform:scale(1.035);
+}
+.mars-video-introduction__cover{transition:opacity .3s ease,visibility .3s ease,filter .3s ease,transform .3s ease}
+.mars-video-introduction.is-playing .mars-video-introduction__cover{filter:none;transform:scale(1)}

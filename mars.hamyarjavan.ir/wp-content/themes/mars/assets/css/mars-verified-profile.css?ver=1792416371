@@ -1,0 +1,116 @@
+/* Mars — product/account polish. */
+
+/* Verified identity fields stay readable but clearly locked. */
+body.woocommerce-account .mars-identity-locked{
+  cursor:not-allowed!important;
+  opacity:.78!important;
+  background:var(--mup-soft,var(--mars-surface-2))!important;
+}
+body.woocommerce-account .mars-verified-name-note{
+  margin:10px 0 16px!important;
+  padding:11px 13px!important;
+  border:1px solid var(--mup-border,var(--mars-line))!important;
+  border-radius:10px!important;
+  background:var(--mup-soft,var(--mars-surface-2))!important;
+  color:var(--mup-muted,var(--mars-muted))!important;
+  font-size:11.5px!important;
+  font-weight:700!important;
+  line-height:1.9!important;
+}
+
+/* Product category trail directly above the product artwork. */
+body.mars-service-product-page .mars-product-category-path{
+  display:flex!important;
+  align-items:center!important;
+  flex-wrap:wrap!important;
+  gap:5px!important;
+  width:100%!important;
+  margin:0 0 9px!important;
+  padding:0 2px!important;
+  color:var(--mars-muted)!important;
+  font-size:10.8px!important;
+  font-weight:750!important;
+  line-height:1.8!important;
+  direction:rtl!important;
+  text-align:right!important;
+}
+body.mars-service-product-page .mars-product-category-path__sep{opacity:.52!important;font-weight:500!important}
+
+/* Desktop/tablet: the whole left service rail follows scrolling and naturally
+   stops at the lower edge of its grid parent. Mobile keeps the existing flow. */
+@media(min-width:769px){
+  body.mars-service-product-page .mars-service-order-layout{overflow:visible!important;align-items:start!important}
+  body.mars-service-product-page .mars-service-order-layout > .mars-service-left-column{
+    position:sticky!important;
+    top:20px!important;
+    align-self:start!important;
+    height:max-content!important;
+    z-index:8!important;
+  }
+}
+
+/* Keep compact switch geometry aligned with the control width and keep the active circle fully inside the switch. */
+body.mars-service-product-page .mars-account-toggle__control,
+body.mars-service-product-page .mars-urgent-order-toggle__control{
+  flex-basis:48px!important;
+  width:48px!important;
+  min-width:48px!important;
+  height:28px!important;
+  overflow:hidden!important;
+  border-radius:999px!important;
+}
+body.mars-service-product-page .mars-account-toggle__control i,
+body.mars-service-product-page .mars-urgent-order-toggle__control i{
+  inset:0!important;
+  width:48px!important;
+  height:28px!important;
+  overflow:hidden!important;
+  border-radius:999px!important;
+}
+body.mars-service-product-page .mars-account-toggle__control i:after,
+body.mars-service-product-page .mars-urgent-order-toggle__control i:after{
+  top:3px!important;
+  right:auto!important;
+  left:3px!important;
+  width:22px!important;
+  height:22px!important;
+  transform:none!important;
+  transition:left .2s ease!important;
+}
+body.mars-service-product-page .mars-account-toggle__control input:checked+i:after,
+body.mars-service-product-page .mars-urgent-order-toggle__control input:checked+i:after{
+  right:auto!important;
+  left:23px!important;
+  transform:none!important;
+}
+@media(max-width:600px){
+  body.mars-service-product-page .mars-account-toggle__control,
+  body.mars-service-product-page .mars-urgent-order-toggle__control,
+  body.mars-service-product-page .mars-account-toggle__control i,
+  body.mars-service-product-page .mars-urgent-order-toggle__control i{width:46px!important;min-width:46px!important;flex-basis:46px!important}
+  body.mars-service-product-page .mars-account-toggle__control input:checked+i:after,
+  body.mars-service-product-page .mars-urgent-order-toggle__control input:checked+i:after{left:21px!important}
+}
+
+/* Mars — final switch geometry + mobile product navigation. */
+body.mars-service-product-page .mars-account-toggle,
+body.mars-service-product-page .mars-urgent-order-toggle{align-items:center!important}
+body.mars-service-product-page .mars-account-toggle__control,
+body.mars-service-product-page .mars-urgent-order-toggle__control{position:relative!important;display:block!important;flex:0 0 48px!important;width:48px!important;min-width:48px!important;height:28px!important;margin:0!important;padding:0!important;border:0!important;overflow:visible!important}
+body.mars-service-product-page .mars-account-toggle__control input,
+body.mars-service-product-page .mars-urgent-order-toggle__control input{position:absolute!important;width:1px!important;height:1px!important;margin:0!important;opacity:0!important;pointer-events:none!important}
+body.mars-service-product-page .mars-account-toggle__control i,
+body.mars-service-product-page .mars-urgent-order-toggle__control i{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;margin:0!important;overflow:hidden!important;border-radius:999px!important}
+body.mars-service-product-page .mars-account-toggle__control i:after,
+body.mars-service-product-page .mars-urgent-order-toggle__control i:after{top:3px!important;right:auto!important;left:3px!important;width:22px!important;height:22px!important;margin:0!important;transform:none!important;transition:left .2s ease!important}
+body.mars-service-product-page .mars-account-toggle__control input:checked+i:after,
+body.mars-service-product-page .mars-urgent-order-toggle__control input:checked+i:after{right:auto!important;left:calc(100% - 25px)!important;transform:none!important}
+@media(max-width:768px){
+  body.mars-service-product-page .mars-service-left-column>.mars-product-category-path{display:flex!important;flex-wrap:nowrap!important;order:0!important;width:100%!important;max-width:100%!important;margin:0 0 9px!important;padding:2px 1px 7px!important;overflow-x:auto!important;overflow-y:hidden!important;white-space:nowrap!important;scrollbar-width:none}
+  body.mars-service-product-page .mars-service-left-column>.mars-product-category-path::-webkit-scrollbar{display:none}
+  body.mars-service-product-page .mars-service-left-column>.mars-product-category-path>*{flex:0 0 auto}
+}
+@media(max-width:600px){
+  body.mars-service-product-page .mars-account-toggle__control,
+  body.mars-service-product-page .mars-urgent-order-toggle__control{flex-basis:46px!important;width:46px!important;min-width:46px!important}
+}

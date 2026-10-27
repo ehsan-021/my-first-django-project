@@ -1,0 +1,277 @@
+/* Mars Elementor extension widgets. RTL-first, dark-mode ready. */
+.mars-extension-placeholder{padding:18px;border:1px dashed #cbd5e1;border-radius:14px;text-align:center;direction:rtl}
+.mars-extension-placeholder,.mars-extension-placeholder *{box-sizing:border-box}
+
+/* 1. Services */
+.mars-services-list{--msl-bg:#fff;--msl-title:#111827;--msl-accent:#18e1b5;--msl-text:#111;--msl-muted:#303030;--msl-number:#18e1b5;--msl-number-text:#063d32;--msl-pattern:#e9efc5;--msl-number-radius:12px;position:relative;isolation:isolate;overflow:hidden;background:var(--msl-bg);color:var(--msl-text);padding:34px clamp(20px,5vw,70px) 42px;box-sizing:border-box}
+.mars-services-list *{box-sizing:border-box}
+.mars-services-list__pattern{position:absolute;z-index:-1;inset-inline-end:3%;top:5px;width:330px;height:330px;opacity:.85;pointer-events:none}
+.mars-services-list[data-pattern="rings"] .mars-services-list__pattern{border-radius:50%;background:repeating-radial-gradient(circle at center,transparent 0 13px,var(--msl-pattern) 14px 16px)}
+.mars-services-list[data-pattern="dots"] .mars-services-list__pattern{border-radius:50%;background:radial-gradient(circle,var(--msl-pattern) 1.7px,transparent 2px);background-size:13px 13px;mask-image:radial-gradient(circle,#000 0 67%,transparent 69%)}
+.mars-services-list[data-pattern="arcs"] .mars-services-list__pattern{border-radius:50%;border:4px solid var(--msl-pattern);box-shadow:inset 0 0 0 20px var(--msl-bg),inset 0 0 0 24px var(--msl-pattern),inset 0 0 0 47px var(--msl-bg),inset 0 0 0 51px var(--msl-pattern),inset 0 0 0 74px var(--msl-bg),inset 0 0 0 78px var(--msl-pattern);clip-path:polygon(0 0,77% 0,52% 100%,0 100%)}
+.mars-services-list[data-pattern="none"] .mars-services-list__pattern{display:none}
+.mars-services-list__header{text-align:center;margin:0 auto 30px;position:relative;z-index:1}
+.mars-services-list__heading-line{display:flex;align-items:center;justify-content:center;gap:12px}
+.mars-services-list__heading-line svg{width:34px;height:34px;fill:none;stroke:var(--msl-accent);stroke-width:2}
+.mars-services-list__header h2{margin:0;color:var(--msl-title);font-size:clamp(22px,2.4vw,31px);font-weight:900;line-height:1.5}
+.mars-services-list__header h2 span{color:var(--msl-accent)}
+.mars-services-list__header p{margin:5px 0 0;color:var(--msl-muted);font-size:14px}
+.mars-services-list__viewport{overflow:hidden}
+.mars-services-list__grid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(var(--msl-rows),minmax(50px,auto));grid-template-columns:repeat(var(--msl-columns),minmax(0,1fr));column-gap:clamp(42px,8vw,130px);row-gap:5px;align-items:center}
+.mars-services-list__item{display:flex;align-items:center;gap:14px;min-width:0}
+.mars-services-list__number{flex:0 0 auto;display:grid;place-items:center;width:38px;height:38px;border-radius:var(--msl-number-radius);background:var(--msl-number);color:var(--msl-number-text);font-size:12px;font-weight:800}
+.mars-services-list__text{font-size:15px;font-weight:600;line-height:1.8;color:var(--msl-text)}
+
+/* 2. Audio testimonials */
+.mars-audio-testimonials{--mat-bg:#fff;--mat-title:#111827;--mat-accent:#0a43c4;--mat-muted:#252525;--mat-card:#dceaf5;--mat-name:#111827;--mat-button:#073bd8;--mat-button-icon:#fff;--mat-wave:#111827;--mat-indicator:#1b22ff;--mat-gap:18px;--mat-per-view:5;--mat-radius:42px;background:var(--mat-bg);padding:38px clamp(18px,5vw,64px) 34px;box-sizing:border-box;color:var(--mat-title)}
+.mars-audio-testimonials *{box-sizing:border-box}
+.mars-audio-testimonials__header{text-align:center;margin-bottom:38px}
+.mars-audio-testimonials__heading{display:flex;align-items:center;justify-content:center;gap:12px}
+.mars-audio-testimonials__heading svg{width:34px;height:34px;fill:none;stroke:var(--mat-accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.mars-audio-testimonials__header h2{margin:0;font-size:clamp(22px,2.4vw,31px);font-weight:900;color:var(--mat-title)}
+.mars-audio-testimonials__header h2 span{color:var(--mat-accent)}
+.mars-audio-testimonials__header p{margin:7px 0 0;color:var(--mat-muted);font-size:14px}
+.mars-audio-testimonials__viewport{overflow-x:auto;overflow-y:hidden;scrollbar-width:none;cursor:grab;touch-action:pan-x pinch-zoom;overscroll-behavior-inline:contain;direction:rtl;user-select:none;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+.mars-audio-testimonials__viewport::-webkit-scrollbar{display:none}
+.mars-audio-testimonials__viewport.is-dragging{cursor:grabbing}
+.mars-audio-testimonials__track{display:flex;gap:var(--mat-gap);width:100%;min-width:100%}
+.mars-audio-testimonials__card{flex:0 0 calc((100% - (var(--mat-gap) * (var(--mat-per-view) - 1))) / var(--mat-per-view));min-width:190px;max-width:290px;background:var(--mat-card);border-radius:var(--mat-radius);padding:28px 22px 24px;text-align:center;scroll-snap-align:start}
+.mars-audio-testimonials__avatar-wrap{display:block;width:104px;height:104px;aspect-ratio:1/1;border-radius:9999px;overflow:hidden;margin:0 auto 16px;background:#fff;isolation:isolate}
+.mars-audio-testimonials__avatar{display:block;width:100%!important;height:100%!important;aspect-ratio:1/1;border-radius:9999px!important;object-fit:cover!important;margin:0!important;background:#fff}
+.mars-audio-testimonials__card h3{margin:0 0 15px;color:var(--mat-name);font-size:15px;font-weight:800}
+.mars-audio-testimonials__player{display:flex;align-items:center;gap:10px;direction:ltr;position:relative;z-index:2;touch-action:manipulation}
+.mars-audio-testimonials__player button{flex:0 0 auto;width:44px;height:44px;display:grid;place-items:center;border:0;border-radius:50%;background:var(--mat-button);color:var(--mat-button-icon);padding:0;cursor:pointer;touch-action:manipulation;position:relative;z-index:3;-webkit-tap-highlight-color:transparent}
+.mars-audio-testimonials__player button:disabled{opacity:.45;cursor:not-allowed}
+.mars-audio-testimonials__player button svg{width:24px;height:24px;fill:currentColor}
+.mars-audio-testimonials__player .icon-pause{display:none}
+.mars-audio-testimonials__card.is-playing .icon-play{display:none}
+.mars-audio-testimonials__card.is-playing .icon-pause{display:block}
+.mars-audio-testimonials__wave{display:flex;align-items:center;justify-content:center;gap:2px;height:44px;min-width:0;flex:1;overflow:hidden;cursor:pointer;touch-action:manipulation}
+.mars-audio-testimonials__wave i{display:block;width:2px;height:var(--wave-height);max-height:40px;border-radius:999px;background:var(--mat-wave);transform-origin:center;animation:none}
+.mars-audio-testimonials__card.is-playing .mars-audio-testimonials__wave i{animation:mars-wave-bounce .7s ease-in-out infinite alternate;animation-delay:calc(var(--wave-height) * -12ms)}
+@keyframes mars-wave-bounce{to{transform:scaleY(.3);opacity:.65}}
+.mars-audio-testimonials__scroll-hint{display:flex;justify-content:center;align-items:center;gap:7px;margin-top:30px}
+.mars-audio-testimonials__scroll-hint i:first-child{width:11px;height:11px;border-radius:50%;background:#d2d5da}
+.mars-audio-testimonials__scroll-hint i:last-child{width:25px;height:10px;border-radius:999px;background:var(--mat-indicator)}
+
+/* 3. Insurance logos */
+.mars-insurance-logos{--mil-bg:#fff;--mil-count:#16cdb1;--mil-text:#111827;--mil-columns:4;--mil-logo-height:88px;--mil-gap:34px;display:flex;align-items:center;gap:clamp(32px,7vw,110px);background:var(--mil-bg);padding:46px clamp(20px,5vw,70px);box-sizing:border-box}
+.mars-insurance-logos *{box-sizing:border-box}
+.mars-insurance-logos__summary{flex:0 0 250px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px}
+.mars-insurance-logos__summary strong{color:var(--mil-count);font-size:clamp(58px,7vw,105px);font-weight:500;line-height:1}
+.mars-insurance-logos__summary span{color:var(--mil-text);font-size:20px;font-weight:800}
+.mars-insurance-logos__viewport{flex:1;min-width:0}
+.mars-insurance-logos__grid{display:grid;grid-template-columns:repeat(var(--mil-columns),minmax(90px,1fr));gap:var(--mil-gap);align-items:center}
+.mars-insurance-logos__item{display:flex;align-items:center;justify-content:center;min-height:var(--mil-logo-height)}
+.mars-insurance-logos__item img{display:block;max-width:100%;width:auto;height:auto;max-height:var(--mil-logo-height);object-fit:contain}
+
+/* 4. Modern FAQ */
+.mars-modern-faq{--mmf-bg:#fff;--mmf-title:#111827;--mmf-accent:#18e1b5;--mmf-muted:#2c2c2c;--mmf-active:#18e1b5;--mmf-active-text:#063d32;--mmf-question:#151515;--mmf-answer:#202020;--mmf-answer-bg:#f3f3f3;--mmf-icon:#18e1b5;--mmf-radius:16px;--mmf-width:980px;background:var(--mmf-bg);padding:28px 18px 42px;color:var(--mmf-question);box-sizing:border-box}
+.mars-modern-faq *{box-sizing:border-box}
+.mars-modern-faq__header,.mars-modern-faq__list{width:min(100%,var(--mmf-width));margin-inline:auto}
+.mars-modern-faq__header{text-align:center;margin-bottom:28px}
+.mars-modern-faq__title-row{display:flex;align-items:center;justify-content:center;gap:12px}
+.mars-modern-faq__title-row svg{width:38px;height:38px;fill:none;stroke:var(--mmf-icon);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.mars-modern-faq__header h2{margin:0;color:var(--mmf-title);font-size:clamp(23px,2.5vw,34px);font-weight:900}
+.mars-modern-faq__header h2 span{color:var(--mmf-accent)}
+.mars-modern-faq__header p{margin:7px 0 0;color:var(--mmf-muted);font-size:14px}
+.mars-modern-faq__list{display:flex;flex-direction:column;gap:14px}
+.mars-modern-faq__item{border:0!important;border-radius:var(--mmf-radius);overflow:visible;background:transparent!important}
+.mars-modern-faq__question{width:100%;border:1px solid color-mix(in srgb,var(--mmf-question) 12%,transparent);background:transparent;color:var(--mmf-question);padding:15px 18px;display:flex;align-items:center;justify-content:space-between;gap:20px;text-align:right;font:inherit;font-size:16px;font-weight:600;cursor:pointer;border-radius:var(--mmf-radius);transition:background-color .28s ease,color .28s ease,border-color .28s ease,transform .28s ease}
+.mars-modern-faq__question i{position:relative;flex:0 0 auto;width:24px;height:24px;border-radius:50%;transition:background-color .28s ease,transform .28s ease}
+.mars-modern-faq__question i:before,.mars-modern-faq__question i:after{content:"";position:absolute;left:6px;top:11px;width:12px;height:1.5px;background:var(--mmf-icon);transition:transform .28s ease,background-color .28s ease}
+.mars-modern-faq__question i:after{transform:rotate(90deg)}
+.mars-modern-faq__item.is-open .mars-modern-faq__question{background:var(--mmf-active);color:var(--mmf-active-text);font-weight:800;border-color:transparent;border-radius:var(--mmf-radius)}
+.mars-modern-faq__item.is-open .mars-modern-faq__question i{background:#fff;transform:rotate(180deg)}
+.mars-modern-faq__item.is-open .mars-modern-faq__question i:before,.mars-modern-faq__item.is-open .mars-modern-faq__question i:after{background:var(--mmf-active)}
+.mars-modern-faq__item.is-open .mars-modern-faq__question i:after{transform:rotate(0deg)}
+.mars-modern-faq__answer{display:grid;grid-template-rows:0fr;opacity:0;visibility:hidden;background:transparent!important;color:var(--mmf-answer);border:0!important;border-radius:0!important;overflow:hidden;margin-top:0;transform:translateY(-6px);transition:grid-template-rows .38s cubic-bezier(.2,.8,.2,1),opacity .26s ease,transform .38s cubic-bezier(.2,.8,.2,1),margin-top .38s ease,visibility 0s linear .38s}
+.mars-modern-faq__answer>div{min-height:0;overflow:hidden;padding:0 24px;font-size:15px;line-height:2.2;transition:padding .38s cubic-bezier(.2,.8,.2,1)}
+.mars-modern-faq__item.is-open .mars-modern-faq__answer{grid-template-rows:1fr;opacity:1;visibility:visible;margin-top:12px;transform:translateY(0);transition:grid-template-rows .38s cubic-bezier(.2,.8,.2,1),opacity .28s ease,transform .38s cubic-bezier(.2,.8,.2,1),margin-top .38s ease,visibility 0s}
+.mars-modern-faq__item.is-open .mars-modern-faq__answer>div{padding:8px 24px 18px}
+.mars-modern-faq__answer p{margin:0 0 10px}
+.mars-modern-faq__answer p:last-child{margin-bottom:0}
+
+/* 5. Company intro */
+.mars-company-intro{--mci-bg:#fff;--mci-title:#111;--mci-accent:#1600ff;--mci-muted:#242424;--mci-text:#171717;--mci-bottom-title:#111;--mci-button:#1700ff;--mci-button-text:#fff;--mci-image-border:#fff;--mci-icon:#1600ff;--mci-width:1180px;--mci-image-size:82px;background:var(--mci-bg);padding:38px clamp(18px,5vw,68px) 36px;color:var(--mci-text);box-sizing:border-box}
+.mars-company-intro *{box-sizing:border-box}
+.mars-company-intro__header,.mars-company-intro__text,.mars-company-intro__bottom{width:min(100%,var(--mci-width));margin-inline:auto}
+.mars-company-intro__header{text-align:right;margin-bottom:20px}
+.mars-company-intro__title-row{display:flex;align-items:center;justify-content:flex-start;gap:12px}
+.mars-company-intro__title-icon{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:38px;height:38px;color:var(--mci-icon);font-size:34px;line-height:1}
+.mars-company-intro__title-icon i{color:inherit;font-size:inherit;line-height:1}
+.mars-company-intro__title-icon svg{display:block;width:34px;height:34px;fill:currentColor;color:inherit}
+.mars-company-intro__header h2{margin:0;color:var(--mci-title);font-size:clamp(23px,2.5vw,34px);font-weight:900}
+.mars-company-intro__header h2 span{color:var(--mci-accent)}
+.mars-company-intro__header p{margin:7px 0 0;color:var(--mci-muted);font-size:14px;font-weight:600}
+.mars-company-intro__text{text-align:center;color:var(--mci-text);font-size:15px;line-height:2.25}
+.mars-company-intro__text p{margin:0 0 8px}
+.mars-company-intro__bottom{display:flex;align-items:center;justify-content:space-between;gap:34px;margin-top:28px}
+.mars-company-intro__media-side{display:flex;align-items:center;gap:28px;min-width:0}
+.mars-company-intro__media-side>strong{color:var(--mci-bottom-title);font-size:18px;font-weight:900;white-space:nowrap}
+.mars-company-intro__images{display:flex;align-items:center;direction:ltr;padding-inline-start:20px}
+.mars-company-intro__images img{display:block;width:var(--mci-image-size);height:var(--mci-image-size);object-fit:cover;border-radius:50%;border:4px solid var(--mci-image-border);margin-inline-start:-20px}
+.mars-company-intro__button{display:inline-flex;align-items:center;justify-content:center;gap:14px;min-width:190px;padding:14px 20px;border-radius:12px;background:var(--mci-button);color:var(--mci-button-text);font-size:14px;font-weight:800;text-decoration:none;white-space:nowrap}
+.mars-company-intro__button span{font-size:20px;line-height:1}
+
+@media (max-width:1024px){
+	.mars-services-list__grid{column-gap:40px}
+	.mars-insurance-logos{gap:38px}
+	.mars-insurance-logos__summary{flex-basis:200px}
+}
+@media (max-width:767px){
+
+	.mars-services-list{padding-inline:18px}
+	.mars-services-list__pattern{width:220px;height:220px;opacity:.5;inset-inline-end:-55px}
+	.mars-services-list.is-mobile-horizontal .mars-services-list__viewport{overflow-x:auto;scrollbar-width:none;direction:rtl;padding-bottom:8px}
+	.mars-services-list.is-mobile-horizontal .mars-services-list__viewport::-webkit-scrollbar{display:none}
+	.mars-services-list.is-mobile-horizontal .mars-services-list__grid{width:max-content;grid-template-columns:repeat(var(--msl-columns),minmax(260px,280px));grid-template-rows:repeat(var(--msl-rows),minmax(50px,auto));column-gap:28px}
+	.mars-services-list:not(.is-mobile-horizontal) .mars-services-list__grid{grid-auto-flow:row;grid-template-columns:1fr;grid-template-rows:none;row-gap:8px}
+
+	.mars-audio-testimonials{padding-inline:18px}
+	.mars-audio-testimonials__card{padding-inline:18px}
+
+	.mars-insurance-logos{display:block;padding-inline:18px}
+	.mars-insurance-logos__summary{margin:0 auto 30px}
+	.mars-insurance-logos.is-mobile-horizontal .mars-insurance-logos__viewport{overflow-x:auto;scrollbar-width:none;direction:rtl}
+	.mars-insurance-logos.is-mobile-horizontal .mars-insurance-logos__viewport::-webkit-scrollbar{display:none}
+	.mars-insurance-logos.is-mobile-horizontal .mars-insurance-logos__grid{display:flex;width:max-content;gap:28px}
+	.mars-insurance-logos.is-mobile-horizontal .mars-insurance-logos__item{flex:0 0 125px;width:125px}
+	.mars-insurance-logos:not(.is-mobile-horizontal) .mars-insurance-logos__grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+
+	.mars-modern-faq__question{font-size:14px;padding:14px 12px}
+	.mars-modern-faq__answer>div{padding:0 17px;font-size:14px}
+	.mars-modern-faq__item.is-open .mars-modern-faq__answer>div{padding:7px 17px 16px}
+
+	.mars-company-intro__bottom{flex-direction:column;align-items:stretch}
+	.mars-company-intro__media-side{flex-direction:column;gap:12px;text-align:center}
+	.mars-company-intro__media-side>strong{white-space:normal}
+	.mars-company-intro__images{justify-content:center;padding-inline-start:18px}
+	.mars-company-intro__button{width:100%}
+}
+@media (prefers-reduced-motion:reduce){
+	.mars-audio-testimonials__card.is-playing .mars-audio-testimonials__wave i{animation:none}
+}
+
+/* 6. Audio introduction */
+.mars-audio-intro{--mai-bg:#f4f7fb;--mai-card:#fff;--mai-eyebrow:#1355d9;--mai-title:#101827;--mai-text:#4b5563;--mai-player-title:#111827;--mai-player-note:#687386;--mai-button:#145be8;--mai-button-icon:#fff;--mai-wave:#c4cedd;--mai-wave-active:#145be8;--mai-time:#5d6777;--mai-width:1180px;--mai-image-width:36%;--mai-image-height:360px;--mai-gap:42px;--mai-radius:28px;background:var(--mai-bg);padding:clamp(22px,4vw,54px);box-sizing:border-box;color:var(--mai-title)}
+.mars-audio-intro *{box-sizing:border-box}
+.mars-audio-intro__inner{width:min(100%,var(--mai-width));margin-inline:auto;display:flex;align-items:stretch;gap:var(--mai-gap)}
+.mars-audio-intro__image{flex:0 0 var(--mai-image-width);min-width:0;border-radius:var(--mai-radius);overflow:hidden;background:var(--mai-card)}
+.mars-audio-intro__image img{display:block;width:100%;height:var(--mai-image-height);object-fit:cover;transition:transform .55s ease}
+.mars-audio-intro:hover .mars-audio-intro__image img{transform:scale(1.025)}
+.mars-audio-intro__body{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:28px}
+.mars-audio-intro.is-text-hidden .mars-audio-intro__body{justify-content:center}
+.mars-audio-intro.is-image-hidden .mars-audio-intro__body{width:100%}
+.mars-audio-intro.is-player-only .mars-audio-intro__inner{max-width:900px}
+.mars-audio-intro__content{text-align:right}
+.mars-audio-intro__eyebrow{display:inline-block;margin-bottom:8px;color:var(--mai-eyebrow);font-size:14px;font-weight:800}
+.mars-audio-intro__content h2{margin:0;color:var(--mai-title);font-size:clamp(24px,3vw,42px);font-weight:900;line-height:1.55}
+.mars-audio-intro__description{margin-top:14px;color:var(--mai-text);font-size:15px;line-height:2.05}
+.mars-audio-intro__description p{margin:0 0 8px}
+.mars-audio-intro__description p:last-child{margin-bottom:0}
+.mars-audio-intro__player{position:relative;overflow:visible;background:transparent;border-radius:0;padding:0;box-shadow:none;direction:ltr}
+.mars-audio-intro__player:before{display:none}
+.mars-audio-intro__player-head{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:18px;direction:rtl}
+.mars-audio-intro__player-head>div{min-width:0;text-align:right}
+.mars-audio-intro__player-head strong{display:block;color:var(--mai-player-title);font-size:17px;font-weight:900;line-height:1.6}
+.mars-audio-intro__player-head span{display:block;margin-top:3px;color:var(--mai-player-note);font-size:12px;line-height:1.75}
+.mars-audio-intro__player button{position:relative;z-index:2;flex:0 0 auto;width:58px;height:58px;display:grid;place-items:center;border:0;border-radius:50%;background:var(--mai-button);color:var(--mai-button-icon);padding:0;cursor:pointer;box-shadow:0 8px 22px color-mix(in srgb,var(--mai-button) 32%,transparent);transition:transform .2s ease;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.mars-audio-intro__player button:hover{transform:scale(1.055)}
+.mars-audio-intro__player button:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+.mars-audio-intro__player button svg{display:block;width:27px;height:27px;fill:currentColor}
+.mars-audio-intro__player .icon-pause{display:none}
+.mars-audio-intro.is-playing .icon-play{display:none}
+.mars-audio-intro.is-playing .icon-pause{display:block}
+.mars-audio-intro__wave{position:relative;z-index:1;display:flex;align-items:center;gap:3px;height:74px;margin-top:16px;overflow:hidden;cursor:pointer;direction:ltr;touch-action:manipulation;outline:none}
+.mars-audio-intro__wave:focus-visible{outline:2px solid var(--mai-wave-active);outline-offset:4px;border-radius:8px}
+.mars-audio-intro__wave i{display:block;flex:1 1 0;min-width:2px;max-width:5px;height:var(--wave-height);border-radius:999px;background:var(--mai-wave);transform-origin:center;transition:background-color .18s ease,transform .18s ease,opacity .18s ease}
+.mars-audio-intro__wave i.is-played{background:var(--mai-wave-active)}
+.mars-audio-intro.is-playing .mars-audio-intro__wave i{animation:mars-intro-wave 1.05s ease-in-out infinite alternate;animation-delay:calc(var(--wave-index) * -18ms)}
+.mars-audio-intro.is-playing .mars-audio-intro__wave i.is-played{animation-duration:.68s;filter:saturate(1.12)}
+@keyframes mars-intro-wave{0%{transform:scaleY(.58);opacity:.76}100%{transform:scaleY(1);opacity:1}}
+.mars-audio-intro__times{position:relative;z-index:1;display:flex;align-items:center;justify-content:flex-start;gap:5px;color:var(--mai-time);font-size:12px;font-variant-numeric:tabular-nums}
+.mars-audio-intro__player audio{display:none}
+
+/* 7. Portfolio showcase */
+.mars-portfolio{--mpf-bg:#f5f5f5;--mpf-title:#171717;--mpf-subtitle:#8b8b8b;--mpf-badge-bg:#ffc928;--mpf-badge-text:#2b2b2b;--mpf-tabs-bg:#e3e3e3;--mpf-tab-text:#272727;--mpf-tab-active:#1c1804;--mpf-tab-active-text:#fff;--mpf-card-bg:#eee;--mpf-project-title:#222;--mpf-meta:#888;--mpf-button-bg:#ffc928;--mpf-button-text:#232323;--mpf-width:1180px;--mpf-per-view:3.35;--mpf-gap:18px;--mpf-image-height:330px;--mpf-card-radius:32px;background:var(--mpf-bg);padding:clamp(34px,5vw,72px) 0;box-sizing:border-box;overflow:hidden}
+.mars-portfolio *{box-sizing:border-box}
+.mars-portfolio__header{width:min(calc(100% - 36px),var(--mpf-width));margin:0 auto 42px;text-align:center}
+.mars-portfolio__title-wrap{display:inline-flex;align-items:flex-start;justify-content:center;position:relative}
+.mars-portfolio__title-wrap h2{margin:0;color:var(--mpf-title);font-size:clamp(30px,4.2vw,58px);font-weight:900;line-height:1.35}
+.mars-portfolio__badge{position:absolute;inset-inline-start:calc(100% - 40px);top:-17px;display:inline-flex;align-items:center;justify-content:center;padding:9px 15px;border-radius:12px;background:var(--mpf-badge-bg);color:var(--mpf-badge-text);font-size:12px;font-weight:900;transform:rotate(-10deg);box-shadow:0 9px 20px color-mix(in srgb,var(--mpf-badge-bg) 40%,transparent);white-space:nowrap}
+.mars-portfolio__header>p{margin:8px 0 0;color:var(--mpf-subtitle);font-size:clamp(15px,1.7vw,23px);font-weight:600}
+.mars-portfolio__tabs{display:flex;align-items:center;justify-content:center;gap:4px;width:max-content;max-width:100%;margin:30px auto 0;padding:7px;border-radius:999px;background:var(--mpf-tabs-bg);overflow-x:auto;scrollbar-width:none}
+.mars-portfolio__tabs::-webkit-scrollbar{display:none}
+.mars-portfolio__tabs button{flex:0 0 auto;border:0;border-radius:999px;background:transparent;color:var(--mpf-tab-text);padding:13px 23px;font:inherit;font-size:14px;font-weight:800;cursor:pointer;transition:background-color .25s ease,color .25s ease,transform .25s ease;white-space:nowrap}
+.mars-portfolio__tabs button.is-active{background:var(--mpf-tab-active);color:var(--mpf-tab-active-text);transform:translateY(-1px);box-shadow:0 12px 26px color-mix(in srgb,var(--mpf-tab-active) 26%,transparent)}
+.mars-portfolio__viewport{overflow-x:auto;overflow-y:hidden;scrollbar-width:none;cursor:grab;touch-action:pan-x pinch-zoom;overscroll-behavior-inline:contain;direction:rtl;user-select:none;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;padding-inline:clamp(18px,4vw,70px)}
+.mars-portfolio__viewport::-webkit-scrollbar{display:none}
+.mars-portfolio__viewport.is-dragging{cursor:grabbing}
+.mars-portfolio__viewport.is-dragging,.mars-portfolio__viewport.is-gliding{scroll-snap-type:none}
+.mars-portfolio__track{display:flex;align-items:stretch;gap:var(--mpf-gap);width:100%;min-width:100%}
+.mars-portfolio__card{flex:0 0 calc((100% - (var(--mpf-gap) * (var(--mpf-per-view) - 1))) / var(--mpf-per-view));min-width:270px;display:flex;flex-direction:column;background:var(--mpf-card-bg);border-radius:var(--mpf-card-radius);overflow:hidden;color:inherit;scroll-snap-align:start;transition:opacity .22s ease}
+.mars-portfolio__card[hidden]{display:none!important}
+.mars-portfolio__card-head{padding:16px 20px 8px;text-align:right;min-height:0}
+.mars-portfolio__card h3{margin:0;color:var(--mpf-project-title);font-size:18px;font-weight:900;line-height:1.65}
+.mars-portfolio__meta{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:6px;color:var(--mpf-meta);font-size:12px;font-weight:600}
+.mars-portfolio__image{position:relative;margin-top:0;overflow:hidden;border-radius:calc(var(--mpf-card-radius) * .72);background:#d6d6d6}
+.mars-portfolio__image img{display:block;width:100%;height:var(--mpf-image-height);object-fit:cover;filter:grayscale(1);transition:filter .42s ease}
+.mars-portfolio__card:hover .mars-portfolio__image img,.mars-portfolio__card:focus-within .mars-portfolio__image img{filter:grayscale(0)}
+.mars-portfolio__view-button{position:absolute;z-index:2;inset-inline:18px;bottom:16px;display:flex;align-items:center;justify-content:center;min-height:46px;padding:10px 18px;border-radius:999px;background:var(--mpf-button-bg);color:var(--mpf-button-text);font-size:14px;font-weight:900;text-decoration:none;opacity:0;visibility:hidden;transform:translateY(18px);transition:opacity .3s ease,transform .3s cubic-bezier(.2,.75,.25,1),visibility .3s ease;box-shadow:0 10px 26px color-mix(in srgb,var(--mpf-button-bg) 32%,transparent);-webkit-tap-highlight-color:transparent}
+.mars-portfolio__card:hover .mars-portfolio__view-button,.mars-portfolio__card:focus-within .mars-portfolio__view-button{opacity:1;visibility:visible;transform:translateY(0)}
+.mars-portfolio__view-button:focus-visible{outline:3px solid color-mix(in srgb,var(--mpf-button-bg) 48%,#fff);outline-offset:3px}
+
+/* 8. Contact banner */
+.mars-contact-banner{--mcb-bg:#0962b8;--mcb-title:#fff;--mcb-accent:#fff;--mcb-phone-bg:#ff6637;--mcb-phone-text:#fff;--mcb-pattern:rgba(255,255,255,.22);--mcb-min-height:220px;--mcb-radius:32px;--mcb-pad-x:48px;position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:40px;min-height:var(--mcb-min-height);padding:30px var(--mcb-pad-x);border-radius:var(--mcb-radius);background:var(--mcb-bg);color:var(--mcb-title);text-decoration:none;box-sizing:border-box;transition:transform .25s ease,filter .25s ease}
+.mars-contact-banner *{box-sizing:border-box}
+.mars-contact-banner:hover{transform:translateY(-2px);filter:saturate(1.04)}
+.mars-contact-banner__text{position:relative;z-index:2;text-align:right;max-width:700px}
+.mars-contact-banner__text h2{display:inline;margin:0;color:var(--mcb-title);font-size:clamp(24px,3vw,42px);font-weight:400;line-height:1.7}
+.mars-contact-banner__text strong{display:inline;color:var(--mcb-accent);font-size:clamp(24px,3vw,42px);font-weight:900;line-height:1.7;margin-inline-start:8px}
+.mars-contact-banner__call{position:relative;z-index:2;display:flex;align-items:center;direction:ltr;flex:0 0 auto}
+.mars-contact-banner__phone{display:inline-flex;align-items:center;justify-content:center;min-height:66px;padding:14px 28px;border-radius:999px;background:var(--mcb-phone-bg);color:var(--mcb-phone-text);font-size:18px;font-weight:900;white-space:nowrap;box-shadow:0 12px 30px rgba(0,0,0,.09)}
+.mars-contact-banner__rings{position:absolute;z-index:0;inset-inline-end:13%;top:50%;width:150px;height:150px;border:1px solid var(--mcb-pattern);border-radius:50%;transform:translateY(-50%);box-shadow:inset 0 0 0 28px transparent,0 0 0 28px color-mix(in srgb,var(--mcb-pattern) 55%,transparent),0 0 0 57px color-mix(in srgb,var(--mcb-pattern) 25%,transparent);opacity:.55;pointer-events:none}
+.mars-contact-banner__dots{position:absolute;z-index:0;width:82px;height:82px;background:radial-gradient(circle,var(--mcb-pattern) 3px,transparent 3.7px);background-size:13px 13px;pointer-events:none}
+.mars-contact-banner__dots--one{inset-inline-start:20px;top:20px}
+.mars-contact-banner__dots--two{inset-inline-end:35%;bottom:15px}
+.mars-contact-banner.is-pattern-hidden .mars-contact-banner__rings,.mars-contact-banner.is-pattern-hidden .mars-contact-banner__dots{display:none}
+
+@media (max-width:767px){
+	.mars-audio-intro__inner{flex-direction:column}
+	.mars-audio-intro__image{flex-basis:auto;width:100%}
+	.mars-audio-intro__player{padding:0}
+	.mars-audio-intro__player-head{align-items:flex-start}
+	.mars-audio-intro__player button{width:52px;height:52px}
+	.mars-audio-intro__wave{height:64px;gap:2px}
+
+	.mars-portfolio__header{margin-bottom:30px}
+	.mars-portfolio__badge{inset-inline-start:auto;inset-inline-end:0;top:-26px}
+	.mars-portfolio__tabs{justify-content:flex-start;margin-top:24px}
+	.mars-portfolio__tabs button{padding:11px 18px;font-size:13px}
+	.mars-portfolio__viewport{padding-inline:18px}
+	.mars-portfolio__card{min-width:255px}
+
+	.mars-contact-banner{flex-direction:column;align-items:stretch;justify-content:center;text-align:center;padding-block:34px;gap:28px}
+	.mars-contact-banner__text{text-align:center;margin-inline:auto}
+	.mars-contact-banner__call{justify-content:center}
+	.mars-contact-banner__phone{min-height:60px;padding-inline:22px;font-size:16px}
+	.mars-contact-banner__dots--two{inset-inline-end:10%;bottom:4px}
+}
+@media (prefers-reduced-motion:reduce){
+	.mars-audio-intro.is-playing .mars-audio-intro__wave i{animation:none}
+	.mars-audio-intro__image img,.mars-portfolio__image img,.mars-portfolio__view-button,.mars-contact-banner,.mars-portfolio__card{transition:none}
+}
+
+
+/* Mars — reliable Light/Dark defaults for Mars Services and FAQ. */
+html.dark .mars-services-list,html[data-theme="dark"] .mars-services-list,body.dark .mars-services-list,body[data-theme="dark"] .mars-services-list{--msl-bg:#111827;--msl-title:#f8fafc;--msl-accent:#18e1b5;--msl-text:#e2e8f0;--msl-muted:#b8c2d1;--msl-number:#18e1b5;--msl-number-text:#063d32;--msl-pattern:#334155}
+html.dark .mars-modern-faq,html[data-theme="dark"] .mars-modern-faq,body.dark .mars-modern-faq,body[data-theme="dark"] .mars-modern-faq{--mmf-bg:#111827;--mmf-title:#f8fafc;--mmf-accent:#18e1b5;--mmf-muted:#b8c2d1;--mmf-active:#18e1b5;--mmf-active-text:#063d32;--mmf-question:#e2e8f0;--mmf-answer:#dbe3ee;--mmf-answer-bg:#202b3b;--mmf-icon:#18e1b5}
+
+/* Mars — linked buttons */
+.mars-linked-buttons{--mlb-bg:#18e1b5;--mlb-text:#fff;--mlb-hover:#12c8a1;display:flex;align-items:center;justify-content:flex-start;flex-wrap:wrap;gap:10px;width:100%;box-sizing:border-box}
+.mars-linked-button{display:inline-flex;align-items:center;justify-content:center;width:var(--mlb-item-width,auto);max-width:100%;min-height:var(--mlb-item-height,48px);padding:8px 22px;border:0;border-radius:10px;background:var(--mlb-bg);color:var(--mlb-text)!important;text-decoration:none!important;font-size:var(--mlb-item-font-size,14px);font-weight:850;line-height:1.3;white-space:nowrap;box-sizing:border-box;transition:transform .18s ease,background-color .18s ease,box-shadow .18s ease}
+.mars-linked-button:hover{background:var(--mlb-hover);color:var(--mlb-text)!important;transform:translateY(-1px);box-shadow:0 8px 22px rgba(15,23,42,.1)}
+.elementor-widget-mars_linked_buttons .mars-linked-button.is-individual{background-color:var(--mlb-item-bg)!important;color:var(--mlb-item-text)!important}
+.elementor-widget-mars_linked_buttons .mars-linked-button.is-individual:hover,.elementor-widget-mars_linked_buttons .mars-linked-button.is-individual:focus{background-color:var(--mlb-item-hover)!important;color:var(--mlb-item-text)!important}
+@media(max-width:520px){.mars-linked-button{min-width:0;max-width:100%}}

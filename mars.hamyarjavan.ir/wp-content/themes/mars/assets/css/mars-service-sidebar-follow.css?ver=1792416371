@@ -1,0 +1,20 @@
+/* Mars — verified account + sticky service rail refinements. */
+
+/* Once the JS follower is active, use a bounded transform rather than relying
+   on browser sticky behavior that can be defeated by Elementor/Woo ancestors. */
+@media (min-width:769px){
+  body.mars-service-product-page.mars-sticky-follow .mars-service-order-layout{
+    position:relative!important;
+    overflow:visible!important;
+    align-items:start!important;
+  }
+  body.mars-service-product-page.mars-sticky-follow .mars-service-order-layout>.mars-service-left-column{
+    position:relative!important;
+    top:auto!important;
+    bottom:auto!important;
+    transform:translate3d(0,var(--mars-service-follow-y,0px),0)!important;
+    transition:none!important;
+    will-change:transform;
+    align-self:start!important;
+  }
+}

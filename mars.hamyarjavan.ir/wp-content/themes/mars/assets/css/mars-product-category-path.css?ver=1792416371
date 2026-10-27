@@ -1,0 +1,19 @@
+/* Mars — clickable product category path. */
+body.mars-service-product-page .mars-product-category-path__link{
+  display:inline-flex!important;
+  align-items:center!important;
+  color:inherit!important;
+  text-decoration:none!important;
+  transition:color .18s ease,opacity .18s ease!important;
+}
+body.mars-service-product-page .mars-product-category-path__link:hover,
+body.mars-service-product-page .mars-product-category-path__link:focus-visible{
+  color:var(--mars-primary,var(--mars-accent,#2563eb))!important;
+  opacity:1!important;
+  text-decoration:none!important;
+}
+body.mars-service-product-page .mars-product-category-path__link:focus-visible{
+  outline:2px solid currentColor!important;
+  outline-offset:3px!important;
+  border-radius:4px!important;
+}

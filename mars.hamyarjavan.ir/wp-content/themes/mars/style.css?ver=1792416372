@@ -1,0 +1,19 @@
+/*
+Theme Name: قالب دیجیتال مریخ
+Theme URI: https://www.rtl-theme.com/mars-wordpress-theme/
+Author: فاطمه باقری
+Author URI: https://www.rtl-theme.com/mars-wordpress-theme/
+Description: قالب فارسی و راست‌چین فروش فایل، اکانت و محصولات دیجیتال بر پایه ووکامرس، المنتور و Tailwind CSS. نسخه پیشنهادی PHP: 8.2.
+Version: 1.2.0
+Requires at least: 6.5
+Tested up to: 7.1
+Requires PHP: 7.4
+Recommended PHP: 8.2+
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: mars
+Domain Path: /languages
+Tags: e-commerce, rtl-language-support, custom-logo, custom-menu, featured-images, threaded-comments, translation-ready
+*/
+
+/* Main compiled styles live in assets/css/app.css. */

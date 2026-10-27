@@ -1,0 +1,176 @@
+.elementor-widget-mars_image_text_section .elementor-widget-container { overflow: visible; }
+
+.mars-image-text-section {
+  --mars-its-bg: #ffffff;
+  --mars-its-image-bg: #18e1b5;
+  --mars-its-pattern: rgba(255,255,255,.55);
+  --mars-its-title: #3f444e;
+  --mars-its-accent: #18e1b5;
+  --mars-its-text: #374151;
+  --mars-its-primary-bg: #18e1b5;
+  --mars-its-primary-text: #063d32;
+  --mars-its-secondary-bg: #3f444e;
+  --mars-its-secondary-text: #ffffff;
+  --mars-its-image-width: 42%;
+  --mars-its-radius: 38px;
+  display: grid;
+  grid-template-columns: minmax(260px, var(--mars-its-image-width)) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(28px, 5vw, 78px);
+  padding: clamp(28px, 4vw, 58px);
+  background: var(--mars-its-bg);
+  direction: ltr;
+}
+
+.mars-image-text-section__media {
+  position: relative;
+  min-height: 360px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: visible;
+}
+
+.mars-image-text-section__shape {
+  position: absolute;
+  inset: 16% 10% 3% 12%;
+  border-radius: var(--mars-its-radius);
+  background:
+    radial-gradient(circle, var(--mars-its-pattern) 0 6px, transparent 7px) 24px 24px / 46px 46px,
+    var(--mars-its-image-bg);
+  z-index: 0;
+}
+
+.mars-image-text-section__image {
+  position: relative;
+  z-index: 1;
+  display: block;
+  max-width: 112%;
+  width: auto;
+  max-height: 440px;
+  object-fit: contain;
+  filter: drop-shadow(0 22px 24px rgba(15,23,42,.15));
+}
+
+.mars-image-text-section__content {
+  direction: rtl;
+  text-align: right;
+  display: grid;
+  gap: 20px;
+  justify-items: start;
+}
+
+.mars-image-text-section__title {
+  margin: 0;
+  color: var(--mars-its-title);
+  font-size: clamp(28px, 3.1vw, 52px);
+  line-height: 1.45;
+  font-weight: 900;
+}
+
+.mars-image-text-section__title span { color: var(--mars-its-accent); }
+
+.mars-image-text-section__text {
+  color: var(--mars-its-text);
+  font-size: clamp(15px, 1.35vw, 20px);
+  line-height: 2;
+  max-width: 720px;
+}
+
+.mars-image-text-section__text p { margin: 0; }
+
+.mars-image-text-section__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.mars-image-text-section__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 150px;
+  min-height: 54px;
+  padding: 0 28px;
+  border-radius: 10px;
+  text-decoration: none !important;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.mars-image-text-section__button--primary {
+  background: var(--mars-its-primary-bg);
+  color: var(--mars-its-primary-text);
+}
+
+.mars-image-text-section__button--secondary {
+  background: var(--mars-its-secondary-bg);
+  color: var(--mars-its-secondary-text);
+}
+
+html.dark .mars-image-text-section,
+html[data-theme="dark"] .mars-image-text-section,
+body.dark .mars-image-text-section,
+body[data-theme="dark"] .mars-image-text-section {
+  --mars-its-bg: #111827;
+  --mars-its-image-bg: #143747;
+  --mars-its-pattern: rgba(255,255,255,.16);
+  --mars-its-title: #f8fafc;
+  --mars-its-accent: #38bdf8;
+  --mars-its-text: #cbd5e1;
+  --mars-its-secondary-bg: #334155;
+}
+
+@media (max-width: 920px) {
+  .mars-image-text-section {
+    grid-template-columns: 1fr;
+    gap: 26px;
+    direction: rtl;
+  }
+  .mars-image-text-section__media {
+    min-height: 300px;
+    order: 1;
+  }
+  .mars-image-text-section__content {
+    order: 2;
+    text-align: center;
+    justify-items: center;
+  }
+  .mars-image-text-section__actions { justify-content: center; }
+}
+
+@media (max-width: 560px) {
+  .mars-image-text-section { padding: 24px 16px; }
+  .mars-image-text-section__media { min-height: 250px; }
+  .mars-image-text-section__shape { inset: 18% 8% 4%; }
+  .mars-image-text-section__image { max-height: 300px; }
+  .mars-image-text-section__button { min-height: 48px; min-width: 132px; padding-inline: 20px; font-size: 14px; }
+}
+
+
+.mars-image-text-section--no-image-bg .mars-image-text-section__shape {
+  display: none;
+}
+.mars-image-text-section--no-image-shadow .mars-image-text-section__image {
+  filter: none;
+}
+
+
+/* Mars — explicit image background/shadow opt-outs */
+.mars-image-text-section--no-image-bg .mars-image-text-section__media,
+.mars-image-text-section--no-image-bg .mars-image-text-section__image {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.mars-image-text-section--no-image-bg .mars-image-text-section__shape { display: none !important; }
+.mars-image-text-section--no-image-shadow .mars-image-text-section__image {
+  filter: none !important;
+  box-shadow: none !important;
+}
+
+/* Mars — switch image/text sides from Elementor. */
+@media (min-width: 921px) {
+  .mars-image-text-section--media-right .mars-image-text-section__media { order: 2; }
+  .mars-image-text-section--media-right .mars-image-text-section__content { order: 1; }
+}

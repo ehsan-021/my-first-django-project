@@ -1,0 +1,80 @@
+(function () {
+  'use strict';
+
+  function init(root) {
+    if (!root || root.dataset.marsVideoIntroductionReady === '1') return;
+
+    var video = root.querySelector('.mars-video-introduction__video');
+    var play = root.querySelector('.mars-video-introduction__play');
+
+    if (!video) return;
+
+    root.dataset.marsVideoIntroductionReady = '1';
+
+    function startPlayback() {
+      root.classList.add('is-playing');
+      video.setAttribute('controls', 'controls');
+
+      var promise = video.play();
+      if (promise && typeof promise.catch === 'function') {
+        promise.catch(function () {
+          root.classList.remove('is-playing');
+          video.removeAttribute('controls');
+        });
+      }
+    }
+
+    if (play) {
+      play.addEventListener('click', function (event) {
+        event.preventDefault();
+        startPlayback();
+      });
+    }
+
+    video.addEventListener('play', function () {
+      root.classList.add('is-playing');
+      video.setAttribute('controls', 'controls');
+    });
+
+    video.addEventListener('ended', function () {
+      root.classList.remove('is-playing');
+      video.removeAttribute('controls');
+      try {
+        video.currentTime = 0;
+      } catch (error) {}
+    });
+  }
+
+  function boot(scope) {
+    var base = scope && scope.querySelectorAll ? scope : document;
+
+    if (base.matches && base.matches('[data-mars-video-introduction]')) {
+      init(base);
+    }
+
+    base.querySelectorAll('[data-mars-video-introduction]').forEach(init);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () {
+      boot(document);
+    }, { once: true });
+  } else {
+    boot(document);
+  }
+
+  document.addEventListener('mars:content-updated', function (event) {
+    boot(event.detail && event.detail.scope ? event.detail.scope : document);
+  });
+
+  window.addEventListener('elementor/frontend/init', function () {
+    if (!window.elementorFrontend || !window.elementorFrontend.hooks) return;
+
+    window.elementorFrontend.hooks.addAction(
+      'frontend/element_ready/mars_video_introduction.default',
+      function ($scope) {
+        boot($scope[0] || document);
+      }
+    );
+  });
+})();

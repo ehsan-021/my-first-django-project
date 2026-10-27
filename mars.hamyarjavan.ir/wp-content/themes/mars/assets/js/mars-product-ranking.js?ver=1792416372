@@ -1,0 +1,175 @@
+(function () {
+  'use strict';
+
+  function init(root) {
+    if (!root || root.dataset.marsRankingReady === '1') return;
+    var viewport = root.querySelector('.mars-product-ranking__viewport');
+    var groups = Array.prototype.slice.call(root.querySelectorAll('.mars-product-ranking__group'));
+    var dots = Array.prototype.slice.call(root.querySelectorAll('.mars-product-ranking__dots span'));
+    if (!viewport || groups.length < 2) return;
+
+    root.dataset.marsRankingReady = '1';
+    var index = 0;
+    var timer = 0;
+    var visible = true;
+    var pointerDown = false;
+    var pointerId = null;
+    var startX = 0;
+    var dragged = false;
+    var autoplay = root.dataset.autoplay === '1';
+    var delay = Math.max(1500, parseInt(root.dataset.delay || '4500', 10));
+
+    function mobileMode() {
+      return window.matchMedia('(max-width: 767px)').matches;
+    }
+
+    function updateDots(nextIndex) {
+      dots.forEach(function (dot, dotIndex) {
+        dot.classList.toggle('is-active', dotIndex === nextIndex);
+      });
+    }
+
+    function nearestIndex() {
+      var edge = viewport.getBoundingClientRect().right;
+      var best = 0;
+      var distance = Infinity;
+      groups.forEach(function (group, groupIndex) {
+        var next = Math.abs(group.getBoundingClientRect().right - edge);
+        if (next < distance) {
+          best = groupIndex;
+          distance = next;
+        }
+      });
+      return best;
+    }
+
+    function goTo(nextIndex, smooth) {
+      if (!mobileMode()) return;
+      if (nextIndex >= groups.length) nextIndex = 0;
+      if (nextIndex < 0) nextIndex = groups.length - 1;
+      index = nextIndex;
+      updateDots(index);
+      var viewportRect = viewport.getBoundingClientRect();
+      var groupRect = groups[index].getBoundingClientRect();
+      var delta = groupRect.right - viewportRect.right;
+      if (Math.abs(delta) < 1) return;
+      var target = viewport.scrollLeft + delta;
+      if (smooth === false) viewport.scrollLeft = target;
+      else viewport.scrollTo({ left: target, top: 0, behavior: 'smooth' });
+    }
+
+    function stop() {
+      if (timer) window.clearTimeout(timer);
+      timer = 0;
+    }
+
+    function schedule() {
+      stop();
+      if (!autoplay || !mobileMode() || !visible || document.hidden || pointerDown) return;
+      timer = window.setTimeout(function () {
+        goTo(index + 1, true);
+        schedule();
+      }, delay);
+    }
+
+    viewport.addEventListener('scroll', function () {
+      if (!mobileMode()) return;
+      window.clearTimeout(viewport._marsRankingScrollTimer);
+      viewport._marsRankingScrollTimer = window.setTimeout(function () {
+        index = nearestIndex();
+        updateDots(index);
+      }, 90);
+    }, { passive: true });
+
+    viewport.addEventListener('pointerdown', function (event) {
+      if (!mobileMode() || event.pointerType === 'touch') return;
+      if (event.button !== undefined && event.button !== 0) return;
+      pointerDown = true;
+      pointerId = event.pointerId;
+      startX = event.clientX;
+      dragged = false;
+      stop();
+      try { viewport.setPointerCapture(pointerId); } catch (error) {}
+    });
+
+    viewport.addEventListener('pointermove', function (event) {
+      if (!pointerDown || event.pointerId !== pointerId) return;
+      if (Math.abs(event.clientX - startX) > 6) dragged = true;
+    });
+
+    function finish(event) {
+      if (!pointerDown || event.pointerId !== pointerId) return;
+      var delta = event.clientX - startX;
+      pointerDown = false;
+      try { viewport.releasePointerCapture(pointerId); } catch (error) {}
+      pointerId = null;
+      if (Math.abs(delta) > 34) goTo(index + (delta < 0 ? 1 : -1), true);
+      else goTo(nearestIndex(), true);
+      schedule();
+    }
+
+    viewport.addEventListener('pointerup', finish);
+    viewport.addEventListener('pointercancel', finish);
+    viewport.addEventListener('touchstart', stop, { passive: true });
+    viewport.addEventListener('touchend', function () {
+      window.setTimeout(function () {
+        if (!mobileMode()) return;
+        index = nearestIndex();
+        updateDots(index);
+        schedule();
+      }, 100);
+    }, { passive: true });
+    viewport.addEventListener('dragstart', function (event) { event.preventDefault(); });
+    viewport.addEventListener('click', function (event) {
+      if (!dragged) return;
+      event.preventDefault();
+      event.stopPropagation();
+      dragged = false;
+    }, true);
+
+    document.addEventListener('visibilitychange', schedule);
+    window.addEventListener('resize', function () {
+      if (mobileMode()) goTo(index, false);
+      else {
+        viewport.scrollLeft = 0;
+        index = 0;
+        updateDots(0);
+      }
+      schedule();
+    }, { passive: true });
+
+    if ('IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.target !== root) return;
+          visible = entry.isIntersecting && entry.intersectionRatio > 0.08;
+          schedule();
+        });
+      }, { threshold: [0, 0.08] });
+      observer.observe(root);
+    }
+
+    updateDots(0);
+    schedule();
+  }
+
+  function boot(scope) {
+    var base = scope && scope.querySelectorAll ? scope : document;
+    if (base.matches && base.matches('[data-mars-product-ranking]')) init(base);
+    base.querySelectorAll('[data-mars-product-ranking]').forEach(init);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { boot(document); }, { once: true });
+  else boot(document);
+
+  document.addEventListener('mars:content-updated', function (event) {
+    boot(event.detail && event.detail.scope ? event.detail.scope : document);
+  });
+
+  window.addEventListener('elementor/frontend/init', function () {
+    if (!window.elementorFrontend || !window.elementorFrontend.hooks) return;
+    window.elementorFrontend.hooks.addAction('frontend/element_ready/mars_product_ranking.default', function ($scope) {
+      boot($scope[0] || document);
+    });
+  });
+})();

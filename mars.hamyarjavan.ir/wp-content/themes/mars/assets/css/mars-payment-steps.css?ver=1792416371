@@ -1,0 +1,38 @@
+.elementor-widget-mars_payment_steps .elementor-widget-container{overflow:visible}
+.mars-payment-steps{--mps-text:#4d598b;--mps-muted:#56618f;--mps-badge-bg:#edf2ff;--mps-circle-bg:#f0f1ee;--mps-final-bg:#4d598b;--mps-final-icon:#fff;--mps-line:#dce1ec;width:100%;box-sizing:border-box;padding:20px 0 72px;color:var(--mps-text);font-family:inherit}
+.mars-payment-steps *{box-sizing:border-box}
+.mars-payment-steps__header{text-align:center;display:flex;flex-direction:column;align-items:center}
+.mars-payment-steps__badge{display:inline-flex;align-items:center;justify-content:center;min-width:168px;min-height:57px;padding:10px 24px;border-radius:13px;background:var(--mps-badge-bg);color:var(--mps-text);font-size:18px;line-height:1;font-weight:850}
+.mars-payment-steps__title{max-width:850px;margin:30px auto 0;color:var(--mps-text);font-size:clamp(28px,2.15vw,38px);line-height:1.65;font-weight:950;letter-spacing:-.3px}
+.mars-payment-steps__steps{position:relative;display:grid;grid-template-columns:repeat(var(--mps-count),minmax(0,1fr));direction:rtl;align-items:start;width:100%;margin-top:112px}
+.mars-payment-steps__track{position:absolute;z-index:0;top:47px;right:calc(50% / var(--mps-count));left:calc(50% / var(--mps-count));height:1px;border-top:1px dashed var(--mps-line)}
+.mars-payment-steps__track i{position:absolute;top:-7px;right:calc((100% / (var(--mps-count) - 1)) * var(--mps-arrow-index));width:14px;height:14px;border-left:2px solid var(--mps-line);border-bottom:2px solid var(--mps-line);transform:translateX(50%) rotate(45deg);background:transparent}
+.mars-payment-steps__step{position:relative;z-index:1;min-width:0;text-align:center;display:flex;flex-direction:column;align-items:center;padding-inline:20px}
+.mars-payment-steps__circle{width:96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--mps-circle-bg);color:var(--mps-text);font-size:38px;font-weight:950;line-height:1}
+.mars-payment-steps__circle svg{width:52px;height:52px;display:block}
+.mars-payment-steps__step.is-final .mars-payment-steps__circle{background:var(--mps-final-bg);color:var(--mps-final-icon)}
+.mars-payment-steps__copy{margin-top:44px;max-width:340px}
+.mars-payment-steps__copy h3{margin:0;color:var(--mps-text);font-size:clamp(22px,1.55vw,29px);line-height:1.55;font-weight:950}
+.mars-payment-steps__copy p{margin:20px 0 0;color:var(--mps-muted);font-size:clamp(16px,1.22vw,22px);line-height:1.75;font-weight:500}
+html[data-theme="dark"] .mars-payment-steps,body[data-theme="dark"] .mars-payment-steps,html.dark .mars-payment-steps,body.dark .mars-payment-steps{--mps-text:#f1f5f9;--mps-muted:#b7c1d7;--mps-badge-bg:#1d2a43;--mps-circle-bg:#202a39;--mps-final-bg:#18e1b5;--mps-final-icon:#07382f;--mps-line:#39465c}
+@media(max-width:767px){
+ .mars-payment-steps{padding:15px 14px 26px}
+ .mars-payment-steps__badge{min-width:143px;min-height:47px;border-radius:11px;padding:9px 18px;font-size:15px}
+ .mars-payment-steps__title{max-width:450px;margin-top:27px;font-size:22px;line-height:1.65;padding-inline:6px}
+ .mars-payment-steps__steps{display:flex;flex-direction:column;gap:18px;margin-top:30px;direction:rtl}
+ .mars-payment-steps__track{display:none}
+ .mars-payment-steps__step{width:100%;display:grid;grid-template-columns:var(--mps-control-circle-size,66px) minmax(0,1fr);gap:14px;align-items:center;text-align:right;padding:0;direction:rtl}
+ .mars-payment-steps__circle{width:66px;height:66px;font-size:30px;grid-column:1;grid-row:1;align-self:center}
+ .mars-payment-steps__circle svg{width:39px;height:39px}
+ .mars-payment-steps__copy{grid-column:2;grid-row:1;margin:0;max-width:none;text-align:right;align-self:center}
+ .mars-payment-steps__copy h3{font-size:20px;line-height:1.45}
+ .mars-payment-steps__copy p{margin-top:5px;font-size:16px;line-height:1.65}
+}
+@media(max-width:420px){
+ .mars-payment-steps{padding-inline:8px}
+ .mars-payment-steps__title{font-size:20px}
+ .mars-payment-steps__step{grid-template-columns:var(--mps-control-circle-size,62px) minmax(0,1fr);gap:10px}
+ .mars-payment-steps__circle{width:62px;height:62px}
+ .mars-payment-steps__copy h3{font-size:18px}
+ .mars-payment-steps__copy p{font-size:14px}
+}

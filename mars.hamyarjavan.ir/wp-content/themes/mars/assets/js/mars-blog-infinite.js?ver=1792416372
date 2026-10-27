@@ -1,0 +1,89 @@
+/** Async append to native post/blog archives; mirrors Mars shop scroll behavior. */
+(function () {
+  'use strict';
+  function start() {
+    var status = document.getElementById('mars-blog-scroll-status');
+    if (!status || !window.fetch || !window.URL) return;
+    var grid = status.previousElementSibling;
+    if (!grid || !grid.classList.contains('mars-latest-articles__grid')) return;
+    var next = Number(status.dataset.nextOffset);
+    var total = Number(status.dataset.total);
+    if (!Number.isFinite(next) || !Number.isFinite(total) || next >= total) return;
+    var loading = status.querySelector('.mars-blog-scroll-loading');
+    var retry = status.querySelector('.mars-blog-scroll-retry');
+    var busy = false, finished = false, scheduled = false, observer = null;
+    var preload = 350;
+    function setBusy(value) {
+      busy = value;
+      if (loading) loading.hidden = !value;
+      status.setAttribute('aria-busy', value ? 'true' : 'false');
+    }
+    function finish() {
+      finished = true;
+      setBusy(false);
+      if (observer) observer.disconnect();
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
+      status.hidden = true;
+    }
+    function check() {
+      if (busy || finished || (retry && !retry.hidden)) return;
+      var rect = status.getBoundingClientRect();
+      var height = window.innerHeight || document.documentElement.clientHeight;
+      if (rect.top <= height + preload && rect.bottom >= -preload) load();
+    }
+    function schedule() {
+      if (scheduled || busy || finished || (retry && !retry.hidden)) return;
+      scheduled = true;
+      window.requestAnimationFrame(function () { scheduled = false; check(); });
+    }
+    function load() {
+      if (busy || finished || next >= total) return;
+      if (retry) retry.hidden = true;
+      setBusy(true);
+      var url = new URL(window.location.href);
+      url.searchParams.set('mars_blog_batch', '1');
+      url.searchParams.set('mars_blog_offset', String(next));
+      fetch(url.toString(), {
+        method: 'GET', credentials: 'same-origin', cache: 'no-store',
+        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+      }).then(function (response) {
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        return response.json();
+      }).then(function (result) {
+        if (!result || !result.success || !result.data) throw new Error('پاسخ نامعتبر');
+        var data = result.data;
+        var offset = Number(data.nextOffset);
+        if (!Number.isFinite(offset) || offset <= next || typeof data.html !== 'string') throw new Error('محتوای نامعتبر');
+        var template = document.createElement('template');
+        template.innerHTML = data.html.trim();
+        var cards = Array.prototype.slice.call(template.content.querySelectorAll('article.mars-article-card'));
+        if (!cards.length && data.hasMore) throw new Error('نتیجه خالی');
+        var fragment = document.createDocumentFragment();
+        cards.forEach(function (card) { fragment.appendChild(card); });
+        grid.appendChild(fragment);
+        next = offset;
+        total = Number(data.total) || total;
+        document.dispatchEvent(new CustomEvent('mars:blog-posts-loaded', { detail: { cards: cards, grid: grid } }));
+        if (!data.hasMore || next >= total) finish();
+        else { setBusy(false); schedule(); }
+      }).catch(function () {
+        setBusy(false);
+        if (retry) retry.hidden = false;
+      });
+    }
+    if (retry) retry.addEventListener('click', load);
+    document.body.classList.add('mars-blog-scroll-ready');
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule, { passive: true });
+    if ('IntersectionObserver' in window) {
+      observer = new IntersectionObserver(function (entries) {
+        if (entries.some(function (entry) { return entry.isIntersecting; })) schedule();
+      }, { rootMargin: preload + 'px 0px', threshold: 0 });
+      observer.observe(status);
+    }
+    schedule();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
+})();

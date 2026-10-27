@@ -1,0 +1,43 @@
+(function(){
+  'use strict';
+  var bar=document.querySelector('[data-mars-header-announcement]');
+  if(!bar)return;
+
+  var key=bar.getAttribute('data-announcement-key')||'';
+  var storageKey='mars_header_announcement_'+key;
+  var dismissDuration=12*60*60*1000;
+  var restoreTimer=0;
+
+  function restoreAfter(delay){
+    if(restoreTimer)window.clearTimeout(restoreTimer);
+    restoreTimer=window.setTimeout(function(){
+      bar.classList.remove('is-dismissed');
+      try{if(key)window.localStorage.removeItem(storageKey);}catch(e){}
+    },Math.max(0,delay));
+  }
+
+  try{
+    if(key){
+      var stored=window.localStorage.getItem(storageKey);
+      if(stored){
+        var dismissedAt=parseInt(stored,10);
+        var elapsed=Date.now()-dismissedAt;
+        if(Number.isFinite(dismissedAt)&&dismissedAt>0&&elapsed>=0&&elapsed<dismissDuration){
+          bar.classList.add('is-dismissed');
+          restoreAfter(dismissDuration-elapsed);
+        }else{
+          // Remove expired timestamps and the legacy permanent "dismissed" value.
+          window.localStorage.removeItem(storageKey);
+        }
+      }
+    }
+  }catch(e){}
+
+  var close=bar.querySelector('[data-mars-announcement-close]');
+  if(!close)return;
+  close.addEventListener('click',function(){
+    bar.classList.add('is-dismissed');
+    try{if(key)window.localStorage.setItem(storageKey,String(Date.now()));}catch(e){}
+    restoreAfter(dismissDuration);
+  });
+})();

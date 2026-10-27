@@ -1,0 +1,127 @@
+(function () {
+  'use strict';
+
+  var selector = '.mars-promo-hero';
+  var pending = 0;
+  var delayed = 0;
+
+  function unlockAncestors(hero) {
+    var host = hero.closest('.elementor-widget-mars_promo_hero_tickers');
+    var node = host;
+
+    while (node && node !== document.body) {
+      if (
+        node.matches &&
+        node.matches('.elementor-widget-mars_promo_hero_tickers, .elementor-widget-container, .e-con, .elementor-section, .elementor-container, .elementor-column, .elementor-column-wrap, .elementor-widget-wrap')
+      ) {
+        node.style.setProperty('overflow', 'visible', 'important');
+        node.style.setProperty('overflow-x', 'visible', 'important');
+      }
+      node = node.parentElement;
+    }
+  }
+
+  function bindHoverPause(hero) {
+    if (!hero || hero.dataset.marsPauseBound === '1') {
+      return;
+    }
+    var host = hero.closest('.mars-promo-pause-hover-yes');
+    if (!host) {
+      return;
+    }
+    hero.dataset.marsPauseBound = '1';
+    var tracks = hero.querySelectorAll('.mars-promo-hero__ticker-track');
+    hero.addEventListener('pointerenter', function () {
+      tracks.forEach(function (track) { track.style.animationPlayState = 'paused'; });
+    });
+    hero.addEventListener('pointerleave', function () {
+      tracks.forEach(function (track) { track.style.animationPlayState = ''; });
+    });
+  }
+
+  function fit(hero) {
+    if (!hero || !document.documentElement) {
+      return;
+    }
+
+    unlockAncestors(hero);
+    bindHoverPause(hero);
+
+    var viewportWidth = document.documentElement.clientWidth || window.innerWidth || 0;
+    if (!viewportWidth) {
+      return;
+    }
+
+    // CSS already places the widget full-bleed before JavaScript runs.
+    // JavaScript only applies a small correction for uncommon, non-centered Elementor parents.
+    hero.style.setProperty('--mph-viewport-correction', '0px');
+
+    var rect = hero.getBoundingClientRect();
+    var correction = -rect.left;
+
+    if (Math.abs(correction) > 0.5) {
+      hero.style.setProperty('--mph-viewport-correction', correction + 'px');
+
+      var corrected = hero.getBoundingClientRect();
+      if (Math.abs(corrected.left) > 0.5) {
+        correction -= corrected.left;
+        hero.style.setProperty('--mph-viewport-correction', correction + 'px');
+      }
+    }
+  }
+
+  function fitAll(scope) {
+    var root = scope && scope.querySelectorAll ? scope : document;
+    var heroes = root.matches && root.matches(selector) ? [root] : root.querySelectorAll(selector);
+
+    Array.prototype.forEach.call(heroes, fit);
+  }
+
+  function queueFit() {
+    if (pending) {
+      window.cancelAnimationFrame(pending);
+    }
+
+    pending = window.requestAnimationFrame(function () {
+      pending = 0;
+      fitAll(document);
+    });
+
+    if (delayed) {
+      window.clearTimeout(delayed);
+    }
+
+    delayed = window.setTimeout(function () {
+      delayed = 0;
+      fitAll(document);
+    }, 180);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', queueFit, { once: true });
+  } else {
+    queueFit();
+  }
+
+  window.addEventListener('load', queueFit, { once: true });
+  window.addEventListener('resize', queueFit, { passive: true });
+  window.addEventListener('orientationchange', queueFit, { passive: true });
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(queueFit).catch(function () {});
+  }
+
+  if (window.jQuery) {
+    window.jQuery(window).on('elementor/frontend/init', function () {
+      if (window.elementorFrontend && window.elementorFrontend.hooks) {
+        window.elementorFrontend.hooks.addAction(
+          'frontend/element_ready/mars_promo_hero_tickers.default',
+          function ($scope) {
+            fitAll($scope && $scope[0] ? $scope[0] : document);
+            window.setTimeout(queueFit, 60);
+          }
+        );
+      }
+    });
+  }
+})();

@@ -1,0 +1,650 @@
+(function(){
+  'use strict';
+
+  function q(sel, root){ return (root || document).querySelector(sel); }
+  function qa(sel, root){ return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+
+  function parseIds(value){
+    return String(value || '').split(',').map(function(v){ return parseInt(v,10) || 0; }).filter(Boolean);
+  }
+
+  function num(value){
+    var n = parseFloat(value);
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  function faDigits(value){
+    try { return new Intl.NumberFormat('fa-IR',{maximumFractionDigits:0}).format(value); }
+    catch(e){ return Math.round(value).toLocaleString(); }
+  }
+
+  function money(value, symbol){
+    return faDigits(Math.max(0, value)) + (symbol ? ' ' + symbol : '');
+  }
+  function esc(value){return String(value||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c];});}
+  function moneyMarkup(value,symbol){return '<span class="mars-checkout-money"><span class="mars-checkout-money__unit">'+esc(symbol||'')+'</span><bdi class="mars-checkout-money__number" dir="ltr">'+esc(faDigits(Math.max(0,value)))+'</bdi></span>';}
+
+  function initServiceProduct(){
+    qa('form.cart').forEach(function(form){
+    if (form.dataset.marsServiceProductReady === '1') return;
+    form.dataset.marsServiceProductReady = '1';
+    form.setAttribute('enctype','multipart/form-data');
+    // Inline purchases can show a different product alongside other archived forms.
+    // Scope the controls to the selected product, not the first product in the DOM.
+    var productRoot = form.closest('[data-mars-inline-product-view]') || form.closest('.product') || document;
+    var orderCard = q('[data-mars-service-order-card]',productRoot);
+    var proxy = q('[data-mars-service-submit]',productRoot);
+    var terms = q('[data-mars-service-terms]',productRoot);
+    var actual = q('.single_add_to_cart_button', form);
+    var variationInput = q('input.variation_id', form);
+    var accountToggle = q('[data-mars-account-toggle]', form);
+    var subtotalEl = q('[data-mars-subtotal]',productRoot);
+    var feeEl = q('[data-mars-fee]',productRoot);
+    var taxEl = q('[data-mars-tax]',productRoot);
+    var discountEl = q('[data-mars-discount]',productRoot);
+    var totalEl = q('[data-mars-service-price]',productRoot);
+    var productAvailable = !proxy || proxy.getAttribute('data-product-available') !== '0';
+    var variationAvailable = true;
+    var defaultProxyLabel = proxy ? (proxy.getAttribute('data-default-label') || proxy.textContent || 'ثبت سفارش') : '';
+    var outProxyLabel = proxy ? (proxy.getAttribute('data-out-label') || 'موجود نیست :(') : 'موجود نیست :(';
+
+    var feePercent = orderCard ? num(orderCard.getAttribute('data-fee-percent')) : 0;
+    var manualDiscount = 0;
+    var basePrice = orderCard ? num(orderCard.getAttribute('data-base-price')) : 0;
+    var baseRegular = orderCard ? num(orderCard.getAttribute('data-base-regular')) : basePrice;
+    var baseTaxNetFactor = orderCard ? num(orderCard.getAttribute('data-tax-net-factor') || 1) : 1;
+    var baseTaxGrossFactor = orderCard ? num(orderCard.getAttribute('data-tax-gross-factor') || 1) : 1;
+    var currentBasePrice = basePrice;
+    var currentBaseRegular = baseRegular;
+    var currentTaxNetFactor = baseTaxNetFactor || 1;
+    var currentTaxGrossFactor = baseTaxGrossFactor || 1;
+    var symbol = orderCard ? (orderCard.getAttribute('data-currency-symbol') || '') : '';
+
+    function currentVariation(){ return variationInput ? (parseInt(variationInput.value,10) || 0) : 0; }
+
+    function applyFields(variationId){
+      qa('[data-mars-field]', form).forEach(function(row){
+        var ids = parseIds(row.getAttribute('data-variations'));
+        var variationActive = ids.length === 0 || (variationId > 0 && ids.indexOf(variationId) !== -1);
+        var accountActive = !row.hasAttribute('data-mars-account-detail') || !accountToggle || accountToggle.checked;
+        var active = variationActive && accountActive;
+        row.hidden = !active;
+        qa('input,textarea,select', row).forEach(function(input){
+          input.disabled = !active;
+          if (active && row.getAttribute('data-required') === '1' && input.type !== 'hidden') input.setAttribute('required','required');
+          else input.removeAttribute('required');
+        });
+      });
+    }
+
+    function dynamicFieldTotal(){
+      var total = qa('[data-mars-foreign-amount]', form).reduce(function(sum, wrap){
+        if (wrap.closest('[data-mars-field]') && wrap.closest('[data-mars-field]').hidden) return sum;
+        var input=q('input[type=number]',wrap), amount=input?Math.max(0,num(input.value)):0, rate=Math.max(0,num(wrap.getAttribute('data-rate')));
+        var toman=amount*rate;
+        var converted=q('[data-mars-converted-amount]',wrap);
+        if(converted) converted.textContent=rate>0?money(toman,'تومان'):'نرخ تبدیل تنظیم نشده';
+        return sum + (wrap.getAttribute('data-affects-price')==='1'?toman:0);
+      },0);
+      qa('[data-mars-urgent-order]', form).forEach(function(wrap){
+        if (wrap.closest('[data-mars-field]') && wrap.closest('[data-mars-field]').hidden) return;
+        var input=q('input[type=checkbox]',wrap);
+        if(input && input.checked) total += Math.max(0,num(wrap.getAttribute('data-fee')));
+      });
+      return total;
+    }
+
+    function updateSummary(price, regular){
+      currentBasePrice = Math.max(0, num(price));
+      currentBaseRegular = Math.max(currentBasePrice, num(regular || price));
+      var dynamic = dynamicFieldTotal();
+      var payableBaseRaw = currentBasePrice + dynamic;
+      var displayRegularRaw = currentBaseRegular + dynamic;
+      var feeRaw = payableBaseRaw * (feePercent / 100);
+      var taxableRaw = payableBaseRaw + feeRaw;
+      var payableBase = payableBaseRaw * currentTaxNetFactor;
+      var displayRegular = displayRegularRaw * currentTaxNetFactor;
+      var fee = feeRaw * currentTaxNetFactor;
+      var saleDiscount = Math.max(0, (currentBaseRegular - currentBasePrice) * currentTaxNetFactor);
+      var tax = Math.max(0, (taxableRaw * currentTaxGrossFactor) - (taxableRaw * currentTaxNetFactor));
+      var discount = saleDiscount + manualDiscount;
+      var total = Math.max(0, (taxableRaw * currentTaxGrossFactor) - manualDiscount);
+      if (subtotalEl) subtotalEl.innerHTML = moneyMarkup(displayRegular, symbol);
+      if (feeEl) feeEl.innerHTML = moneyMarkup(fee, symbol);
+      if (taxEl) taxEl.innerHTML = moneyMarkup(tax, symbol);
+      if (discountEl) discountEl.innerHTML = moneyMarkup(discount, symbol);
+      if (totalEl) totalEl.innerHTML = moneyMarkup(total, symbol);
+      if (orderCard) orderCard.setAttribute('data-current-total', String(total));
+      try { document.dispatchEvent(new CustomEvent('mars:service-total-change',{detail:{total:total,base:currentBasePrice,dynamic:dynamic,fee:fee}})); } catch(e) {}
+    }
+
+    function requiredFieldsOk(){
+      var rows = qa('[data-mars-field]', form);
+      for (var i=0;i<rows.length;i++) {
+        var row = rows[i];
+        if (row.hidden || row.getAttribute('data-required') !== '1') continue;
+        var input = q('input:not([type=hidden]),textarea,select', row);
+        if (!input || input.disabled) continue;
+        if (input.type === 'file') {
+          if (!input.files || !input.files.length) return false;
+        } else if (input.type === 'checkbox' || input.type === 'radio') {
+          if (!input.checked) return false;
+        } else {
+          if (!String(input.value || '').trim()) return false;
+          if (typeof input.checkValidity === 'function' && !input.checkValidity()) return false;
+        }
+      }
+      return true;
+    }
+
+    function syncProxy(){
+      if (!proxy) return;
+      var actualDisabled = !actual || actual.disabled || actual.classList.contains('disabled') || actual.getAttribute('aria-disabled') === 'true';
+      var termsOk = !terms || terms.checked;
+      var fieldsOk = requiredFieldsOk();
+      var available = productAvailable && variationAvailable;
+      proxy.textContent = available ? defaultProxyLabel : outProxyLabel;
+      proxy.disabled = !available || actualDisabled || !termsOk || !fieldsOk;
+    }
+
+    if (terms) terms.addEventListener('change', syncProxy);
+    if (proxy) proxy.addEventListener('click', function(){
+      syncProxy();
+      if (proxy.disabled) return;
+      var loginUrl = proxy.getAttribute('data-login-url');
+      if (loginUrl) { window.location.href = loginUrl; return; }
+      if (actual) {
+        if (typeof form.requestSubmit === 'function') form.requestSubmit(actual);
+        else form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
+      }
+    });
+
+    qa('.mars-file-input input[type=file]', form).forEach(function(input){
+      input.addEventListener('change', function(){
+        var wrap = input.closest('.mars-file-input');
+        var row = input.closest('[data-mars-field]');
+        var status = row ? q('[data-mars-file-status]', row) : null;
+        var statusText = status ? q('b', status) : null;
+        var file = input.files && input.files[0] ? input.files[0] : null;
+        if (wrap) wrap.classList.toggle('has-file', !!file);
+        if (status) status.classList.toggle('has-file', !!file);
+        if (statusText) statusText.textContent = file ? ('فایل انتخاب شد: ' + file.name) : 'فایلی انتخاب نشده است';
+      });
+    });
+
+    qa('[data-mars-foreign-amount] input[type=number],[data-mars-urgent-order] input[type=checkbox]', form).forEach(function(input){
+      function recalc(){ updateSummary(currentBasePrice,currentBaseRegular); syncProxy(); }
+      input.addEventListener('input',recalc); input.addEventListener('change',recalc);
+    });
+
+    qa('[data-mars-field] input,[data-mars-field] textarea,[data-mars-field] select', form).forEach(function(input){
+      input.addEventListener('input', syncProxy);
+      input.addEventListener('change', syncProxy);
+    });
+
+    if (accountToggle) {
+      accountToggle.addEventListener('change', function(){ applyFields(currentVariation()); syncProxy(); });
+    }
+
+    qa('[data-mars-password-toggle]', form).forEach(function(button){
+      button.addEventListener('click', function(){
+        var wrap = button.closest('.mars-password-field');
+        var input = wrap ? q('input', wrap) : null;
+        if (!input) return;
+        var visible = input.type === 'password';
+        input.type = visible ? 'text' : 'password';
+        button.classList.toggle('is-visible', visible);
+        button.setAttribute('aria-pressed', visible ? 'true' : 'false');
+        button.setAttribute('aria-label', visible ? 'پنهان کردن رمز عبور' : 'نمایش رمز عبور');
+      });
+    });
+
+    applyFields(currentVariation());
+    updateSummary(basePrice, baseRegular);
+    syncProxy();
+
+    if (window.jQuery) {
+      var $form = window.jQuery(form);
+      $form.on('found_variation', function(e, variation){
+        var id = variation && variation.variation_id ? parseInt(variation.variation_id,10) : currentVariation();
+        applyFields(id || 0);
+        if (variation) {
+          variationAvailable = variation.is_in_stock !== false && variation.is_purchasable !== false && variation.variation_is_active !== false;
+          currentTaxNetFactor = num(variation.mars_tax_net_factor || baseTaxNetFactor || 1) || 1;
+          currentTaxGrossFactor = num(variation.mars_tax_gross_factor || baseTaxGrossFactor || 1) || 1;
+          updateSummary(variation.mars_raw_price !== undefined ? variation.mars_raw_price : (variation.display_price || variation.price || basePrice), variation.mars_raw_regular_price !== undefined ? variation.mars_raw_regular_price : (variation.display_regular_price || variation.regular_price || variation.display_price || baseRegular));
+        }
+        window.setTimeout(syncProxy, 0);
+      });
+      $form.on('reset_data hide_variation', function(){
+        variationAvailable = true;
+        currentTaxNetFactor = baseTaxNetFactor || 1;
+        currentTaxGrossFactor = baseTaxGrossFactor || 1;
+        applyFields(0);
+        updateSummary(basePrice, baseRegular);
+        window.setTimeout(syncProxy, 0);
+      });
+      $form.on('woocommerce_variation_has_changed', function(){
+        window.setTimeout(function(){ applyFields(currentVariation()); syncProxy(); }, 20);
+      });
+    }
+
+    if (variationInput && 'MutationObserver' in window) {
+      new MutationObserver(function(){ applyFields(currentVariation()); syncProxy(); }).observe(variationInput,{attributes:true,attributeFilter:['value']});
+      variationInput.addEventListener('change', function(){ applyFields(currentVariation()); syncProxy(); });
+    }
+
+    if (actual && 'MutationObserver' in window) {
+      new MutationObserver(syncProxy).observe(actual,{attributes:true,attributeFilter:['disabled','class','aria-disabled']});
+    }
+    });
+  }
+
+  function initVariationButtons(){
+    var buttonMode=document.body.classList.contains('mars-variation-mode-buttons');
+
+    qa('form.variations_form').forEach(function(form){
+      var selects=qa('table.variations select',form);
+      if(!selects.length)return;
+
+      function syncSelect(select){
+        // WooCommerce marks impossible combinations as disabled. Hide those
+        // values in the native select too, so both display modes behave the
+        // same way and customers never see a combination that cannot exist.
+        Array.prototype.slice.call(select.options).forEach(function(option){
+          if(!option.value)return;
+          var dependencyHidden=option.dataset.marsDependencyHidden==='1';
+          option.hidden=!!option.disabled||dependencyHidden;
+        });
+
+        var wrap=select._marsVariationButtonsWrap;
+        if(!wrap)return;
+        var visibleCount=0;
+        qa('.mars-variation-option',wrap).forEach(function(btn){
+          var option=Array.prototype.slice.call(select.options).find(function(item){return String(item.value)===String(btn.dataset.value);});
+          var unavailable=!option || option.disabled || option.dataset.marsDependencyHidden==='1';
+          var active=!!option && String(select.value)===String(btn.dataset.value);
+          btn.classList.toggle('is-active',active);
+          btn.classList.toggle('is-unavailable',unavailable);
+          btn.disabled=unavailable;
+          btn.hidden=unavailable;
+          btn.setAttribute('aria-hidden',unavailable?'true':'false');
+          if(!unavailable)visibleCount++;
+        });
+        wrap.classList.toggle('is-empty',visibleCount===0);
+      }
+
+      function syncAll(){selects.forEach(syncSelect);}
+
+      selects.forEach(function(select){
+        if(select.dataset.marsVariationAvailabilityReady!=='1'){
+          select.dataset.marsVariationAvailabilityReady='1';
+          select.addEventListener('change',function(){window.setTimeout(syncAll,0);});
+          if('MutationObserver' in window){
+            new MutationObserver(function(){window.setTimeout(syncAll,0);}).observe(select,{childList:true,subtree:true,attributes:true,attributeFilter:['disabled','selected']});
+          }
+        }
+
+        if(!buttonMode){syncSelect(select);return;}
+        if(select.dataset.marsButtonsReady==='1'){
+          syncSelect(select);
+          return;
+        }
+        select.dataset.marsButtonsReady='1';
+        var wrap=document.createElement('div');
+        wrap.className='mars-variation-buttons';
+        wrap.setAttribute('role','group');
+        wrap.setAttribute('aria-label',select.getAttribute('aria-label')||'گزینه‌های محصول');
+        select._marsVariationButtonsWrap=wrap;
+
+        Array.prototype.slice.call(select.options).forEach(function(opt){
+          if(!opt.value)return;
+          var btn=document.createElement('button');
+          btn.type='button';
+          btn.className='mars-variation-option';
+          btn.textContent=opt.textContent;
+          btn.dataset.value=opt.value;
+          btn.addEventListener('click',function(){
+            if(btn.disabled||btn.hidden)return;
+            select.value=btn.dataset.value;
+            if(window.jQuery)window.jQuery(select).trigger('change');
+            else select.dispatchEvent(new Event('change',{bubbles:true}));
+            window.setTimeout(syncAll,0);
+          });
+          wrap.appendChild(btn);
+        });
+        select.insertAdjacentElement('afterend',wrap);
+        syncSelect(select);
+      });
+
+      if(window.jQuery && form.dataset.marsVariationAvailabilityEvents!=='1'){
+        form.dataset.marsVariationAvailabilityEvents='1';
+        var $form=window.jQuery(form);
+        $form.on('woocommerce_update_variation_values.marsButtons woocommerce_variation_has_changed.marsButtons found_variation.marsButtons reset_data.marsButtons hide_variation.marsButtons mars_variation_dependencies_updated.marsButtons',function(){
+          window.setTimeout(syncAll,0);
+        });
+        // Ask WooCommerce to calculate availability once after our button layer is ready.
+        window.setTimeout(function(){try{$form.trigger('check_variations');}catch(e){}window.setTimeout(syncAll,0);},0);
+      }else{
+        window.setTimeout(syncAll,0);
+      }
+    });
+  }
+
+
+  function initMobileProductBar(){
+    qa('[data-mars-mobile-product-bar]').forEach(function(bar){
+    if(bar.dataset.marsMobileBarReady==='1')return;
+    var root=bar.closest('[data-mars-inline-product-view]') || bar.closest('.product') || document;
+    var button=q('[data-mars-mobile-product-action]',bar);
+    var price=q('[data-mars-mobile-product-price]',bar);
+    var form=q('form.cart',root);
+    if(!button||!price||!form) return;
+    bar.dataset.marsMobileBarReady='1';
+    var proxy=q('[data-mars-service-submit]',root);
+    var orderCard=q('[data-mars-service-order-card]',root);
+    var actual=q('.single_add_to_cart_button',form);
+    var variationInput=q('input.variation_id',form);
+    var isVariable=bar.getAttribute('data-variable')==='1';
+    var parentAvailable=bar.getAttribute('data-product-available')==='1';
+    var initialVariationId=variationInput?(parseInt(variationInput.value,10)||0):0;
+    var variationAvailable=!isVariable || initialVariationId>0;
+    var validVariation=!isVariable || initialVariationId>0;
+    var scale=num(bar.getAttribute('data-price-scale')||1) || 1;
+    var decimals=Math.max(0,Math.min(2,parseInt(bar.getAttribute('data-price-decimals')||'0',10)||0));
+    var labels={
+      buy:bar.getAttribute('data-buy-label')||'خرید',
+      options:bar.getAttribute('data-options-label')||'گزینه‌ها',
+      complete:bar.getAttribute('data-complete-label')||'تکمیل سفارش',
+      terms:bar.getAttribute('data-terms-label')||'پذیرش قوانین',
+      out:bar.getAttribute('data-out-label')||'موجود نیست :('
+    };
+
+    function formatPrice(value){
+      value=Math.max(0,num(value))*scale;
+      try{return new Intl.NumberFormat('fa-IR',{minimumFractionDigits:0,maximumFractionDigits:decimals}).format(value);}
+      catch(e){return value.toFixed(decimals).replace(/\.0+$/,'');}
+    }
+    function setPrice(value){ if(value!==undefined&&value!==null&&value!=='') price.textContent=formatPrice(value); }
+    if(orderCard&&orderCard.getAttribute('data-current-total')!=='') setPrice(orderCard.getAttribute('data-current-total'));
+    document.addEventListener('mars:service-total-change',function(e){if(e&&e.detail&&e.detail.total!==undefined)setPrice(e.detail.total);});
+    function allSelected(){
+      if(!isVariable) return true;
+      var selects=qa('table.variations select',form);
+      return selects.length>0 && selects.every(function(select){return !!String(select.value||'').trim();});
+    }
+    function actualReady(){
+      return !!actual && !actual.disabled && !actual.classList.contains('disabled') && actual.getAttribute('aria-disabled')!=='true';
+    }
+    function fieldsReady(){
+      var rows=qa('[data-mars-field]',form);
+      for(var i=0;i<rows.length;i++){
+        var row=rows[i];
+        if(row.hidden||row.getAttribute('data-required')!=='1') continue;
+        var input=q('input:not([type=hidden]),textarea,select',row);
+        if(!input||input.disabled) continue;
+        var bad=input.type==='file'?(!input.files||!input.files.length):((input.type==='checkbox'||input.type==='radio')?!input.checked:!String(input.value||'').trim());
+        if(bad) return false;
+        if(typeof input.checkValidity==='function'&&!input.checkValidity()) return false;
+      }
+      return true;
+    }
+    function termsReady(){
+      var terms=q('[data-mars-service-terms]',form)||q('[data-mars-service-terms]');
+      return !terms||terms.checked;
+    }
+    function proxyReady(){
+      if(proxy) return !proxy.disabled;
+      return actualReady()&&fieldsReady()&&termsReady();
+    }
+    function firstNeedsAttention(){
+      var rows=qa('[data-mars-field]',form);
+      for(var i=0;i<rows.length;i++){
+        var row=rows[i];
+        if(row.hidden||row.getAttribute('data-required')!=='1') continue;
+        var input=q('input:not([type=hidden]),textarea,select',row);
+        if(!input||input.disabled) continue;
+        var bad=input.type==='file'?(!input.files||!input.files.length):((input.type==='checkbox'||input.type==='radio')?!input.checked:!String(input.value||'').trim());
+        if(bad) return row;
+      }
+      var terms=q('[data-mars-service-terms]');
+      if(terms&&!terms.checked) return terms.closest('.mars-service-terms')||terms;
+      return q('.mars-service-form-heading')||form;
+    }
+    function scrollTo(el){
+      if(!el) return;
+      var header=q('.mars-header');
+      var headerH=header?header.getBoundingClientRect().height:0;
+      var top=el.getBoundingClientRect().top+window.scrollY-headerH-18;
+      window.scrollTo({top:Math.max(0,top),behavior:'smooth'});
+    }
+    function scrollToOptions(){
+      var target=q('.mars-variation-buttons',form)||q('table.variations',form)||form;
+      scrollTo(target);
+      var firstEmpty=qa('table.variations select',form).find(function(select){return !select.value;});
+      if(firstEmpty){
+        var wrap=firstEmpty.parentNode?q('.mars-variation-buttons',firstEmpty.parentNode):null;
+        var focus=wrap?q('.mars-variation-option:not(:disabled)',wrap):null;
+        window.setTimeout(function(){if(focus)focus.focus({preventScroll:true});},420);
+      }
+    }
+    function sync(){
+      var completelyOut=!parentAvailable || (isVariable && validVariation && !variationAvailable);
+      if(completelyOut){
+        button.textContent=labels.out;
+        button.disabled=true;
+        button.dataset.state='out';
+        return;
+      }
+      if(isVariable && (!allSelected() || !validVariation)){
+        button.textContent=labels.options;
+        button.disabled=false;
+        button.dataset.state='options';
+        return;
+      }
+      var onlyTermsRemain=fieldsReady() && !termsReady() && actualReady();
+      if(onlyTermsRemain){
+        button.textContent=labels.terms;
+        button.disabled=false;
+        button.dataset.state='terms';
+        return;
+      }
+      if(proxyReady()){
+        button.textContent=labels.complete;
+        button.disabled=false;
+        button.dataset.state='buy';
+      }else{
+        button.textContent=labels.complete;
+        button.disabled=false;
+        button.dataset.state='complete';
+      }
+    }
+
+    button.addEventListener('click',function(){
+      if(button.disabled) return;
+      var state=button.dataset.state||'';
+      if(state==='options'){scrollToOptions();return;}
+      if(state==='terms'){
+        var terms=q('[data-mars-service-terms]',form)||q('[data-mars-service-terms]');
+        scrollTo(terms?(terms.closest('.mars-service-terms')||terms):form);
+        window.setTimeout(function(){if(terms)terms.focus({preventScroll:true});},420);
+        return;
+      }
+      if(state==='buy'){
+        if(proxy&&!proxy.disabled){proxy.click();return;}
+        if(actual&&!actual.disabled&&!actual.classList.contains('disabled')){if(typeof form.requestSubmit==='function')form.requestSubmit(actual);else form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));return;}
+      }
+      scrollTo(firstNeedsAttention());
+    });
+
+    qa('input,textarea,select',form).forEach(function(input){
+      input.addEventListener('input',function(){window.setTimeout(sync,0);});
+      input.addEventListener('change',function(){window.setTimeout(sync,0);});
+    });
+    if(proxy&&'MutationObserver' in window)new MutationObserver(sync).observe(proxy,{attributes:true,attributeFilter:['disabled','class','aria-disabled']});
+    if(actual&&'MutationObserver' in window)new MutationObserver(sync).observe(actual,{attributes:true,attributeFilter:['disabled','class','aria-disabled']});
+
+    if(window.jQuery&&isVariable){
+      var $form=window.jQuery(form);
+      $form.on('found_variation.marsMobileBar',function(e,variation){
+        validVariation=!!(variation&&variation.variation_id);
+        variationAvailable=!!variation && variation.is_in_stock!==false && variation.is_purchasable!==false && variation.variation_is_active!==false;
+        if(variation){ if(orderCard&&orderCard.getAttribute('data-current-total')!=='') setPrice(orderCard.getAttribute('data-current-total')); else setPrice(variation.display_price!==undefined?variation.display_price:variation.price); }
+        window.setTimeout(sync,0);
+      });
+      $form.on('reset_data.marsMobileBar hide_variation.marsMobileBar',function(){validVariation=false;variationAvailable=true;window.setTimeout(sync,0);});
+      $form.on('woocommerce_variation_has_changed.marsMobileBar',function(){window.setTimeout(sync,20);});
+      window.setTimeout(function(){ $form.trigger('check_variations'); },0);
+    }
+    sync();
+    });
+  }
+
+  function initPopup(){
+    var popup = q('[data-mars-product-popup]');
+    if (!popup) return;
+
+    // Escape any transformed/isolated product or layout ancestor so the modal
+    // participates in the root stacking context and can always cover the header.
+    if (popup.parentNode !== document.body) document.body.appendChild(popup);
+
+    var once = popup.getAttribute('data-show-once') === 'yes';
+    var key = 'mars_product_popup_' + (popup.getAttribute('data-product-id') || '0') + '_' + (popup.getAttribute('data-popup-version') || '1');
+    var already = false;
+    try { already = !!(once && window.sessionStorage && sessionStorage.getItem(key) === '1'); } catch(e){}
+
+    function open(){ popup.hidden = false; document.body.classList.add('mars-product-popup-open'); try{document.dispatchEvent(new CustomEvent('mars:product-popup-open'));}catch(e){} }
+    function close(){
+      popup.hidden = true;
+      document.body.classList.remove('mars-product-popup-open');
+      try{document.dispatchEvent(new CustomEvent('mars:product-popup-close'));}catch(e){}
+      try { if (once && window.sessionStorage) sessionStorage.setItem(key,'1'); } catch(e){}
+    }
+
+    qa('[data-mars-popup-close]', popup).forEach(function(el){ el.addEventListener('click', close); });
+    qa('[data-mars-popup-open]').forEach(function(el){ el.addEventListener('click', open); });
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !popup.hidden) close(); });
+    if (!already) window.setTimeout(open, 180);
+  }
+
+  function initNotice(){
+    qa('.mars-service-notice').forEach(function(notice){
+      var close = q('.mars-service-notice__close', notice);
+      if (close) { close.style.cursor='pointer'; close.addEventListener('click', function(){ notice.hidden = true; }); }
+    });
+  }
+
+  function init(){ initVariationButtons(); initServiceProduct(); initMobileProductBar(); initPopup(); initNotice(); }
+  window.MarsServiceProductInit = init;
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+
+/* Mars — AJAX add to cart + friendly success toast. */
+(function(){
+  'use strict';
+  function q(s,r){return (r||document).querySelector(s)}
+  function qa(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
+  function ensureToast(){
+    var toast=q('[data-mars-cart-toast]');
+    if(toast)return toast;
+    toast=document.createElement('div');
+    toast.className='mars-cart-toast';toast.setAttribute('data-mars-cart-toast','');toast.hidden=true;
+    toast.innerHTML='<div class="mars-cart-toast__icon" aria-hidden="true">✓</div><div class="mars-cart-toast__copy"><strong>به سبد خرید اضافه شد</strong><p></p></div><a class="mars-cart-toast__link" href="#">مشاهده سبد</a><button type="button" class="mars-cart-toast__close" aria-label="بستن">×</button>';
+    document.body.appendChild(toast);
+    q('.mars-cart-toast__close',toast).addEventListener('click',function(){hideToast(toast)});
+    return toast;
+  }
+  var toastTimer=0;
+  function hideToast(toast){
+    if(!toast)return;toast.classList.remove('is-visible');
+    window.setTimeout(function(){toast.hidden=true},280);
+  }
+  function showToast(message,cartUrl){
+    var toast=ensureToast(),p=q('p',toast),a=q('.mars-cart-toast__link',toast);
+    if(p)p.textContent=message||'محصول با موفقیت به سبد خرید اضافه شد.';
+    if(a){a.href=cartUrl||'#';a.hidden=!cartUrl;}
+    toast.hidden=false;requestAnimationFrame(function(){toast.classList.add('is-visible')});
+    clearTimeout(toastTimer);toastTimer=setTimeout(function(){hideToast(toast)},4300);
+  }
+  function updateFragments(data){
+    if(!data)return;
+    var fragments=data.fragments||{};
+    Object.keys(fragments).forEach(function(selector){qa(selector).forEach(function(node){var temp=document.createElement('div');temp.innerHTML=fragments[selector];var replacement=temp.firstElementChild;if(replacement)node.replaceWith(replacement);});});
+    qa('.mars-cart-count').forEach(function(el){el.textContent=String(data.count||0).replace(/\d/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'[d]})});
+    if(window.jQuery){
+      var $=window.jQuery,$button=$('.single_add_to_cart_button').first();
+      $(document.body).trigger('added_to_cart',[fragments,data.cartHash||'',$button]);
+      // WooCommerce's stock add-to-cart script appends a "View cart" link after
+      // any button passed to the added_to_cart event. Mars already shows its own
+      // success toast, so the duplicate inline link must never remain in the form.
+      $button.siblings('a.added_to_cart.wc-forward').remove();
+    }
+    function removeNativeViewCartLinks(){qa('form.cart a.added_to_cart.wc-forward').forEach(function(link){link.remove();});}
+    removeNativeViewCartLinks();
+    if(window.requestAnimationFrame)requestAnimationFrame(removeNativeViewCartLinks);
+    window.setTimeout(removeNativeViewCartLinks,0);
+  }
+  function freshToken(){
+    if(window.crypto&&typeof window.crypto.randomUUID==='function')return window.crypto.randomUUID();
+    return 'mars-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2)+'-'+Math.random().toString(36).slice(2);
+  }
+  function rotateToken(form){
+    var input=q('[data-mars-add-request-token]',form);
+    if(input)input.value=freshToken();
+  }
+  function initAjaxCart(){
+    var cfg=window.marsProductAjax||{};if(!cfg.ajaxUrl||!cfg.nonce)return;
+    qa('form.cart').forEach(function(form){
+    if(form.dataset.marsAjaxCart==='1')return;
+    form.dataset.marsAjaxCart='1';
+
+    function send(){
+      if(form.classList.contains('is-mars-adding'))return;
+      var btn=q('.single_add_to_cart_button',form),proxy=q('[data-mars-service-submit]');
+      if(!btn||btn.disabled||btn.classList.contains('disabled'))return;
+      if(typeof form.reportValidity==='function'&&!form.reportValidity())return;
+      var fd=new FormData(form);
+      var nativeId=fd.get('add-to-cart')||btn.value||'';
+      var postedId=fd.get('product_id')||'';
+      if(nativeId && postedId && String(nativeId)!==String(postedId)){
+        showToast('اطلاعات محصول هماهنگ نیست. صفحه را تازه‌سازی کنید.',cfg.cartUrl);return;
+      }
+      var pid=nativeId||postedId;
+      if(!/^\d+$/.test(String(pid))){showToast('شناسه محصول معتبر نیست.',cfg.cartUrl);return;}
+      fd.delete('add-to-cart');fd.set('product_id',String(pid));
+      fd.set('action','mars_ajax_add_to_cart');fd.set('nonce',cfg.nonce);
+      form.classList.add('is-mars-adding');btn.classList.add('is-loading');btn.setAttribute('aria-busy','true');
+      if(proxy){proxy.classList.add('is-loading');proxy.setAttribute('aria-busy','true');}
+      fetch(cfg.ajaxUrl,{method:'POST',body:fd,credentials:'same-origin',cache:'no-store',headers:{'Cache-Control':'no-cache, no-store, max-age=0','Pragma':'no-cache'}})
+        .then(function(r){return r.json()})
+        .then(function(resp){
+          if(!resp||!resp.success){throw new Error(resp&&resp.data&&resp.data.message?resp.data.message:(cfg.error||'افزودن محصول انجام نشد.'));}
+          updateFragments(resp.data);showToast(resp.data.message||cfg.success,resp.data.cartUrl||cfg.cartUrl);
+          try{document.dispatchEvent(new CustomEvent('mars:cart-added',{detail:{data:resp.data||{},form:form,inline:!!(form.closest&&form.closest('[data-mars-inline-product-view]'))}}));}catch(e){}
+        })
+        .catch(function(err){
+          var toast=ensureToast();toast.classList.add('is-error');showToast(err&&err.message?err.message:(cfg.error||'خطا در افزودن محصول.'),cfg.cartUrl);setTimeout(function(){toast.classList.remove('is-error')},4500);
+        })
+        .finally(function(){
+          rotateToken(form);
+          form.classList.remove('is-mars-adding');btn.classList.remove('is-loading');btn.removeAttribute('aria-busy');
+          if(proxy){proxy.classList.remove('is-loading');proxy.removeAttribute('aria-busy');}
+          window.setTimeout(function(){try{var ev=new Event('change',{bubbles:true});if(proxy)proxy.dispatchEvent(ev);}catch(e){}},0);
+        });
+    }
+
+    // Own both the click and submit phases. This prevents WooCommerce or a plugin
+    // from processing the same physical click in parallel with Mars AJAX.
+    form.addEventListener('click',function(e){
+      var button=e.target&&e.target.closest?e.target.closest('.single_add_to_cart_button'):null;
+      if(!button||!form.contains(button))return;
+      e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();send();
+    },true);
+    form.addEventListener('submit',function(e){
+      e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();send();
+    },true);
+    });
+  }
+  window.MarsAjaxCartInit=initAjaxCart;
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initAjaxCart);else initAjaxCart();
+})();

@@ -1,0 +1,19 @@
+/* Mars local typography. These exact filenames match the supplied font package. */
+@font-face{font-family:"Mars Peyda";src:local("PeydaWebFaNum Medium"),local("PeydaWebFaNum-Medium"),url("../fonts/payda/PeydaWebFaNum-Medium.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Mars Peyda";src:local("PeydaWebFaNum Medium"),local("PeydaWebFaNum-Medium"),url("../fonts/payda/PeydaWebFaNum-Medium.woff2") format("woff2");font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:"Mars Peyda";src:local("PeydaWebFaNum Bold"),local("PeydaWebFaNum-Bold"),url("../fonts/payda/PeydaWebFaNum-Bold.woff2") format("woff2");font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:"Mars Peyda";src:local("PeydaWebFaNum Bold"),local("PeydaWebFaNum-Bold"),url("../fonts/payda/PeydaWebFaNum-Bold.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:"Mars Peyda";src:local("PeydaWebFaNum Black"),local("PeydaWebFaNum-Black"),url("../fonts/payda/PeydaWebFaNum-Black.woff2") format("woff2");font-weight:800;font-style:normal;font-display:swap}
+@font-face{font-family:"Mars Peyda";src:local("PeydaWebFaNum Black"),local("PeydaWebFaNum-Black"),url("../fonts/payda/PeydaWebFaNum-Black.woff2") format("woff2");font-weight:900;font-style:normal;font-display:swap}
+
+@font-face{font-family:"Mars Inter";src:local("Inter Regular"),local("Inter"),url("../fonts/inter/Inter-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Mars Inter";src:local("Inter Medium"),url("../fonts/inter/Inter-Medium.woff2") format("woff2");font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:"Mars Inter";src:local("Inter SemiBold"),url("../fonts/inter/Inter-SemiBold.woff2") format("woff2");font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:"Mars Inter";src:local("Inter Bold"),url("../fonts/inter/Inter-Bold.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:"Mars Inter";src:local("Inter ExtraBold"),url("../fonts/inter/Inter-ExtraBold.woff2") format("woff2");font-weight:800;font-style:normal;font-display:swap}
+@font-face{font-family:"Mars Inter";src:local("Inter Black"),url("../fonts/inter/Inter-Black.woff2") format("woff2");font-weight:900;font-style:normal;font-display:swap}
+
+:root{--mars-font-fa:"Mars Peyda","PeydaWebFaNum",Tahoma,"Segoe UI",Arial,sans-serif;--mars-font-latin:"Mars Inter",Inter,Arial,sans-serif}
+html,body,button,input,select,textarea,optgroup,.woocommerce,.elementor,.mars-header,.mars-mobile-drawer{font-family:var(--mars-font-fa)!important}
+body,h1,h2,h3,h4,h5,h6,p,a,span,strong,small,label,button,input,select,textarea,li,td,th{font-family:inherit}
+html[lang^="en"] body,.mars-latin,[dir="ltr"].mars-latin,code,kbd,pre{font-family:var(--mars-font-latin)!important}

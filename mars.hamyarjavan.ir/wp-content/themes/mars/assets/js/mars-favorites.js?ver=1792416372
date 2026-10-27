@@ -1,0 +1,58 @@
+(function(){
+  'use strict';
+  function qa(sel,root){return Array.prototype.slice.call((root||document).querySelectorAll(sel));}
+  function toast(message){
+    var el=document.querySelector('[data-mars-favorite-toast]');
+    if(!el){el=document.createElement('div');el.className='mars-favorite-toast';el.setAttribute('data-mars-favorite-toast','');document.body.appendChild(el);}
+    el.textContent=message||'';el.classList.add('is-visible');clearTimeout(el._timer);el._timer=setTimeout(function(){el.classList.remove('is-visible');},2600);
+  }
+  function syncButtons(productId,active,label){
+    qa('[data-mars-favorite-button][data-product-id="'+productId+'"]').forEach(function(btn){
+      btn.classList.toggle('is-active',!!active);btn.setAttribute('aria-pressed',active?'true':'false');btn.disabled=false;btn.classList.remove('is-loading');
+      var text=btn.querySelector('[data-mars-favorite-label]');if(text)text.textContent=label||(active?MarsFavorites.removeLabel:MarsFavorites.addLabel);
+    });
+  }
+  function updateAccountState(count){
+    var badge=document.querySelector('[data-mars-favorites-count]');
+    var grid=document.querySelector('[data-mars-favorites-grid]');
+    var empty=document.querySelector('[data-mars-favorites-empty]');
+    if(badge){badge.textContent=String(count)+' محصول';if(count<=0)badge.hidden=true;}
+    if(grid)grid.hidden=count<=0;
+    if(empty)empty.hidden=count>0;
+  }
+  function removeAccountCard(productId,count){
+    var card=document.querySelector('[data-mars-favorite-card="'+productId+'"]');
+    if(!card){updateAccountState(count);return;}
+    card.classList.add('is-removing');setTimeout(function(){if(card.parentNode)card.parentNode.removeChild(card);updateAccountState(count);},220);
+  }
+  function toggle(btn){
+    var id=parseInt(btn.getAttribute('data-product-id')||'0',10);if(!id)return;
+    if(!MarsFavorites.loggedIn){window.location.href=btn.getAttribute('data-login-url')||MarsFavorites.loginUrl;return;}
+    qa('[data-mars-favorite-button][data-product-id="'+id+'"]').forEach(function(b){b.disabled=true;b.classList.add('is-loading');});
+    var body=new URLSearchParams();body.set('action','mars_toggle_favorite');body.set('nonce',MarsFavorites.nonce);body.set('product_id',String(id));
+    fetch(MarsFavorites.ajaxUrl,{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'},body:body.toString()})
+      .then(function(r){return r.json();})
+      .then(function(resp){
+        if(!resp||!resp.success){if(resp&&resp.data&&resp.data.requiresLogin){window.location.href=resp.data.loginUrl||MarsFavorites.loginUrl;return;}throw new Error(resp&&resp.data&&resp.data.message||MarsFavorites.error);}
+        syncButtons(id,!!resp.data.active,resp.data.label);if(!resp.data.active)removeAccountCard(id,parseInt(resp.data.count||'0',10));toast(resp.data.message||'');
+      })
+      .catch(function(err){syncButtons(id,btn.classList.contains('is-active'));toast(err&&err.message?err.message:MarsFavorites.error);});
+  }
+  function removeFavorite(btn){
+    var id=parseInt(btn.getAttribute('data-product-id')||'0',10);if(!id)return;
+    btn.disabled=true;btn.classList.add('is-loading');
+    var body=new URLSearchParams();body.set('action','mars_remove_favorite');body.set('nonce',MarsFavorites.nonce);body.set('product_id',String(id));
+    fetch(MarsFavorites.ajaxUrl,{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'},body:body.toString()})
+      .then(function(r){return r.json();})
+      .then(function(resp){
+        if(!resp||!resp.success){if(resp&&resp.data&&resp.data.requiresLogin){window.location.href=resp.data.loginUrl||MarsFavorites.loginUrl;return;}throw new Error(resp&&resp.data&&resp.data.message||MarsFavorites.removeError||MarsFavorites.error);}
+        syncButtons(id,false,MarsFavorites.addLabel);removeAccountCard(id,parseInt(resp.data.count||'0',10));toast(resp.data.message||MarsFavorites.removed);
+      })
+      .catch(function(err){btn.disabled=false;btn.classList.remove('is-loading');toast(err&&err.message?err.message:(MarsFavorites.removeError||MarsFavorites.error));});
+  }
+  document.addEventListener('click',function(e){
+    var removeBtn=e.target.closest&&e.target.closest('[data-mars-favorite-remove]');
+    if(removeBtn){e.preventDefault();e.stopPropagation();removeFavorite(removeBtn);return;}
+    var btn=e.target.closest&&e.target.closest('[data-mars-favorite-button]');if(!btn)return;e.preventDefault();e.stopPropagation();toggle(btn);
+  });
+})();

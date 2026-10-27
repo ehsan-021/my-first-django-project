@@ -1,0 +1,100 @@
+/* Mars — bounded desktop follow-scroll for normal + AJAX service product rails. */
+(function(){
+  'use strict';
+
+  var left=null,parent=null,raf=0,resizeObserver=null,mutationObserver=null;
+  var desktop=window.matchMedia('(min-width: 769px)');
+
+  function visible(el){
+    if(!el)return false;
+    var s=window.getComputedStyle(el);
+    var r=el.getBoundingClientRect();
+    return s.display!=='none'&&s.visibility!=='hidden'&&r.width>0&&r.height>0;
+  }
+
+  function topOffset(){
+    var offset=18;
+    var admin=document.getElementById('wpadminbar');
+    if(visible(admin))offset+=admin.getBoundingClientRect().height;
+    var header=document.querySelector('.mars-header.is-sticky');
+    if(visible(header))offset+=header.getBoundingClientRect().height+8;
+    return offset;
+  }
+
+  function clearCurrent(){
+    document.body.classList.remove('mars-sticky-follow');
+    if(left)left.style.removeProperty('--mars-service-follow-y');
+    if(resizeObserver){resizeObserver.disconnect();resizeObserver=null;}
+    left=null;parent=null;
+  }
+
+  function findRail(){
+    var rails=document.querySelectorAll('body.mars-service-product-page .mars-service-order-layout > .mars-service-left-column');
+    for(var i=0;i<rails.length;i++)if(visible(rails[i]))return rails[i];
+    return rails.length?rails[0]:null;
+  }
+
+  function bindRail(){
+    var candidate=findRail();
+    if(candidate===left&&candidate&&document.body.contains(candidate))return true;
+    if(left&&left!==candidate)clearCurrent();
+    if(!candidate||!document.body.contains(candidate))return false;
+
+    left=candidate;
+    parent=left.parentElement;
+    if(!parent){clearCurrent();return false;}
+
+    if(window.ResizeObserver){
+      resizeObserver=new ResizeObserver(schedule);
+      resizeObserver.observe(left);
+      resizeObserver.observe(parent);
+    }
+    return true;
+  }
+
+  function update(){
+    raf=0;
+    if(!desktop.matches){
+      document.body.classList.remove('mars-sticky-follow');
+      if(left)left.style.removeProperty('--mars-service-follow-y');
+      return;
+    }
+    if(!left||!parent||!document.body.contains(left)||!visible(left)){
+      bindRail();
+      if(!left||!parent||!visible(left)){document.body.classList.remove('mars-sticky-follow');return;}
+    }
+
+    document.body.classList.add('mars-sticky-follow');
+    var parentRect=parent.getBoundingClientRect();
+    var parentTop=window.pageYOffset+parentRect.top;
+    var desired=window.pageYOffset+topOffset()-parentTop;
+    var max=Math.max(0,parent.offsetHeight-left.offsetHeight);
+    var y=Math.max(0,Math.min(max,desired));
+    left.style.setProperty('--mars-service-follow-y',Math.round(y)+'px');
+  }
+
+  function schedule(){if(!raf)raf=window.requestAnimationFrame(update);}
+  function refresh(){bindRail();schedule();}
+
+  function init(){
+    bindRail();
+    window.addEventListener('scroll',schedule,{passive:true});
+    window.addEventListener('resize',refresh,{passive:true});
+    if(desktop.addEventListener)desktop.addEventListener('change',refresh);
+    else if(desktop.addListener)desktop.addListener(refresh);
+
+    if(window.MutationObserver){
+      mutationObserver=new MutationObserver(function(mutations){
+        for(var i=0;i<mutations.length;i++){
+          if(mutations[i].addedNodes.length||mutations[i].removedNodes.length){refresh();break;}
+        }
+      });
+      mutationObserver.observe(document.body,{childList:true,subtree:true});
+    }
+    document.addEventListener('mars:inline-view-changed',refresh);
+    refresh();
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
+  else init();
+})();

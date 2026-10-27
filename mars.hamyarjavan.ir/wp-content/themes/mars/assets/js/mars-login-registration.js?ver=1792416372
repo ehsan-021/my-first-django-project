@@ -1,0 +1,463 @@
+(function ($) {
+	'use strict';
+
+	function latin(value) {
+		var map = {
+			'۰': '0', '۱': '1', '۲': '2', '۳': '3', '۴': '4', '۵': '5', '۶': '6', '۷': '7', '۸': '8', '۹': '9',
+			'٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4', '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9'
+		};
+		return String(value || '').replace(/[۰-۹٠-٩]/g, function (char) {
+			return map[char] || char;
+		});
+	}
+
+	function mobile(value) {
+		var normalized = latin(value).replace(/[^0-9+]/g, '');
+		if (normalized.indexOf('+98') === 0) normalized = '0' + normalized.slice(3);
+		if (normalized.indexOf('0098') === 0) normalized = '0' + normalized.slice(4);
+		if (normalized.indexOf('98') === 0 && normalized.length === 12) normalized = '0' + normalized.slice(2);
+		if (normalized.indexOf('9') === 0 && normalized.length === 10) normalized = '0' + normalized;
+		return normalized;
+	}
+
+	// Always go to WooCommerce My Account, regardless of the optional redirect
+	// configured for the login page. A fresh URL bypasses Safari's page cache.
+	function accountDestination() {
+		var fallback = MarsLoginRegistration.accountUrl || MarsLoginRegistration.homeUrl || '/';
+		var link = document.createElement('a');
+		link.href = fallback;
+		// Only the account URL provided by WordPress is trusted as a destination.
+		if (!/^https?:$/.test(link.protocol)) link.href = MarsLoginRegistration.homeUrl || '/';
+		var clean = link.href.split('#')[0];
+		return clean + (clean.indexOf('?') < 0 ? '?' : '&') + 'mars_auth_redirect=' + new Date().getTime();
+	}
+
+	function navigateAfterAuth(destination, box) {
+		var url = accountDestination();
+		var messageBox = box.find('[data-mars-sms-message]');
+		var manualLink = $('<a/>', {href: url}).text('ورود به حساب کاربری من');
+		messageBox.addClass('is-success').empty().append(document.createTextNode('ورود موفق بود. '), manualLink);
+		box.find('input').trigger('blur');
+		// Never reload the exact same guest URL: it can replay the login screen.
+		window.location.replace(url);
+	}
+
+
+	function authRequestError(xhr, status) {
+		if (status === 'timeout') return 'پاسخ سرور با تأخیر همراه بود. وضعیت ورود بررسی شد؛ لطفاً دوباره تلاش کنید.';
+		if (xhr && (xhr.status === 403 || $.trim(xhr.responseText || '') === '-1')) return 'اعتبار صفحه ورود منقضی شده است. صفحه را تازه‌سازی کنید و دوباره تلاش کنید.';
+		if (xhr && xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) return xhr.responseJSON.data.message;
+		if (xhr && xhr.status >= 500) return 'سرور هنگام بررسی ورود خطا داد. لطفاً مجدداً تلاش کنید.';
+		return 'ارتباط با سرور برقرار نشد. دوباره تلاش کنید.';
+	}
+
+	// If the server set a login cookie but the AJAX reply was interrupted, navigate
+	// instead of falsely telling the customer to request a new SMS code.
+	function recoverAuthOnError(box, xhr, status) {
+		var messageBox = box.find('[data-mars-sms-message]');
+		$.ajax({
+			url: MarsLoginRegistration.ajaxUrl,
+			type: 'POST',
+			dataType: 'json',
+			cache: false,
+			timeout: 8000,
+			data: {action: 'mars_sms_login_state'}
+		}).done(function (response) {
+			if (response && response.success && response.data && response.data.authenticated) {
+				navigateAfterAuth(response.data.redirect, box);
+			} else {
+				messageBox.removeClass('is-success').text(authRequestError(xhr, status));
+			}
+		}).fail(function () {
+			messageBox.removeClass('is-success').text(authRequestError(xhr, status));
+		});
+	}
+
+	function initTabs() {
+		document.querySelectorAll('[data-mars-account-auth]').forEach(function (shell) {
+			if (shell.dataset.ready) return;
+			shell.dataset.ready = '1';
+			var tabs = shell.querySelectorAll('[data-mars-auth-tab]');
+
+			function mode(name) {
+				var register = name === 'register';
+				shell.classList.toggle('is-register', register);
+				tabs.forEach(function (button) {
+					button.classList.toggle('is-active', button.getAttribute('data-mars-auth-tab') === name);
+				});
+				var input = shell.querySelector(register ? '.u-column2 input,.col-2 input' : '.u-column1 input,.col-1 input');
+				if (input) setTimeout(function () { input.focus({ preventScroll: true }); }, 60);
+			}
+
+			tabs.forEach(function (button) {
+				button.addEventListener('click', function (event) {
+					event.preventDefault();
+					mode(button.getAttribute('data-mars-auth-tab') || 'login');
+				});
+			});
+			var requestedMode = 'login';
+			try {
+				requestedMode = new URLSearchParams(window.location.search).get('mars_auth') === 'register' ? 'register' : 'login';
+			} catch (e) {}
+			mode(requestedMode);
+		});
+	}
+
+	function initSms() {
+		$('[data-mars-sms-auth]').each(function () {
+			var box = $(this);
+			if (box.data('ready')) return;
+			box.data('ready', 1);
+
+			var current = '';
+			var timer = null;
+			var left = 0;
+			var activeMode = 'sms';
+			var otpOrigin = 'sms';
+			var msg = box.find('[data-mars-sms-message]');
+			var send = box.find('[data-mars-sms-send]');
+			var verify = box.find('[data-mars-sms-verify]');
+			var passwordCheck = box.find('[data-mars-password-check]');
+			var passwordLogin = box.find('[data-mars-password-login]');
+			var passwordSms = box.find('[data-mars-password-sms]');
+			var passwordMobile = box.find('[data-mars-password-mobile]');
+			var passwordInput = box.find('[data-mars-password-input]');
+			var passwordFields = box.find('[data-mars-password-fields]');
+			var registerButton = box.find('[data-mars-register-submit]');
+			var registerFirst = box.find('[data-mars-register-first]');
+			var registerLast = box.find('[data-mars-register-last]');
+
+			function message(text, success) {
+				msg.toggleClass('is-success', !!success).text(text || '');
+			}
+
+			function step(name) {
+				box.find('[data-mars-sms-step]').removeClass('is-active');
+				box.find('[data-mars-sms-step="' + name + '"]').addClass('is-active');
+				message('');
+			}
+
+			function loading(button, on) {
+				if (!button || !button.length) return;
+				button.prop('disabled', !!on).toggleClass('is-loading', !!on);
+			}
+
+			function tick() {
+				var element = box.find('[data-mars-sms-timer]');
+				if (left > 0) {
+					var minutes = Math.floor(left / 60);
+					var seconds = left % 60;
+					element.text(('0' + minutes).slice(-2) + ':' + ('0' + seconds).slice(-2) + ' مانده تا دریافت مجدد کد');
+					left--;
+				} else {
+					clearInterval(timer);
+					element.html('<button type="button" data-mars-sms-resend>دریافت مجدد کد</button>');
+				}
+			}
+
+			function start(seconds) {
+				clearInterval(timer);
+				left = parseInt(seconds || MarsLoginRegistration.resendSeconds || 120, 10);
+				tick();
+				timer = setInterval(tick, 1000);
+			}
+
+			function validMobile(value) {
+				return /^09\d{9}$/.test(value);
+			}
+
+			function resetPasswordStage(keepNumber) {
+				passwordFields.prop('hidden', true);
+				passwordCheck.show();
+				passwordMobile.prop('readonly', false);
+				passwordInput.val('');
+				if (!keepNumber) passwordMobile.val('');
+			}
+
+			function setMode(modeName) {
+				activeMode = modeName === 'password' ? 'password' : 'sms';
+				box.find('[data-mars-sms-mode]').each(function () {
+					var button = $(this);
+					var selected = button.attr('data-mars-sms-mode') === activeMode;
+					button.toggleClass('is-active', selected).attr('aria-selected', selected ? 'true' : 'false');
+				});
+
+				clearInterval(timer);
+				box.find('[data-mars-sms-timer]').empty();
+				if (activeMode === 'password') {
+					var smsNumber = mobile(box.find('[data-mars-sms-mobile]').val());
+					if (smsNumber && !passwordMobile.val()) passwordMobile.val(smsNumber);
+					resetPasswordStage(true);
+					step('password');
+					setTimeout(function () { passwordMobile.trigger('focus'); }, 60);
+				} else {
+					var passNumber = mobile(passwordMobile.val());
+					if (passNumber && !box.find('[data-mars-sms-mobile]').val()) box.find('[data-mars-sms-mobile]').val(passNumber);
+					step('mobile');
+					setTimeout(function () { box.find('[data-mars-sms-mobile]').trigger('focus'); }, 60);
+				}
+			}
+
+			function registerStep(number) {
+				current = mobile(number);
+				box.find('[data-mars-sms-mobile]').val(current);
+				step('register');
+				message('برای ساخت حساب، نام و نام خانوادگی را وارد کنید.', true);
+				setTimeout(function () { registerFirst.trigger('focus'); }, 60);
+			}
+
+			function registerNames() {
+				return {
+					first_name: $.trim(registerFirst.val() || '').replace(/\s+/g, ' '),
+					last_name: $.trim(registerLast.val() || '').replace(/\s+/g, ' ')
+				};
+			}
+
+			function namesValid(names) {
+				return !!(names.first_name && names.last_name &&
+					names.first_name.length <= 60 && names.last_name.length <= 60 &&
+					!/[0-9۰-۹٠-٩@]/.test(names.first_name + names.last_name));
+			}
+
+			function sendOtp(number, button, names) {
+				var normalized = mobile(number);
+				if (!validMobile(normalized)) {
+					message(MarsLoginRegistration.messages.mobile);
+					return $.Deferred().reject().promise();
+				}
+
+				current = normalized;
+				otpOrigin = names ? 'register' : activeMode;
+				loading(button, true);
+
+				return $.post(MarsLoginRegistration.ajaxUrl, {
+					action: 'mars_sms_login_send',
+					nonce: MarsLoginRegistration.nonce,
+					mobile: current,
+					first_name: names ? names.first_name : '',
+					last_name: names ? names.last_name : ''
+				}).done(function (response) {
+					if (response && response.success) {
+						box.find('[data-mars-sms-mobile-mask]').text(response.data.mobileMask || current);
+						step('code');
+						start(response.data.resendSeconds);
+						message(response.data.message || 'کد تأیید ارسال شد.', true);
+						setTimeout(function () { box.find('[data-mars-sms-code]').trigger('focus'); }, 80);
+					} else {
+						if (response && response.data && response.data.needsRegistration) {
+							registerStep(current);
+						}
+						message(response && response.data && response.data.message || 'ارسال کد انجام نشد.');
+					}
+				}).fail(function (xhr, status) {
+					message(authRequestError(xhr, status));
+				}).always(function () {
+					loading(button, false);
+				});
+			}
+
+			send.on('click', function () {
+				if (send.prop('disabled')) return;
+				var value = mobile(box.find('[data-mars-sms-mobile]').val());
+				box.find('[data-mars-sms-mobile]').val(value);
+				if (!validMobile(value)) {
+					message(MarsLoginRegistration.messages.mobile);
+					return;
+				}
+				loading(send, true);
+				var sendingOtp = false;
+				$.post(MarsLoginRegistration.ajaxUrl, {
+					action: 'mars_sms_login_check_mobile',
+					nonce: MarsLoginRegistration.nonce,
+					mobile: value
+				}).done(function (response) {
+					if (!response || !response.success) {
+						message(response && response.data && response.data.message || 'بررسی شماره انجام نشد.');
+						return;
+					}
+					if (response.data.exists) {
+						sendingOtp = true;
+						sendOtp(value, send);
+					} else {
+						registerStep(value);
+					}
+				}).fail(function (xhr, status) {
+					message(authRequestError(xhr, status));
+				}).always(function () {
+					// Let sendOtp own the busy state until the SMS API answers.
+					if (!sendingOtp) loading(send, false);
+				});
+			});
+
+			registerButton.on('click', function () {
+				if (registerButton.prop('disabled')) return;
+				var names = registerNames();
+				if (!namesValid(names)) {
+					message('نام و نام خانوادگی معتبر را بدون عدد وارد کنید.');
+					return;
+				}
+				sendOtp(current, registerButton, names);
+			});
+
+			box.find('[data-mars-register-edit]').on('click', function () {
+				setMode('sms');
+			});
+
+			passwordCheck.on('click', function () {
+				var value = mobile(passwordMobile.val());
+				passwordMobile.val(value);
+				if (!validMobile(value)) {
+					message(MarsLoginRegistration.messages.mobile);
+					return;
+				}
+
+				loading(passwordCheck, true);
+				$.post(MarsLoginRegistration.ajaxUrl, {
+					action: 'mars_sms_login_check_mobile',
+					nonce: MarsLoginRegistration.nonce,
+					mobile: value
+				}).done(function (response) {
+					if (!response || !response.success) {
+						message(response && response.data && response.data.message || 'بررسی شماره انجام نشد.');
+						return;
+					}
+
+					current = value;
+					if (response.data.exists) {
+						passwordMobile.prop('readonly', true);
+						passwordCheck.hide();
+						passwordFields.prop('hidden', false);
+						message('حساب کاربری پیدا شد. رمز عبور خود را وارد کنید.', true);
+						setTimeout(function () { passwordInput.trigger('focus'); }, 60);
+					} else {
+						// A new customer must supply names before requesting an OTP.
+						setMode('sms');
+						registerStep(value);
+					}
+				}).fail(function (xhr, status) {
+					message(authRequestError(xhr, status));
+				}).always(function () {
+					loading(passwordCheck, false);
+				});
+			});
+
+			passwordLogin.on('click', function (event) {
+				event.preventDefault();
+				if (passwordLogin.prop('disabled')) return;
+				var value = current || mobile(passwordMobile.val());
+				var password = passwordInput.val() || '';
+				if (!validMobile(value)) {
+					message(MarsLoginRegistration.messages.mobile);
+					return;
+				}
+				if (!password) {
+					message('رمز عبور را وارد کنید.');
+					passwordInput.trigger('focus');
+					return;
+				}
+
+				loading(passwordLogin, true);
+				$.post(MarsLoginRegistration.ajaxUrl, {
+					action: 'mars_sms_login_password',
+					nonce: MarsLoginRegistration.nonce,
+					mobile: value,
+					password: password
+				}).done(function (response) {
+					if (response && response.success) {
+						message(response.data && response.data.message || 'ورود موفق بود.', true);
+						navigateAfterAuth(response.data && response.data.redirect, box);
+					} else {
+						message(response && response.data && response.data.message || 'ورود انجام نشد.');
+					}
+				}).fail(function (xhr, status) {
+					recoverAuthOnError(box, xhr, status);
+				}).always(function () {
+					loading(passwordLogin, false);
+				});
+			});
+
+			passwordSms.on('click', function () {
+				var value = current || mobile(passwordMobile.val());
+				sendOtp(value, passwordSms);
+			});
+
+			verify.on('click', function (event) {
+				event.preventDefault();
+				if (verify.prop('disabled')) return;
+				var code = latin(box.find('[data-mars-sms-code]').val()).replace(/[^0-9]/g, '');
+				if (!code) {
+					message(MarsLoginRegistration.messages.code);
+					return;
+				}
+
+				loading(verify, true);
+				$.post(MarsLoginRegistration.ajaxUrl, {
+					action: 'mars_sms_login_verify',
+					nonce: MarsLoginRegistration.nonce,
+					mobile: current,
+					code: code
+				}).done(function (response) {
+					if (response && response.success) {
+						message(response.data && response.data.message || 'ورود موفق بود.', true);
+						navigateAfterAuth(response.data && response.data.redirect, box);
+					} else {
+						message(response && response.data && response.data.message || 'کد تأیید صحیح نیست.');
+					}
+				}).fail(function (xhr, status) {
+					recoverAuthOnError(box, xhr, status);
+				}).always(function () {
+					loading(verify, false);
+				});
+			});
+
+			box.on('click', '[data-mars-sms-resend]', function (event) {
+				event.preventDefault();
+				sendOtp(current, $(this), otpOrigin === 'register' ? registerNames() : null);
+			});
+
+			box.find('[data-mars-sms-edit]').on('click', function (event) {
+				event.preventDefault();
+				clearInterval(timer);
+				if (otpOrigin === 'password') {
+					resetPasswordStage(true);
+					passwordMobile.val(current);
+					step('password');
+				} else {
+					registerPending = false;
+					box.find('[data-mars-sms-mobile]').val(current);
+					step('mobile');
+				}
+			});
+
+			box.find('[data-mars-sms-mode]').on('click', function (event) {
+				event.preventDefault();
+				setMode($(this).attr('data-mars-sms-mode'));
+			});
+
+			box.find('[data-mars-sms-back]').on('click', function (event) {
+				event.preventDefault();
+				window.location.href = MarsLoginRegistration.homeUrl || '/';
+			});
+
+			box.find('input').on('keydown', function (event) {
+				if (event.key !== 'Enter') return;
+				event.preventDefault();
+				if (box.find('[data-mars-sms-step="code"]').hasClass('is-active')) {
+					verify.trigger('click');
+				} else if (box.find('[data-mars-sms-step="password"]').hasClass('is-active')) {
+					if (!passwordFields.prop('hidden')) passwordLogin.trigger('click');
+					else passwordCheck.trigger('click');
+				} else if (box.find('[data-mars-sms-step="register"]').hasClass('is-active')) {
+					registerButton.trigger('click');
+				} else {
+					send.trigger('click');
+				}
+			});
+		});
+	}
+
+	$(function () {
+		initTabs();
+		initSms();
+	});
+})(jQuery);

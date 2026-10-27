@@ -1,0 +1,282 @@
+(function(){
+'use strict';
+
+function blockingPopupActive(){
+	return !!(
+		window.MarsCartPopupOpen ||
+		document.body.classList.contains('mars-cart-popup-open') ||
+		document.body.classList.contains('mars-product-popup-open') ||
+		document.querySelector('.mars-cart-suggestion-popup.is-open') ||
+		document.querySelector('[data-mars-product-popup]:not([hidden])')
+	);
+}
+
+function hasProductPopup(){
+	return !!document.querySelector('[data-mars-product-popup]');
+}
+
+function darkMode(){
+	return document.documentElement.classList.contains('dark') ||
+		document.body.classList.contains('dark') ||
+		document.documentElement.getAttribute('data-theme') === 'dark' ||
+		document.body.getAttribute('data-theme') === 'dark';
+}
+
+function storageKey(config){
+	return 'mars_global_popup_' + config.id + '_' + (config.version || '1') + '_' + (config.userKey || 'guest');
+}
+
+function lastShown(config){
+	try {
+		return parseInt(localStorage.getItem(storageKey(config)) || '0', 10) || 0;
+	} catch (error) {
+		return 0;
+	}
+}
+
+function markShown(config){
+	try {
+		localStorage.setItem(storageKey(config), String(Date.now()));
+	} catch (error) {}
+}
+
+function canShow(config){
+	var last = lastShown(config);
+	var mode = config.frequencyMode || 'interval';
+	if (mode === 'always') return true;
+	if (mode === 'once') return last === 0;
+	return last === 0 || (Date.now() - last) >= Math.max(1, parseInt(config.frequencyHours || 4, 10)) * 3600000;
+}
+
+function toast(text){
+	var item = document.createElement('div');
+	item.className = 'mars-popup-toast';
+	item.textContent = text;
+	document.body.appendChild(item);
+	requestAnimationFrame(function(){ item.classList.add('is-visible'); });
+	setTimeout(function(){
+		item.classList.remove('is-visible');
+		setTimeout(function(){ item.remove(); }, 220);
+	}, 1400);
+}
+
+function preloadImage(config){
+	if (!config.image || (config.type !== 'image' && config.type !== 'image_text')) {
+		return Promise.resolve();
+	}
+	return new Promise(function(resolve){
+		var image = new Image();
+		var settled = false;
+		function done(){
+			if (settled) return;
+			settled = true;
+			resolve();
+		}
+		image.decoding = 'async';
+		image.onload = function(){
+			if (typeof image.decode === 'function') {
+				image.decode().catch(function(){}).finally(done);
+			} else {
+				done();
+			}
+		};
+		image.onerror = done;
+		image.src = config.image;
+		setTimeout(done, 1200);
+	});
+}
+
+function createPopup(config){
+	var scheme = darkMode() ? (config.style.dark || {}) : (config.style.light || {});
+	var overlay = document.createElement('div');
+	var box = document.createElement('section');
+	var escapeHandler = null;
+
+	overlay.className = 'mars-popup-overlay';
+	box.className = 'mars-popup-box mars-popup-box--' + String(config.type || 'image_text').replace(/[^a-z0-9_-]/gi, '');
+	box.setAttribute('role', 'dialog');
+	box.setAttribute('aria-modal', 'true');
+	box.setAttribute('tabindex', '-1');
+
+	box.style.setProperty('--mars-popup-width', (config.style.width || 540) + 'px');
+	box.style.setProperty('--mars-popup-radius', (config.style.radius || 20) + 'px');
+	box.style.setProperty('--mars-popup-image-height', (config.style.imageHeight || 300) + 'px');
+	box.style.setProperty('--mars-popup-bg', scheme.bg || '#fff');
+	box.style.setProperty('--mars-popup-text', scheme.text || '#0f172a');
+	box.style.setProperty('--mars-popup-muted', scheme.muted || '#64748b');
+	box.style.setProperty('--mars-popup-border', scheme.border || '#e2e8f0');
+	box.style.setProperty('--mars-popup-accent', scheme.accent || '#ef335a');
+	box.style.setProperty('--mars-popup-accent-text', scheme.accentText || '#fff');
+	overlay.style.setProperty('--mars-popup-overlay', scheme.overlay || '#0f172a');
+	overlay.style.setProperty('--mars-popup-overlay-opacity', String(config.style.overlayOpacity == null ? 0.58 : config.style.overlayOpacity));
+
+	function close(){
+		if (escapeHandler) document.removeEventListener('keydown', escapeHandler);
+		document.removeEventListener('mars:product-popup-open', close);
+		document.body.classList.remove('mars-popup-open');
+		overlay.classList.remove('is-visible');
+		setTimeout(function(){ overlay.remove(); }, 180);
+	}
+	document.addEventListener('mars:product-popup-open', close);
+
+	if (config.closeEnabled) {
+		var closeButton = document.createElement('button');
+		closeButton.className = 'mars-popup-close';
+		closeButton.type = 'button';
+		closeButton.innerHTML = '×';
+		closeButton.setAttribute('aria-label', 'بستن');
+		closeButton.addEventListener('click', close, { passive: true });
+		box.appendChild(closeButton);
+
+		overlay.addEventListener('click', function(event){
+			if (event.target === overlay) close();
+		}, { passive: true });
+
+		escapeHandler = function(event){
+			if (event.key === 'Escape' && document.body.contains(overlay)) close();
+		};
+		document.addEventListener('keydown', escapeHandler);
+	}
+
+	if ((config.type === 'image' || config.type === 'image_text') && config.image) {
+		var media = document.createElement('div');
+		var image = document.createElement('img');
+		media.className = 'mars-popup-media';
+		image.className = 'mars-popup-image';
+		image.src = config.image;
+		image.alt = config.title || '';
+		image.decoding = 'async';
+		image.loading = 'eager';
+		image.draggable = false;
+
+		if (config.imageLink) {
+			var imageLink = document.createElement('a');
+			imageLink.href = config.imageLink;
+			imageLink.rel = 'noopener';
+			imageLink.appendChild(image);
+			media.appendChild(imageLink);
+		} else {
+			media.appendChild(image);
+		}
+		box.appendChild(media);
+	}
+
+	if (config.type !== 'image' || config.buttonEnabled) {
+		var body = document.createElement('div');
+		body.className = 'mars-popup-body';
+
+		if (config.type !== 'image') {
+			if (config.title) {
+				var title = document.createElement('div');
+				title.className = 'mars-popup-title';
+				title.innerHTML = config.title;
+				body.appendChild(title);
+			}
+			if (config.text) {
+				var text = document.createElement('div');
+				text.className = 'mars-popup-text';
+				text.innerHTML = config.text;
+				body.appendChild(text);
+			}
+			if (config.type === 'coupon') {
+				var coupon = document.createElement('div');
+				var code = document.createElement('div');
+				var copy = document.createElement('button');
+				coupon.className = 'mars-popup-coupon';
+				code.className = 'mars-popup-code';
+				code.textContent = config.coupon || '—';
+				copy.className = 'mars-popup-copy';
+				copy.type = 'button';
+				copy.textContent = 'کپی';
+				copy.disabled = !config.coupon;
+				copy.addEventListener('click', function(){
+					if (!config.coupon) return;
+					if (navigator.clipboard && navigator.clipboard.writeText) {
+						navigator.clipboard.writeText(config.coupon).then(function(){ toast('کپی شد'); });
+					} else {
+						var area = document.createElement('textarea');
+						area.value = config.coupon;
+						document.body.appendChild(area);
+						area.select();
+						try { document.execCommand('copy'); } catch (error) {}
+						area.remove();
+						toast('کپی شد');
+					}
+				});
+				coupon.appendChild(code);
+				coupon.appendChild(copy);
+				body.appendChild(coupon);
+			}
+		}
+
+		if (config.buttonEnabled && config.buttonText && config.buttonUrl) {
+			var actions = document.createElement('div');
+			var button = document.createElement('a');
+			actions.className = 'mars-popup-actions';
+			button.className = 'mars-popup-button';
+			button.href = config.buttonUrl;
+			button.textContent = config.buttonText;
+			if (config.buttonNewTab) {
+				button.target = '_blank';
+				button.rel = 'noopener noreferrer';
+			}
+			button.addEventListener('click', close, { passive: true });
+			actions.appendChild(button);
+			body.appendChild(actions);
+		}
+		box.appendChild(body);
+	}
+
+	overlay.appendChild(box);
+	return overlay;
+}
+
+function run(){
+	var root = document.querySelector('.mars-popup-root');
+	if (!root) return;
+
+	var config;
+	try {
+		config = JSON.parse(root.getAttribute('data-mars-popup') || '{}');
+	} catch (error) {
+		return;
+	}
+
+	if (!config.id || !canShow(config)) return;
+
+	var delay = Math.max(0, parseInt(config.delay || 0, 10)) * 1000;
+	/* Product-order popups always have priority. Give their auto-open cycle time
+	   to start, then wait until every product/cart modal has closed. */
+	if (hasProductPopup()) delay = Math.max(delay, 900);
+	var deadline = Date.now() + 30000;
+	function attempt(){
+		if (!canShow(config)) return;
+		if (blockingPopupActive()) {
+			if (Date.now() < deadline) window.setTimeout(attempt, 420);
+			return;
+		}
+		preloadImage(config).then(function(){
+			if (blockingPopupActive() || !canShow(config)) {
+				if (Date.now() < deadline) window.setTimeout(attempt, 420);
+				return;
+			}
+			var overlay = createPopup(config);
+			document.body.appendChild(overlay);
+			document.body.classList.add('mars-popup-open');
+			markShown(config);
+			requestAnimationFrame(function(){
+				overlay.classList.add('is-visible');
+				var box = overlay.querySelector('.mars-popup-box');
+				if (box) box.focus({ preventScroll: true });
+			});
+		});
+	}
+	window.setTimeout(attempt, delay);
+}
+
+if (document.readyState === 'loading') {
+	document.addEventListener('DOMContentLoaded', run, { once: true });
+} else {
+	run();
+}
+})();

@@ -1,0 +1,598 @@
+(function () {
+    'use strict';
+
+    // Track active calendar instances
+    var activeCalendars = new WeakMap();
+    var calendarPopup = null;
+    var currentInput = null;
+    var lastOpenTime = 0; // Track when calendar was opened
+
+    /**
+     * Create popup container for calendar
+     */
+    function getOrCreatePopup() {
+        if (!calendarPopup) {
+            calendarPopup = document.createElement('div');
+            calendarPopup.className = 'persian-date-popup';
+            calendarPopup.style.cssText = 'position:absolute;z-index:999999;display:none;';
+            document.body.appendChild(calendarPopup);
+        }
+        return calendarPopup;
+    }
+
+    /**
+     * Position popup near input element
+     */
+    function positionPopup(input) {
+        var popup = getOrCreatePopup();
+        var rect = input.getBoundingClientRect();
+        var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        var scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
+        var targetTop = rect.bottom + scrollTop + 5;
+        var targetLeft = rect.left + scrollLeft;
+
+        // Adjust position relative to parent if inside a popup modal
+        var parent = popup.parentNode;
+        var parentRect = null;
+        if (parent && parent !== document.body) {
+            parentRect = parent.getBoundingClientRect();
+            targetTop -= (parentRect.top + scrollTop);
+            targetLeft -= (parentRect.left + scrollLeft);
+        }
+
+        popup.style.top = targetTop + 'px';
+        popup.style.left = targetLeft + 'px';
+
+        // Check if popup goes off screen
+        setTimeout(function () {
+            var popupRect = popup.getBoundingClientRect();
+            if (popupRect.right > window.innerWidth) {
+                var newLeft = window.innerWidth - popupRect.width - 10 + scrollLeft;
+                if (parentRect) {
+                    newLeft -= (parentRect.left + scrollLeft);
+                }
+                popup.style.left = newLeft + 'px';
+            }
+            if (popupRect.bottom > window.innerHeight) {
+                var newTop = rect.top + scrollTop - popupRect.height - 5;
+                if (parentRect) {
+                    newTop -= (parentRect.top + scrollTop);
+                }
+                popup.style.top = newTop + 'px';
+            }
+        }, 0);
+    }
+
+
+    /**
+     * Check if calendar is open
+     */
+    function isCalendarOpen() {
+        return calendarPopup && calendarPopup.style.display !== 'none';
+    }
+
+    /**
+     * Convert Gregorian date string to Jalali date string
+     */
+    function gregorianToJalaliString(gregStr) {
+        if (!gregStr || typeof PersianElementorDateConverter === 'undefined') return gregStr;
+        var parts = gregStr.trim().split(' ');
+        var datePart = parts[0] || '';
+        var timePart = parts[1] || '';
+
+        var dParts = datePart.split(/[\/\-]/);
+        if (dParts.length === 3) {
+            var gy = parseInt(dParts[0], 10);
+            var gm = parseInt(dParts[1], 10);
+            var gd = parseInt(dParts[2], 10);
+            if (gy > 1700) {
+                var jalali = PersianElementorDateConverter.gregorianToJalali(gy, gm, gd);
+                if (jalali[0] > 0) {
+                    var jStr = jalali[0] + '-' +
+                        String(jalali[1]).padStart(2, '0') + '-' +
+                        String(jalali[2]).padStart(2, '0');
+                    if (timePart) {
+                        jStr += ' ' + timePart;
+                    }
+                    return jStr;
+                }
+            }
+        }
+        return gregStr;
+    }
+
+    /**
+     * Show calendar popup
+     */
+    function showCalendar(displayInput, realInput) {
+        if (!realInput) realInput = displayInput;
+        if (typeof PersianElementorCalendar === 'undefined') {
+            console.error('Persian Elementor: PersianElementorCalendar not loaded');
+            return;
+        }
+
+        // Suppress native Flatpickr popup if active
+        suppressFlatpickr(realInput);
+
+        // If already open for a different input, close it first
+        if (isCalendarOpen() && currentInput !== displayInput) {
+            hideCalendar();
+        }
+
+        // If already open for this input, don't reopen
+        if (isCalendarOpen() && currentInput === displayInput) {
+            return;
+        }
+
+        var popup = getOrCreatePopup();
+        
+        // Find parent popup to avoid triggering click-outside close handlers
+        var parentPopup = displayInput.closest('.elementor-popup-modal, .jet-popup, .dialog-widget, .jet-popup-container');
+        if (parentPopup) {
+            parentPopup.appendChild(popup);
+        } else if (popup.parentNode !== document.body) {
+            document.body.appendChild(popup);
+        }
+
+        currentInput = displayInput;
+        lastOpenTime = Date.now();
+
+        // Clear previous calendar and destroy instance
+        if (activeCalendars.has(popup)) {
+            var oldCalendar = activeCalendars.get(popup);
+            if (oldCalendar && typeof oldCalendar.destroy === 'function') {
+                oldCalendar.destroy();
+            }
+            activeCalendars.delete(popup);
+        }
+        popup.innerHTML = '';
+
+        // Check if field is an Elementor Editor Panel Control (inside editor sidebar/panel)
+        var isEditorControl = realInput.hasAttribute('data-setting') ||
+                             (realInput.closest && realInput.closest('.elementor-control-input-wrapper, .elementor-control'));
+        
+        var enableTime = false;
+        var enableTimeAttr = realInput.getAttribute('data-enable-time');
+        var settingAttr = realInput.getAttribute('data-setting') || '';
+        var dateFormat = realInput.getAttribute('data-date-format') || realInput.getAttribute('placeholder') || '';
+        var existingVal = realInput.value ? realInput.value.trim() : '';
+
+        if (enableTimeAttr === 'true' || enableTimeAttr === '1') {
+            enableTime = true;
+        } else if (enableTimeAttr === 'false' || enableTimeAttr === '0') {
+            enableTime = false;
+        } else if (settingAttr === 'due_date' || realInput.classList.contains('elementor-time-field')) {
+            enableTime = true;
+        } else if (dateFormat && /[HiGgK:]/.test(dateFormat)) {
+            enableTime = true;
+        } else if (existingVal && existingVal.indexOf(':') !== -1) {
+            enableTime = true;
+        } else {
+            enableTime = false;
+        }
+
+        // Parse existing value from realInput
+        var selectedDate = new Date();
+        var selectedHour = selectedDate.getHours();
+        var selectedMinute = selectedDate.getMinutes();
+
+        if (existingVal && typeof PersianElementorDateConverter !== 'undefined') {
+            var parts = existingVal.split(' ');
+            var datePart = parts[0] || '';
+            var timePart = parts[1] || '';
+
+            if (timePart) {
+                var tParts = timePart.split(':');
+                if (tParts.length >= 2) {
+                    selectedHour = parseInt(tParts[0], 10) || 0;
+                    selectedMinute = parseInt(tParts[1], 10) || 0;
+                }
+            }
+
+            var dParts = datePart.split(/[\/\-]/);
+            if (dParts.length === 3) {
+                var y = parseInt(dParts[0], 10);
+                var m = parseInt(dParts[1], 10);
+                var d = parseInt(dParts[2], 10);
+                if (y > 1700) {
+                    selectedDate = new Date(y, m - 1, d, selectedHour, selectedMinute);
+                } else if (y > 1300) {
+                    var gregorian = PersianElementorDateConverter.jalaliToGregorian(y, m, d);
+                    if (gregorian[0] > 0) {
+                        selectedDate = new Date(gregorian[0], gregorian[1] - 1, gregorian[2], selectedHour, selectedMinute);
+                    }
+                }
+            }
+        }
+
+        // Create calendar with closure for this specific input
+        var calendar = new PersianElementorCalendar(popup, {
+            selectedDate: selectedDate,
+            enableTime: enableTime,
+            selectedHour: selectedHour,
+            selectedMinute: selectedMinute,
+            title: enableTime ? 'انتخاب تاریخ و زمان' : 'انتخاب تاریخ',
+            showCloseButton: true,
+            onDateSelect: function (dateInfo) {
+                var jalali = dateInfo.jalali;
+                var gregorian = dateInfo.gregorian;
+
+                // Format Jalali string (YYYY/MM/DD or YYYY/MM/DD HH:mm)
+                var jFormatted = jalali.year + '/' +
+                    String(jalali.month).padStart(2, '0') + '/' +
+                    String(jalali.day).padStart(2, '0');
+                if (enableTime) {
+                    jFormatted += ' ' + String(jalali.hour).padStart(2, '0') + ':' +
+                        String(jalali.minute).padStart(2, '0');
+                }
+
+                if (isEditorControl) {
+                    // For Editor Panel Controls (e.g., Countdown due_date):
+                    // Gregorian value for realInput (Elementor model)
+                    var gFormatted = gregorian.year + '-' +
+                        String(gregorian.month).padStart(2, '0') + '-' +
+                        String(gregorian.day).padStart(2, '0');
+                    if (enableTime) {
+                        gFormatted += ' ' + String(jalali.hour).padStart(2, '0') + ':' +
+                            String(jalali.minute).padStart(2, '0');
+                    }
+
+                    // Jalali string (YYYY-MM-DD) for displayInput mirror
+                    var jDisplay = jalali.year + '-' +
+                        String(jalali.month).padStart(2, '0') + '-' +
+                        String(jalali.day).padStart(2, '0');
+                    if (enableTime) {
+                        jDisplay += ' ' + String(jalali.hour).padStart(2, '0') + ':' +
+                            String(jalali.minute).padStart(2, '0');
+                    }
+
+                    if (displayInput !== realInput) {
+                        displayInput.value = jDisplay;
+                    }
+                    realInput.value = gFormatted;
+                } else {
+                    // For Form Fields / Frontend: set realInput value directly to Jalali date!
+                    realInput.value = jFormatted;
+                }
+
+                // Trigger change and input events on realInput
+                var eventInput = new Event('input', { bubbles: true });
+                var eventChange = new Event('change', { bubbles: true });
+                realInput.dispatchEvent(eventInput);
+                realInput.dispatchEvent(eventChange);
+
+                if (window.jQuery) {
+                    window.jQuery(realInput).trigger('input').trigger('change');
+                }
+
+                if (!enableTime) {
+                    hideCalendar();
+                }
+            },
+            onClose: function () {
+                hideCalendar();
+            }
+        });
+
+        activeCalendars.set(popup, calendar);
+
+        // Set default font to Vazirmatn
+        popup.style.fontFamily = 'VazirMatn, Vazir, Vazirmatn, VazirmatnVF, sans-serif';
+
+        // Prevent clicks inside popup from closing other popups
+        ['click', 'mousedown', 'mouseup', 'pointerdown', 'pointerup', 'touchstart', 'touchend'].forEach(function (event) {
+            popup.addEventListener(event, function (e) {
+                e.stopPropagation();
+            });
+        });
+
+        // Show popup
+        popup.style.display = 'block';
+        positionPopup(displayInput);
+
+        // Mark input as active
+        displayInput.setAttribute('data-calendar-open', 'true');
+
+        // Ensure outside-click listeners are attached to preview canvas iframe
+        attachAllIframeListeners();
+    }
+
+    /**
+     * Hide calendar popup
+     */
+    function hideCalendar() {
+        if (calendarPopup) {
+            calendarPopup.style.display = 'none';
+            calendarPopup.innerHTML = '';
+        }
+        if (currentInput) {
+            currentInput.removeAttribute('data-calendar-open');
+            currentInput = null;
+        }
+    }
+
+    /**
+     * Suppress native Flatpickr popup for target input only
+     */
+    function suppressFlatpickr(input) {
+        if (!input) return;
+        if (input._flatpickr) {
+            try {
+                input._flatpickr.close();
+                if (input._flatpickr.calendarContainer) {
+                    input._flatpickr.calendarContainer.style.display = 'none';
+                }
+            } catch (ex) {}
+        }
+    }
+
+    /**
+     * Initialize a single date field
+     */
+    function initPersianDateField(inputOrId) {
+        var realInput = typeof inputOrId === 'string' ?
+            document.getElementById(inputOrId) : inputOrId;
+
+        if (!realInput || realInput.hasAttribute('data-persian-date-initialized')) return false;
+
+        // Skip if this is already a display input created by us
+        if (realInput.hasAttribute('data-persian-display-input')) return false;
+
+        realInput.setAttribute('data-persian-date-initialized', 'true');
+
+        var displayInput = realInput;
+
+        // ONLY create visual display mirror for Editor Panel Controls (sidebar/panel options)!
+        var isEditorControl = realInput.hasAttribute('data-setting') ||
+                              (realInput.closest && realInput.closest('.elementor-control-input-wrapper, .elementor-control'));
+
+        if (isEditorControl && realInput.parentNode) {
+            displayInput = document.createElement('input');
+            displayInput.type = 'text';
+            displayInput.className = realInput.className + ' persian-datepicker-display';
+            displayInput.placeholder = realInput.placeholder || '';
+            if (realInput.hasAttribute('readonly')) {
+                displayInput.setAttribute('readonly', 'readonly');
+            }
+            displayInput.setAttribute('data-persian-display-input', 'true');
+            displayInput.setAttribute('data-persian-date-initialized', 'true');
+
+            // Hide real input visually (keep in DOM for Elementor model)
+            realInput.style.display = 'none';
+
+            // Insert displayInput right before realInput in DOM
+            realInput.parentNode.insertBefore(displayInput, realInput);
+
+            // Sync initial value: Convert Gregorian value from realInput to Jalali for displayInput
+            if (realInput.value) {
+                displayInput.value = gregorianToJalaliString(realInput.value);
+            }
+
+            // Sync changes if realInput value is updated programmatically
+            realInput.addEventListener('change', function () {
+                displayInput.value = gregorianToJalaliString(realInput.value);
+            });
+        }
+
+        // Suppress native flatpickr on realInput
+        suppressFlatpickr(realInput);
+
+        var blockFlatpickr = function (e) {
+            suppressFlatpickr(realInput);
+        };
+
+        displayInput.addEventListener('focus', blockFlatpickr, true);
+        displayInput.addEventListener('mousedown', blockFlatpickr, true);
+
+        // Click handler to toggle Jalali calendar
+        displayInput.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            suppressFlatpickr(realInput);
+
+            if (isCalendarOpen() && currentInput === displayInput) {
+                hideCalendar();
+            } else {
+                showCalendar(displayInput, realInput);
+            }
+        });
+
+        return true;
+    }
+
+    /**
+     * Initialize all date fields on page
+     */
+    function initAllDateFields() {
+        var selectorList = [
+            '[data-persian-date]:not([data-persian-date-initialized])'
+        ];
+        if (window.persianElementorDatepickerEnabled) {
+            selectorList.push('.elementor-date-time-picker:not([data-persian-date-initialized])');
+            selectorList.push('.flatpickr:not([data-persian-date-initialized])');
+            selectorList.push('input[data-setting="due_date"]:not([data-persian-date-initialized])');
+        }
+        var selector = selectorList.join(',');
+        var fields = document.querySelectorAll(selector);
+        fields.forEach(function (field) {
+            initPersianDateField(field);
+        });
+    }
+
+    /**
+     * Close calendar when clicking outside in parent document
+     */
+    function handleOutsideClick(e) {
+        if (!isCalendarOpen()) return;
+
+        // Don't close if clicked within 100ms of opening (prevents race condition)
+        if (Date.now() - lastOpenTime < 100) return;
+
+        // Don't close if clicking inside calendar
+        if (calendarPopup && calendarPopup.contains(e.target)) return;
+
+        // Don't close if clicking the input that opened it
+        if (currentInput && (e.target === currentInput || currentInput.contains(e.target))) return;
+
+        hideCalendar();
+    }
+
+    /**
+     * Close calendar when clicking or interacting inside any preview iframe (e.g. Elementor canvas)
+     */
+    function handleIframeInteraction() {
+        if (!isCalendarOpen()) return;
+
+        // Don't close if clicked within 100ms of opening (prevents race condition)
+        if (Date.now() - lastOpenTime < 100) return;
+
+        hideCalendar();
+    }
+
+
+    /**
+     * Attach outside-click listeners to all iframes (Elementor preview canvas, etc.)
+     */
+    function attachAllIframeListeners() {
+        try {
+            var iframes = document.querySelectorAll('iframe');
+            iframes.forEach(function (iframe) {
+                try {
+                    var iframeDoc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
+                    if (iframeDoc) {
+                        ['pointerdown', 'mousedown', 'click', 'touchstart'].forEach(function (evt) {
+                            iframeDoc.removeEventListener(evt, handleIframeInteraction, true);
+                            iframeDoc.addEventListener(evt, handleIframeInteraction, true);
+                        });
+                    }
+                    iframe.removeEventListener('load', attachAllIframeListeners);
+                    iframe.addEventListener('load', attachAllIframeListeners);
+                } catch (ex) {
+                    // Cross-origin iframe security restriction, safe to ignore
+                }
+            });
+        } catch (e) {}
+    }
+
+    /**
+     * Hook into Elementor Editor events to close calendar on selection / panel changes
+     */
+    var elementorHooksAttached = false;
+    function initElementorEditorIntegration() {
+        var el = window.elementor || (window.top && window.top.elementor);
+        if (!el || elementorHooksAttached) return;
+        elementorHooksAttached = true;
+
+        if (el.on) {
+            try {
+                el.on('preview:loaded', function () {
+                    attachAllIframeListeners();
+                    hideCalendar();
+                });
+                el.on('panel:open_editor', function () {
+                    hideCalendar();
+                });
+            } catch (e) {}
+        }
+
+        if (el.channels && el.channels.editor) {
+            try {
+                el.channels.editor.on('section:activated', hideCalendar);
+                el.channels.editor.on('element:selected', hideCalendar);
+            } catch (e) {}
+        }
+
+        if (el.selection && typeof el.selection.on === 'function') {
+            try {
+                el.selection.on('change', hideCalendar);
+            } catch (e) {}
+        }
+    }
+
+    // Attach document-level outside click and key listeners
+    document.addEventListener('click', handleOutsideClick);
+    document.addEventListener('pointerdown', handleOutsideClick, true);
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function () {
+            initAllDateFields();
+            attachAllIframeListeners();
+            initElementorEditorIntegration();
+        });
+    } else {
+        initAllDateFields();
+        attachAllIframeListeners();
+        initElementorEditorIntegration();
+    }
+
+    // Also listen for Elementor initialization event
+    window.addEventListener('elementor/init', initElementorEditorIntegration);
+    if (typeof window !== 'undefined' && window.jQuery) {
+        window.jQuery(window).on('elementor:init', initElementorEditorIntegration);
+    }
+
+    // MutationObserver for dynamic content & Elementor panel changes
+    var observer = new MutationObserver(function (mutations) {
+        // Auto-close if the input that opened the calendar was removed from DOM
+        if (isCalendarOpen() && currentInput && !document.body.contains(currentInput)) {
+            hideCalendar();
+        }
+
+        var shouldReinit = false;
+
+        mutations.forEach(function (mutation) {
+            if (mutation.type === 'childList') {
+                mutation.addedNodes.forEach(function (node) {
+                    if (node.nodeType === Node.ELEMENT_NODE) {
+                        if (node.tagName === 'IFRAME' || (node.querySelector && node.querySelector('iframe'))) {
+                            attachAllIframeListeners();
+                        }
+                        var hasMatch = false;
+                        if (node.matches) {
+                            if (node.matches('[data-persian-date]')) hasMatch = true;
+                            if (window.persianElementorDatepickerEnabled && (node.matches('.elementor-date-time-picker') || node.matches('.flatpickr') || node.matches('input[data-setting="due_date"]'))) hasMatch = true;
+                        }
+                        if (!hasMatch && node.querySelector) {
+                            if (node.querySelector('[data-persian-date]')) hasMatch = true;
+                            if (window.persianElementorDatepickerEnabled && node.querySelector('.elementor-date-time-picker, .flatpickr, input[data-setting="due_date"]')) hasMatch = true;
+                        }
+                        if (hasMatch) shouldReinit = true;
+                    }
+                });
+            }
+        });
+
+        if (shouldReinit) {
+            initAllDateFields();
+        }
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+    // Expose functions globally
+    window.initPersianDateField = initPersianDateField;
+    window.initAllPersianDateFields = initAllDateFields;
+    window.hidePersianCalendar = hideCalendar;
+
+    // Hook into Elementor and JetPopup events to re-initialize cloned inputs inside popups
+    if (typeof window !== 'undefined' && window.jQuery) {
+        window.jQuery(document).on('elementor/popup/show', function(event, id, instance) {
+            if (instance && instance.$element) {
+                instance.$element.find('[data-persian-date]').removeAttr('data-persian-date-initialized');
+                initAllDateFields();
+            }
+        });
+        window.jQuery(document).on('jet-popup/show-event', function(event, $popup) {
+            if ($popup) {
+                $popup.find('[data-persian-date]').removeAttr('data-persian-date-initialized');
+                initAllDateFields();
+            }
+        });
+    }
+
+})();

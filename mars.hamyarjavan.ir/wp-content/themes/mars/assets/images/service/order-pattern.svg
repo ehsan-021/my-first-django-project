@@ -1,0 +1,9 @@
+<svg width="360" height="312" viewBox="0 0 360 312" xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" stroke="#dbe7f7" stroke-width="1.2" opacity="0.78">
+    <path d="M90 1l78 45v90l-78 45-78-45V46L90 1z"/>
+    <path d="M246 91l78 45v90l-78 45-78-45v-90l78-45z"/>
+    <path d="M90 181l78 45v90l-78 45-78-45v-90l78-45z"/>
+  </g>
+  <path d="M12 136l78 45 78-45-78-45-78 45z" fill="#e8f0fc" opacity=".76"/>
+  <path d="M168 226l78 45v-90l-78 45z" fill="#edf4fe" opacity=".7"/>
+</svg>

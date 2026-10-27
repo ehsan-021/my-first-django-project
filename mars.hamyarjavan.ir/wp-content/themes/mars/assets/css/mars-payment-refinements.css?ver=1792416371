@@ -1,0 +1,37 @@
+/* Mars — frontend order/ticket/blog refinements. */
+
+/* Human ticket messages always show the participant avatar; system messages never do. */
+.mars-ticket-messages article:not(.is-system) .mars-ticket-avatar,
+.mars-ticket-admin-thread article:not(.is-system) .mars-ticket-avatar{display:inline-flex!important;visibility:visible!important;opacity:1!important}
+.mars-ticket-messages article.is-system .mars-ticket-avatar,
+.mars-ticket-admin-thread article.is-system .mars-ticket-avatar,
+.mars-ticket-messages .mars-system-avatar{display:none!important}
+.mars-ticket-avatar img{display:block!important;width:38px!important;height:38px!important;border-radius:50%!important;object-fit:cover!important}
+
+/* Order state card: more legible status and balanced spacing. */
+.mars-order-state{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;gap:18px!important;flex-wrap:wrap!important;
+  margin:18px 0 22px!important;padding:17px 19px!important;border:1px solid var(--mup-border,var(--mars-line))!important;
+  border-radius:15px!important;background:var(--mup-soft,var(--mars-surface-2))!important
+}
+.mars-order-state .mars-pro-status{display:inline-flex!important;align-items:center!important;min-height:38px!important;padding:7px 13px!important;border-radius:10px!important;font-size:16px!important;font-weight:900!important;line-height:1.4!important}
+.mars-order-state .mars-price{display:inline-flex!important;align-items:center!important;min-height:38px!important;font-size:16px!important;font-weight:950!important;white-space:nowrap!important}
+
+/* Default WordPress blog index mirrors the Elementor Latest Articles visual language. */
+.mars-blog-index{padding-top:42px!important;padding-bottom:58px!important}
+.mars-blog-index__seo-title{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.mars-blog-index .mars-latest-articles{--mla-cols:4;--mla-gap:16px}
+.mars-blog-index .mars-latest-articles__head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.mars-blog-index .mars-latest-articles__head>div{display:grid;gap:5px}
+.mars-blog-index .mars-latest-articles__head h2{margin:0!important}
+.mars-blog-index__pagination{margin-top:28px}
+.mars-blog-index__pagination .nav-links{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap}
+.mars-blog-index__pagination .page-numbers{display:grid;place-items:center;min-width:40px;height:40px;padding:0 11px;border:1px solid var(--mla-line,var(--mars-line));border-radius:11px;background:var(--mla-card,var(--mars-surface));color:var(--mla-text,var(--mars-text))!important;text-decoration:none!important;font-size:12px;font-weight:850}
+.mars-blog-index__pagination .page-numbers.current{border-color:var(--mla-accent,var(--mars-accent));color:var(--mla-accent,var(--mars-accent))!important}
+
+@media(max-width:1024px){.mars-blog-index .mars-latest-articles{--mla-cols:2}}
+@media(max-width:700px){
+  .mars-order-state{align-items:stretch!important;gap:12px!important;padding:14px!important}
+  .mars-order-state .mars-pro-status,.mars-order-state .mars-price{width:100%!important;justify-content:center!important}
+  .mars-blog-index{padding-top:26px!important}.mars-blog-index .mars-latest-articles{--mla-cols:1}
+}

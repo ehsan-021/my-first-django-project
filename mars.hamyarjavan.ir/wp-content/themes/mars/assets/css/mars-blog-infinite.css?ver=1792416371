@@ -1,0 +1,8 @@
+/* Native posts grid: unobtrusive loader below the last card. */
+.mars-blog-scroll-status{display:flex;align-items:center;justify-content:center;min-height:65px;margin-top:22px;direction:rtl}
+.mars-blog-scroll-status[hidden],.mars-blog-scroll-loading[hidden],.mars-blog-scroll-retry[hidden]{display:none!important}
+.mars-blog-scroll-loading{display:flex;align-items:center;justify-content:center;gap:12px;color:var(--mars-muted,#777);font-size:14px}
+.mars-blog-scroll-spinner{width:24px;height:24px;display:inline-block;border:3px solid currentColor;border-left-color:transparent;border-radius:50%;animation:marsBlogSpin .75s linear infinite}
+.mars-blog-scroll-retry{font:inherit;color:var(--mars-accent,#10b981);background:transparent;border:1px solid currentColor;border-radius:12px;padding:9px 18px;cursor:pointer}
+@keyframes marsBlogSpin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.mars-blog-scroll-spinner{animation-duration:1.5s}}

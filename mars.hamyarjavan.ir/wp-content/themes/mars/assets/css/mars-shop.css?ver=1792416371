@@ -1,0 +1,250 @@
+/* Mars — dedicated shop/category archive cards. */
+body.mars-dedicated-shop{
+  --mars-shop-card-body:var(--mars-shop-card-bg,#f3f6fa);
+  --mars-shop-card-title:var(--mars-text);
+  --mars-shop-card-muted:var(--mars-muted);
+}
+body.mars-dedicated-shop .mars-shop-main{width:100%;padding-top:24px;padding-bottom:64px}
+body.mars-dedicated-shop .woocommerce-products-header,
+body.mars-dedicated-shop .woocommerce-products-header__title,
+body.mars-dedicated-shop .mars-shop-heading,
+body.mars-dedicated-shop .mars-shop-toolbar,
+body.mars-dedicated-shop .woocommerce-result-count,
+body.mars-dedicated-shop .woocommerce-ordering,
+body.mars-dedicated-shop .woocommerce-breadcrumb,
+body.mars-dedicated-shop nav.woocommerce-breadcrumb,
+body.mars-dedicated-shop #sidebar,
+body.mars-dedicated-shop #secondary,
+body.mars-dedicated-shop .widget-area{display:none!important}
+
+/* Category text uses WooCommerce's normal Product category > Description value. */
+body.mars-dedicated-shop .mars-shop-category-text{
+  width:100%!important;
+  max-width:none!important;
+  margin:0 0 var(--mars-cat-spacing,28px)!important;
+  padding:0!important;
+  color:var(--mars-muted);
+  font-size:var(--mars-cat-font-size,14px);
+  line-height:2;
+  text-align:right;
+  box-sizing:border-box;
+  overflow-wrap:anywhere;
+}
+body.mars-dedicated-shop .mars-shop-category-text--right{text-align:right}
+body.mars-dedicated-shop .mars-shop-category-text--center{text-align:center}
+body.mars-dedicated-shop .mars-shop-category-text--left{text-align:left}
+body.mars-dedicated-shop .mars-shop-category-text p{margin:0 0 12px}
+body.mars-dedicated-shop .mars-shop-category-text p:last-child{margin-bottom:0}
+body.mars-dedicated-shop .mars-shop-category-text h1,
+body.mars-dedicated-shop .mars-shop-category-text h2,
+body.mars-dedicated-shop .mars-shop-category-text h3,
+body.mars-dedicated-shop .mars-shop-category-text h4{color:var(--mars-text);line-height:1.55;margin:1.1em 0 .55em}
+body.mars-dedicated-shop .mars-shop-category-text a{color:var(--mars-accent);text-decoration:none}
+body.mars-dedicated-shop .mars-shop-category-text img{
+  display:block;max-width:100%!important;height:auto!important;border-radius:var(--mars-cat-image-radius,16px);margin:18px auto;
+}
+body.mars-dedicated-shop .mars-shop-category-text figure{max-width:100%!important;margin:18px 0}
+body.mars-dedicated-shop .mars-shop-category-text figure img{margin:0 auto}
+body.mars-dedicated-shop .mars-shop-category-text .wp-caption{max-width:100%!important}
+body.mars-dedicated-shop .mars-shop-category-text ul,
+body.mars-dedicated-shop .mars-shop-category-text ol{padding-inline-start:24px;margin:12px 0}
+body.mars-dedicated-shop .mars-shop-category-text table{width:100%;max-width:100%;border-collapse:collapse;display:block;overflow-x:auto}
+body.mars-dedicated-shop .mars-shop-category-text iframe,
+body.mars-dedicated-shop .mars-shop-category-text video{max-width:100%}
+body.mars-dedicated-shop .mars-shop-category-text--hide-desktop{display:none!important}
+body.mars-dedicated-shop .woocommerce-pagination + .mars-shop-category-text,
+body.mars-dedicated-shop .products + .mars-shop-category-text{margin-top:var(--mars-cat-spacing,28px)!important;margin-bottom:0!important}
+
+body.mars-dedicated-shop ul.products,
+body.mars-dedicated-shop ul.products.columns-2,
+body.mars-dedicated-shop ul.products.columns-3,
+body.mars-dedicated-shop ul.products.columns-4,
+body.mars-dedicated-shop ul.products.columns-5,
+body.mars-dedicated-shop ul.products.columns-6,
+body.mars-dedicated-shop .products{
+  display:grid!important;
+  grid-template-columns:repeat(var(--mars-shop-columns-desktop,4),minmax(0,1fr))!important;
+  gap:18px!important;
+  clear:both;
+  width:100%!important;
+  margin:0!important;
+  padding:0!important;
+  list-style:none!important;
+  align-items:start!important;
+}
+body.mars-dedicated-shop ul.products:before,
+body.mars-dedicated-shop ul.products:after{display:none!important;content:none!important}
+
+body.mars-dedicated-shop ul.products li.product,
+body.mars-dedicated-shop ul.products li.product.first,
+body.mars-dedicated-shop ul.products li.product.last{
+  position:relative!important;
+  display:flex!important;
+  flex-direction:column!important;
+  float:none!important;
+  clear:none!important;
+  width:100%!important;
+  max-width:none!important;
+  height:auto!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:20px!important;
+  background:var(--mars-shop-card-body)!important;
+  box-shadow:none!important;
+  overflow:hidden!important;
+  transform:none;
+  transition:transform .18s ease;
+}
+body.mars-dedicated-shop ul.products li.product:hover{transform:translateY(-2px)!important;box-shadow:none!important}
+body.mars-dedicated-shop ul.products li.product>a.woocommerce-LoopProduct-link,
+body.mars-dedicated-shop ul.products li.product>a.woocommerce-loop-product__link{
+  display:flex!important;
+  flex-direction:column!important;
+  height:auto!important;
+  flex:0 0 auto!important;
+  color:inherit!important;
+  text-decoration:none!important;
+  background:transparent!important;
+}
+body.mars-dedicated-shop ul.products li.product a img,
+body.mars-dedicated-shop ul.products li.product .woocommerce-loop-product__link img{
+  display:block!important;
+  width:100%!important;
+  max-width:none!important;
+  height:auto!important;
+  aspect-ratio:1.72/1!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:var(--mars-surface)!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  box-shadow:none!important;
+}
+body.mars-dedicated-shop ul.products li.product .woocommerce-loop-product__title{
+  display:block!important;
+  width:100%!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:12px 12px 4px!important;
+  color:var(--mars-shop-card-title)!important;
+  font-size:16px!important;
+  font-weight:650!important;
+  line-height:1.45!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+body.mars-dedicated-shop ul.products li.product .mars-product-badge,
+body.mars-dedicated-shop ul.products li.product .onsale,
+body.mars-dedicated-shop ul.products li.product .star-rating,
+body.mars-dedicated-shop ul.products li.product .button,
+body.mars-dedicated-shop ul.products li.product>.price,
+body.mars-dedicated-shop ul.products li.product .woocommerce-loop-product__link>.price{display:none!important}
+
+.mars-shop-discount-badge{
+  position:absolute;z-index:5;top:10px;right:10px;display:inline-flex;align-items:center;justify-content:center;
+  min-width:42px;height:28px;padding:0 9px;border-radius:9px;background:var(--mars-shop-discount-bg,#ef4444);color:#fff;
+  font-size:11px;font-weight:900;line-height:1;direction:rtl;box-shadow:none;
+}
+.mars-shop-card-price{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;
+  margin-top:0!important;padding:2px 12px 13px!important;color:var(--mars-shop-card-muted)!important;font-size:12px!important;
+  line-height:1.7!important;direction:rtl;
+}
+.mars-shop-card-price>span{font-weight:700!important;white-space:nowrap!important}
+.mars-shop-card-price>strong{
+  display:flex!important;flex-direction:row!important;align-items:center!important;gap:4px!important;margin:0!important;
+  color:var(--mars-shop-card-muted)!important;font-size:12px!important;font-weight:750!important;white-space:nowrap!important;
+  direction:rtl!important;unicode-bidi:isolate;
+}
+/* DOM order is number then currency; RTL flex puts number on right, تومان on left. */
+.mars-shop-price-number{order:0}.mars-shop-price-unit{order:1}
+
+/* If WooCommerce is configured to show category cards, their Description text appears here too. */
+body.mars-dedicated-shop .products li.product-category .mars-shop-category-card-text{
+  margin:0;padding:0 12px 14px;color:var(--mars-muted);font-size:11px;line-height:1.8;text-align:center;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+
+body.mars-dedicated-shop .woocommerce-pagination{margin-top:34px!important}
+body.mars-dedicated-shop .woocommerce-pagination ul{display:flex!important;justify-content:center!important;gap:7px!important;border:0!important}
+body.mars-dedicated-shop .woocommerce-pagination li{border:0!important}
+body.mars-dedicated-shop .woocommerce-pagination a,
+body.mars-dedicated-shop .woocommerce-pagination span{display:grid!important;place-items:center!important;min-width:38px!important;height:38px!important;padding:0 9px!important;border:1px solid var(--mars-line)!important;border-radius:10px!important;background:var(--mars-surface)!important;color:var(--mars-text)!important}
+body.mars-dedicated-shop .woocommerce-pagination .current{border-color:var(--mars-accent)!important;background:var(--mars-accent)!important;color:#fff!important}
+
+@media(max-width:768px){
+  body.mars-dedicated-shop .mars-shop-main{padding-top:16px;padding-bottom:46px}
+  body.mars-dedicated-shop .mars-shop-category-text{font-size:var(--mars-cat-font-size,13px);line-height:1.9}
+  body.mars-dedicated-shop .mars-shop-category-text--hide-desktop{display:block!important}
+  body.mars-dedicated-shop .mars-shop-category-text--hide-mobile{display:none!important}
+  body.mars-dedicated-shop ul.products,
+  body.mars-dedicated-shop ul.products.columns-2,
+  body.mars-dedicated-shop ul.products.columns-3,
+  body.mars-dedicated-shop ul.products.columns-4,
+  body.mars-dedicated-shop ul.products.columns-5,
+  body.mars-dedicated-shop ul.products.columns-6,
+  body.mars-dedicated-shop .products{grid-template-columns:repeat(var(--mars-shop-columns-mobile,2),minmax(0,1fr))!important;gap:10px!important}
+  body.mars-dedicated-shop ul.products li.product{border-radius:15px!important}
+  body.mars-dedicated-shop ul.products li.product .woocommerce-loop-product__title{padding:8px 8px 3px!important;font-size:13px!important}
+  .mars-shop-card-price{padding:2px 8px 10px!important;gap:5px!important;font-size:10px!important}
+  .mars-shop-card-price>strong{gap:2px!important;font-size:10px!important}
+  .mars-shop-discount-badge{top:7px;right:7px;min-width:34px;height:23px;padding:0 6px;border-radius:7px;font-size:9px}
+}
+
+
+/* Mars — normalized landscape product artwork.
+ * Recommended source artwork: 1200 × 675 px (16:9).
+ * object-fit keeps unusual source files proportional and avoids stretching. */
+body.mars-dedicated-shop ul.products li.product a img,
+body.mars-dedicated-shop ul.products li.product .woocommerce-loop-product__link img{
+  width:100%!important;
+  height:auto!important;
+  aspect-ratio:16 / 9!important;
+  object-fit:cover!important;
+  object-position:center center!important;
+  background:var(--mars-surface)!important;
+}
+
+
+/* Completely unavailable products remain visible but their artwork is clearly inactive. */
+body.mars-dedicated-shop ul.products li.product.outofstock img,
+body.mars-dedicated-shop ul.products li.product.is-out-of-stock img{
+  filter:grayscale(1)!important;
+  opacity:.68!important;
+}
+
+
+/* Infinite product loading for the native Mars WooCommerce archive. */
+body.mars-dedicated-shop.mars-shop-scroll-ready .woocommerce-pagination { display:none!important; }
+body.mars-dedicated-shop .mars-shop-scroll-status {
+  display:flex; align-items:center; justify-content:center; min-height:76px;
+  margin:18px 0 4px; direction:rtl; font:inherit; color:var(--mars-muted);
+}
+body.mars-dedicated-shop .mars-shop-scroll-status[hidden],
+body.mars-dedicated-shop .mars-shop-scroll-loading[hidden],
+body.mars-dedicated-shop .mars-shop-scroll-retry[hidden] { display:none!important; }
+body.mars-dedicated-shop .mars-shop-scroll-loading {
+  display:inline-flex; align-items:center; justify-content:center; gap:11px;
+  padding:13px 22px; border-radius:14px; background:var(--mars-surface);
+  border:1px solid var(--mars-line); color:var(--mars-text); font-size:13px; font-weight:600;
+}
+body.mars-dedicated-shop .mars-shop-scroll-spinner {
+  display:inline-block; flex:none; width:20px; height:20px;
+  border:2px solid var(--mars-line); border-top-color:var(--mars-accent);
+  border-radius:50%; animation:mars-shop-rotate .7s linear infinite;
+}
+@keyframes mars-shop-rotate { to { transform:rotate(360deg); } }
+body.mars-dedicated-shop .mars-shop-scroll-retry {
+  padding:10px 17px; border:1px solid var(--mars-line); border-radius:11px;
+  background:var(--mars-surface); color:var(--mars-text); cursor:pointer;
+  font:inherit; font-size:13px; transition:border-color .2s ease;
+}
+body.mars-dedicated-shop .mars-shop-scroll-retry:hover { border-color:var(--mars-accent); }
+@media(prefers-reduced-motion:reduce) {
+  body.mars-dedicated-shop .mars-shop-scroll-spinner { animation-duration:1.6s; }
+}

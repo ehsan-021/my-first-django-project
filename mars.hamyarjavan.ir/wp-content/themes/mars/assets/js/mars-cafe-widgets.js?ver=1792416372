@@ -1,0 +1,254 @@
+(function () {
+  'use strict';
+
+  function parseJSON(node, fallback) {
+    try { return JSON.parse(node ? node.textContent : '') || fallback; } catch (e) { return fallback; }
+  }
+
+  function faNumber(value, decimals, minDecimals) {
+    var n = Number(value || 0);
+    if (!isFinite(n)) n = 0;
+    var max = typeof decimals === 'number' ? decimals : 0;
+    var min = typeof minDecimals === 'number' ? minDecimals : 0;
+    return new Intl.NumberFormat('fa-IR', { minimumFractionDigits: min, maximumFractionDigits: max }).format(n);
+  }
+
+  function formatUsd(value) {
+    var n = Number(value || 0);
+    if (!isFinite(n) || n <= 0) return '—';
+    if (n >= 1000) return faNumber(n, 2, 2);
+    if (n >= 1) return faNumber(n, 2, 2);
+    if (n >= 0.01) return faNumber(n, 4, 2);
+    return faNumber(n, 6, 2);
+  }
+
+  function withCacheBuster(url) {
+    if (!url) return url;
+    return url + (url.indexOf('?') === -1 ? '?' : '&') + '_mars_ts=' + Date.now();
+  }
+
+  function initImageFallbacks(scope) {
+    var root = scope && scope.querySelectorAll ? scope : document;
+    root.querySelectorAll('.mars-crypto-rate-card__icon img[data-fallback]').forEach(function (img) {
+      if (img.dataset.marsFallbackBound === '1') return;
+      img.dataset.marsFallbackBound = '1';
+      img.addEventListener('error', function () {
+        var fallback = img.getAttribute('data-fallback');
+        if (fallback && img.src !== fallback) {
+          img.src = fallback;
+          img.removeAttribute('data-fallback');
+        }
+      });
+    });
+  }
+
+  function initCalculator(root) {
+    if (!root || root.dataset.marsInit === '1') return;
+    root.dataset.marsInit = '1';
+
+    var data = parseJSON(root.querySelector('.mars-currency-calculator__data'), {});
+    var rates = Object.assign({}, data.rates || {});
+    var manual = data.manual || {};
+    var services = Array.isArray(data.services) ? data.services : [];
+    var mode = root.dataset.rateMode || 'auto';
+    var category = root.querySelector('.mars-currency-calculator__category');
+    var service = root.querySelector('.mars-currency-calculator__service');
+    var amount = root.querySelector('.mars-currency-calculator__amount');
+    var currency = root.querySelector('.mars-currency-calculator__currency');
+    var total = root.querySelector('.mars-currency-calculator__total');
+    var submit = root.querySelector('.mars-currency-calculator__submit');
+    var status = root.querySelector('.mars-currency-calculator__status');
+    var tabs = root.querySelectorAll('.mars-currency-calculator__tab');
+
+    function itemsForCategory(name) {
+      return services.filter(function (item) { return item.category === name; });
+    }
+
+    function selectedService() {
+      var idx = service ? parseInt(service.value, 10) : -1;
+      return idx >= 0 && services[idx] ? services[idx] : null;
+    }
+
+    function calculate() {
+      var code = currency ? currency.value : (root.dataset.defaultCurrency || 'USD');
+      var rate = Number(rates[code] || 0);
+      var qty = Number(amount ? amount.value : 0);
+      var item = selectedService();
+      var feePercent = item ? Number(item.feePercent || 0) : 0;
+      var feeFixed = item ? Number(item.feeFixed || 0) : 0;
+      var value = qty > 0 && rate > 0 ? (qty * rate * (1 + feePercent / 100)) + feeFixed : 0;
+
+      if (total) total.textContent = value > 0 ? (faNumber(Math.round(value), 0) + ' تومان') : '—';
+      if (status) status.textContent = rate > 0 ? 'نرخ به‌روز است.' : 'نرخ در دسترس نیست.';
+      if (submit) submit.href = (item && item.url) ? item.url : (root.dataset.defaultUrl || '#');
+    }
+
+    function rebuildServices() {
+      if (!service || !category) { calculate(); return; }
+      var list = itemsForCategory(category.value);
+      service.innerHTML = '';
+      list.forEach(function (item, idx) {
+        var option = document.createElement('option');
+        option.value = String(services.indexOf(item));
+        option.textContent = item.name;
+        if (idx === 0) option.selected = true;
+        service.appendChild(option);
+      });
+      tabs.forEach(function (tab) {
+        var active = tab.dataset.category === category.value;
+        tab.classList.toggle('is-active', active);
+        tab.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      calculate();
+    }
+
+    if (category) category.addEventListener('change', rebuildServices);
+    if (service) service.addEventListener('change', calculate);
+    if (amount) amount.addEventListener('input', calculate);
+    if (currency) currency.addEventListener('change', calculate);
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        if (!category) return;
+        category.value = tab.dataset.category || category.value;
+        rebuildServices();
+      });
+    });
+
+    if (currency && root.dataset.defaultCurrency) currency.value = root.dataset.defaultCurrency;
+    rebuildServices();
+
+    function loadRates() {
+      if (!((mode === 'auto' || mode === 'mixed') && root.dataset.restUrl && window.fetch)) return;
+      fetch(withCacheBuster(root.dataset.restUrl), {
+        credentials: 'same-origin',
+        cache: 'no-store',
+        headers: { Accept: 'application/json', 'Cache-Control': 'no-cache' }
+      })
+        .then(function (res) { return res.ok ? res.json() : Promise.reject(new Error('rate')); })
+        .then(function (json) {
+          if (!json || !json.rates) throw new Error('rate');
+          rates = Object.assign({}, rates, json.rates);
+          if (mode === 'mixed') {
+            Object.keys(manual).forEach(function (code) {
+              if (Number(manual[code] || 0) > 0) rates[code] = Number(manual[code]);
+            });
+          }
+          calculate();
+        })
+        .catch(function () { calculate(); });
+    }
+
+    loadRates();
+  }
+
+  function initCrypto(root, force) {
+    if (!root) return;
+    if (root.dataset.marsInit === '1' && !force) return;
+    if (root._marsRateTimer) {
+      window.clearInterval(root._marsRateTimer);
+      root._marsRateTimer = null;
+    }
+    root.dataset.marsInit = '1';
+    initImageFallbacks(root);
+    var rest = root.dataset.restUrl;
+    if (!rest || !window.fetch) return;
+
+    function updateCard(card, row) {
+      if (!card || !row) return;
+      var usd = Number(row.usd || 0);
+      var change = Number(row.change || 0);
+      var price = card.querySelector('[data-usd]');
+      var badge = card.querySelector('[data-change]');
+      if (price && usd > 0) price.textContent = formatUsd(usd);
+      if (badge && Object.prototype.hasOwnProperty.call(row, 'change')) {
+        badge.textContent = faNumber(Math.abs(change), 2, 2) + '٪';
+        badge.classList.remove('is-positive', 'is-negative', 'is-neutral');
+        badge.classList.add(change > 0.005 ? 'is-positive' : (change < -0.005 ? 'is-negative' : 'is-neutral'));
+      }
+    }
+
+    function refreshFromCoinGecko() {
+      var cards = Array.prototype.slice.call(root.querySelectorAll('.mars-crypto-rate-card[data-cg-id]'));
+      var ids = cards.map(function (card) { return card.dataset.cgId || ''; }).filter(Boolean);
+      if (!ids.length || !window.fetch) return Promise.resolve(false);
+      var url = 'https://api.coingecko.com/api/v3/simple/price?ids=' + encodeURIComponent(ids.join(',')) + '&vs_currencies=usd&include_24hr_change=true&_mars_ts=' + Date.now();
+      return fetch(url, { cache: 'no-store', headers: { Accept: 'application/json' } })
+        .then(function (res) { return res.ok ? res.json() : Promise.reject(new Error('cg')); })
+        .then(function (json) {
+          var updated = 0;
+          cards.forEach(function (card) {
+            var id = card.dataset.cgId;
+            var row = json && json[id] ? json[id] : null;
+            if (!row || Number(row.usd || 0) <= 0) return;
+            updateCard(card, { usd: Number(row.usd || 0), change: Number(row.usd_24h_change || 0) });
+            updated++;
+          });
+          return updated > 0;
+        })
+        .catch(function () { return false; });
+    }
+
+    function refresh() {
+      fetch(withCacheBuster(rest), {
+        credentials: 'same-origin',
+        cache: 'no-store',
+        headers: { Accept: 'application/json', 'Cache-Control': 'no-cache' }
+      })
+        .then(function (res) { return res.ok ? res.json() : Promise.reject(new Error('rates')); })
+        .then(function (json) {
+          var updated = 0;
+          if (json && json.markets) {
+            root.querySelectorAll('.mars-crypto-rate-card').forEach(function (card) {
+              var code = card.dataset.symbol;
+              var row = json.markets[code];
+              if (row && Number(row.usd || 0) > 0) {
+                updateCard(card, row);
+                updated++;
+              }
+            });
+          }
+          if (!updated) refreshFromCoinGecko();
+        }).catch(function () {
+          /* Browser-side public fallback keeps the widget useful if WordPress blocks outbound requests. */
+          refreshFromCoinGecko();
+        });
+    }
+
+    refresh();
+    if (root.dataset.autoRefresh === 'yes') {
+      root._marsRateTimer = window.setInterval(refresh, 60000);
+    }
+  }
+
+  function init(scope) {
+    var base = scope && scope.querySelectorAll ? scope : document;
+    if (base.matches && base.matches('.mars-currency-calculator')) initCalculator(base);
+    if (base.matches && base.matches('.mars-crypto-rates')) initCrypto(base);
+    base.querySelectorAll('.mars-currency-calculator').forEach(initCalculator);
+    base.querySelectorAll('.mars-crypto-rates').forEach(initCrypto);
+    initImageFallbacks(base);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { init(document); });
+  else init(document);
+
+  if (window.jQuery) {
+    window.jQuery(window).on('elementor/frontend/init', function () {
+      if (!window.elementorFrontend || !window.elementorFrontend.hooks) return;
+      window.elementorFrontend.hooks.addAction('frontend/element_ready/mars_currency_calculator.default', function ($scope) { init($scope && $scope[0] ? $scope[0] : document); });
+      window.elementorFrontend.hooks.addAction('frontend/element_ready/mars_crypto_rates.default', function ($scope) { var node = $scope && $scope[0] ? $scope[0] : document; if (node.matches && node.matches('.mars-crypto-rates')) initCrypto(node, true); else if (node.querySelectorAll) node.querySelectorAll('.mars-crypto-rates').forEach(function (item) { initCrypto(item, true); }); initImageFallbacks(node); });
+      window.elementorFrontend.hooks.addAction('frontend/element_ready/global', function ($scope) { init($scope && $scope[0] ? $scope[0] : document); });
+    });
+  }
+
+  if ('MutationObserver' in window) {
+    var observer = new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        mutation.addedNodes.forEach(function (node) {
+          if (node && node.nodeType === 1) init(node);
+        });
+      });
+    });
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+  }
+})();

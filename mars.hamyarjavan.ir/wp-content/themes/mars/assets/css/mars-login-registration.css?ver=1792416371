@@ -1,0 +1,163 @@
+body.mars-auth-active main#main,body.mars-auth-active .mars-page-shell,body.mars-auth-active .mars-content-card,body.mars-auth-active .entry-content{width:100%!important;max-width:none!important;margin:0!important;padding:0!important;background:var(--mars-auth-page-bg,#fff)!important;border:0!important;border-radius:0!important;box-shadow:none!important}body.mars-auth-active .entry-title,body.mars-auth-active .mars-page-header,body.mars-auth-active .page-header,body.mars-auth-active .page-title,body.mars-auth-active .woocommerce-products-header{display:none!important}.mars-account-login-shell{min-height:100vh;display:grid;grid-template-columns:minmax(280px,1fr) minmax(360px,1fr);align-items:stretch;background:var(--mars-auth-page-bg,#fff);color:var(--mars-auth-text,#1f2937);direction:ltr}.mars-account-login-side{direction:rtl;background:var(--mars-auth-side-bg,#e8f8e8);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:48px 34px;min-height:620px}.mars-account-login-art{width:min(360px,80%);margin:0 auto 28px;color:var(--mars-auth-primary,#2f8f39);display:flex;align-items:center;justify-content:center}.mars-account-login-default-art,.mars-account-login-illustration{display:block;width:100%;max-width:100%;max-height:330px;height:auto;object-fit:contain}.mars-account-login-side h2{margin:0 0 12px!important;color:var(--mars-auth-primary,#2f8f39)!important;font-size:25px!important;font-weight:950!important;line-height:1.7!important}.mars-account-login-side p{max-width:360px;margin:0!important;color:var(--mars-auth-muted,#7c8798)!important;font-size:15px!important;font-weight:700!important;line-height:2!important}.mars-account-login-form{direction:rtl;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:54px 34px;background:var(--mars-auth-card-bg,#fff)}.mars-account-login-heading,.mars-account-auth-tabs,.mars-account-login-form #customer_login,.mars-account-login-form .u-columns,.mars-account-login-form .col2-set{width:min(420px,100%)!important;max-width:420px!important}.mars-account-login-heading{margin-bottom:18px;text-align:right}.mars-account-login-heading h2{margin:0 0 8px!important;color:var(--mars-auth-text,#1f2937)!important;font-size:24px!important;font-weight:950!important;line-height:1.7!important}.mars-account-login-heading p{margin:0!important;color:var(--mars-auth-muted,#7c8798)!important;font-size:14px!important;font-weight:700!important;line-height:1.9!important}.mars-account-auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:0 0 20px;background:color-mix(in srgb,var(--mars-auth-border,#e5e7eb) 55%,transparent);border:1px solid var(--mars-auth-border,#e5e7eb);border-radius:13px;padding:5px}.mars-account-auth-tabs button{height:40px;border:0;border-radius:9px;background:transparent;color:var(--mars-auth-muted,#7c8798);font-family:inherit;font-size:13px;font-weight:950;cursor:pointer}.mars-account-auth-tabs button.is-active{background:var(--mars-auth-primary,#2f8f39);color:#fff}.mars-account-login-form #customer_login,.mars-account-login-form .u-columns,.mars-account-login-form .col2-set{display:block!important;margin:0!important}.mars-account-login-form .u-column1,.mars-account-login-form .u-column2,.mars-account-login-form .col-1,.mars-account-login-form .col-2{width:100%!important;max-width:100%!important;float:none!important;margin:0!important;padding:0!important}.mars-account-login-form .u-column2,.mars-account-login-form .col-2{display:none!important}.mars-account-login-shell.is-register .u-column1,.mars-account-login-shell.is-register .col-1{display:none!important}.mars-account-login-shell.is-register .u-column2,.mars-account-login-shell.is-register .col-2{display:block!important}.mars-account-login-form h2{display:none!important}.mars-account-login-form form.login,.mars-account-login-form form.register,.woocommerce-account:not(.logged-in) .mars-account-login-form form{width:100%!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;border-radius:0!important}.mars-account-login-form .form-row{width:100%!important;float:none!important;margin:0 0 16px!important;padding:0!important}.mars-account-login-form label{display:block!important;margin:0 0 7px!important;color:var(--mars-auth-muted,#7c8798)!important;font-size:13px!important;font-weight:850!important}.mars-account-login-form input.input-text,.mars-account-login-form input[type=text],.mars-account-login-form input[type=email],.mars-account-login-form input[type=password]{width:100%!important;height:48px!important;border:1px solid var(--mars-auth-border,#e5e7eb)!important;border-radius:10px!important;background:var(--mars-auth-input-bg,#fff)!important;color:var(--mars-auth-text,#1f2937)!important;padding:0 13px!important;box-shadow:none!important;font-family:inherit!important;font-size:14px!important;font-weight:700!important}.mars-account-login-form input:focus{border-color:var(--mars-auth-primary,#2f8f39)!important;outline:none!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--mars-auth-primary,#2f8f39) 12%,transparent)!important}.mars-account-login-form .password-input{display:block!important;width:100%!important}.mars-account-login-form .show-password-input{left:10px!important;right:auto!important;background:transparent!important;border:0!important;box-shadow:none!important}.mars-account-login-form .woocommerce-form-login__rememberme{display:inline-flex!important;align-items:center!important;gap:7px!important;color:var(--mars-auth-muted,#7c8798)!important;font-size:13px!important;font-weight:800!important}.mars-account-login-form .lost_password{text-align:center!important}.mars-account-login-form a{color:var(--mars-auth-primary,#2f8f39)!important;font-weight:900!important;text-decoration:none!important}.mars-account-login-form button.button,.mars-account-login-form .woocommerce-button,.mars-account-login-form input[type=submit]{width:100%!important;min-height:49px!important;border:0!important;border-radius:10px!important;background:var(--mars-auth-primary,#2f8f39)!important;color:#fff!important;font-family:inherit!important;font-weight:950!important;font-size:15px!important;padding:0 18px!important;box-shadow:none!important}.mars-account-login-form .woocommerce-privacy-policy-text,.mars-account-login-form .woocommerce-form-register p{color:var(--mars-auth-muted,#7c8798)!important;font-size:13px!important;line-height:1.9!important}.mars-auth-mode-sms #customer_login,.mars-auth-mode-sms .woocommerce-form-login,.mars-auth-mode-sms .woocommerce-form-register{display:none!important}.mars-sms-auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 18px;background:var(--mars-auth-page-bg,#fff);direction:rtl}.mars-sms-auth-card{position:relative;width:min(100%,450px);padding:34px 36px 30px;border:1px solid var(--mars-auth-border,#e5e7eb);border-radius:22px;background:var(--mars-auth-card-bg,#fff);box-shadow:0 18px 55px rgba(15,23,42,.07);text-align:center}.mars-sms-auth-back{position:absolute;right:18px;top:18px;width:40px;height:40px;border:1px solid var(--mars-auth-border,#e5e7eb);border-radius:12px;background:transparent;color:var(--mars-auth-text,#1f2937);cursor:pointer;font-size:18px}.mars-sms-auth-logo{height:64px;margin:0 auto 36px;display:flex;align-items:center;justify-content:center}.mars-sms-auth-logo-img{display:block;max-width:190px;max-height:64px;width:auto;height:auto;object-fit:contain}.mars-sms-auth-logo-img--dark{display:none!important}html.dark .mars-sms-auth-logo-img--light,body.dark .mars-sms-auth-logo-img--light,body[data-theme="dark"] .mars-sms-auth-logo-img--light{display:none!important}html.dark .mars-sms-auth-logo-img--dark,body.dark .mars-sms-auth-logo-img--dark,body[data-theme="dark"] .mars-sms-auth-logo-img--dark{display:block!important}.mars-sms-auth-logo-text{color:var(--mars-auth-primary,#ef4056);font-size:28px;font-weight:950}.mars-sms-auth-step{display:none}.mars-sms-auth-step.is-active{display:block}.mars-sms-auth-step h2{margin:0 0 10px!important;color:var(--mars-auth-text,#1f2937)!important;font-size:22px!important;font-weight:950!important}.mars-sms-auth-step p{margin:0 0 24px!important;color:var(--mars-auth-muted,#7c8798)!important;font-size:14px!important;font-weight:700!important;line-height:2!important}.mars-sms-field{display:block;margin:0 0 18px}.mars-sms-field input{width:100%!important;height:54px!important;border:1px solid var(--mars-auth-border,#e5e7eb)!important;border-radius:10px!important;background:var(--mars-auth-input-bg,#fff)!important;color:var(--mars-auth-text,#1f2937)!important;font-family:inherit!important;font-size:16px!important;font-weight:800!important;text-align:center!important;box-shadow:none!important}.mars-sms-field input:focus{border-color:var(--mars-auth-primary,#ef4056)!important;outline:0!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--mars-auth-primary,#ef4056) 12%,transparent)!important}.mars-sms-submit{width:100%!important;height:54px!important;border:0!important;border-radius:10px!important;background:var(--mars-auth-primary,#ef4056)!important;color:#fff!important;font-family:inherit!important;font-size:15px!important;font-weight:950!important;cursor:pointer!important}.mars-sms-submit[disabled]{opacity:.65;cursor:not-allowed!important}.mars-sms-link{display:block;border:0;background:transparent;color:var(--mars-auth-primary,#ef4056)!important;padding:0;margin:0 0 10px auto;font-family:inherit;font-weight:900;cursor:pointer}.mars-sms-timer{min-height:32px;margin:16px 0 22px;color:var(--mars-auth-muted,#7c8798);font-size:13px;font-weight:800;line-height:2}.mars-sms-timer button{border:0;background:transparent;color:var(--mars-auth-primary,#ef4056);font:inherit;font-weight:900;cursor:pointer}.mars-sms-auth-message{min-height:24px;margin-top:15px;color:#ef4056;font-size:13px;font-weight:850;line-height:1.9}.mars-sms-auth-message.is-success{color:#16a34a}@media(max-width:900px){.mars-account-login-shell{grid-template-columns:1fr;direction:rtl}.mars-account-login-side{min-height:auto;padding:32px 18px}.mars-account-login-art{width:min(260px,70%);margin-bottom:16px}.mars-account-login-form{padding:34px 18px}}@media(max-width:600px){.mars-sms-auth-wrap{padding:0;align-items:flex-start}.mars-sms-auth-card{width:100%;min-height:100vh;border:0;border-radius:0;box-shadow:none;padding:30px 22px}.mars-sms-auth-logo{margin-bottom:42px}}
+
+/* Mars — standalone login and default back button */
+body.mars-auth-active{
+	min-height:100vh!important;
+	background:var(--mars-auth-page-bg,#fff)!important;
+}
+body.mars-auth-active #mars-site-header,
+body.mars-auth-active .mars-complete-footer,
+body.mars-auth-active .mars-elementor-footer{
+	display:none!important;
+}
+body.mars-auth-active .mars-site-main{
+	min-height:100vh!important;
+}
+.mars-account-login-form{
+	position:relative;
+}
+.mars-account-login-back-home{
+	display:inline-flex!important;
+	align-items:center!important;
+	justify-content:center!important;
+	align-self:flex-start!important;
+	gap:8px!important;
+	min-height:42px!important;
+	margin:0 0 28px!important;
+	padding:7px 14px!important;
+	border:1px solid var(--mars-auth-border,#e5e7eb)!important;
+	border-radius:11px!important;
+	background:transparent!important;
+	color:var(--mars-auth-text,#1f2937)!important;
+	font-size:13px!important;
+	font-weight:900!important;
+	line-height:1!important;
+	text-decoration:none!important;
+}
+.mars-account-login-back-home:hover{
+	border-color:var(--mars-auth-primary,#2f8f39)!important;
+	color:var(--mars-auth-primary,#2f8f39)!important;
+}
+.mars-account-login-back-home span{
+	font-size:18px;
+	line-height:1;
+}
+.mars-account-login-form form.register #reg_password,
+.mars-account-login-form form.register input[name="password"]{
+	display:block!important;
+}
+
+
+/* Mars — centered default-login links */
+.mars-account-login-back-home{
+	align-self:center!important;
+	margin:0 auto 28px!important;
+	text-align:center!important;
+}
+.mars-account-login-form .lost_password,
+.mars-account-login-form .woocommerce-LostPassword{
+	display:block!important;
+	width:100%!important;
+	margin:14px auto 0!important;
+	text-align:center!important;
+}
+.mars-account-login-form .lost_password a,
+.mars-account-login-form .woocommerce-LostPassword a{
+	display:inline-flex!important;
+	align-items:center!important;
+	justify-content:center!important;
+	margin-inline:auto!important;
+	text-align:center!important;
+}
+body.mars-auth-active .mars-header,body.mars-auth-active .mars-announcement,body.mars-auth-active .mars-complete-footer,body.mars-auth-active footer{display:none!important}body.mars-auth-active main#primary,body.mars-auth-active #primary,body.mars-auth-active .site-main{width:100%!important;max-width:none!important;margin:0!important;padding:0!important}
+
+/* Authentication-page centering and page-title cleanup. */
+body.mars-auth-active .mars-content-card>header,body.mars-auth-active .mars-content-card>.mars-page-header{display:none!important}
+body.mars-auth-mode-sms .woocommerce{display:flex!important;width:100%!important;min-height:100svh!important;align-items:center!important;justify-content:center!important;margin:0!important;padding:0!important}
+body.mars-auth-mode-sms .woocommerce>.mars-sms-auth-wrap{width:100%!important;min-height:100svh!important}
+
+
+/* Mars — remove native Woo account chrome from the dedicated auth screen. */
+body.mars-auth-active #customer_login>.u-column1>h2,
+body.mars-auth-active #customer_login>.u-column2>h2,
+body.mars-auth-active #customer_login>.col-1>h2,
+body.mars-auth-active #customer_login>.col-2>h2,
+body.mars-auth-active .woocommerce>h2,
+body.mars-auth-active .woocommerce-breadcrumb,
+body.mars-auth-active nav.woocommerce-breadcrumb{display:none!important}
+body.mars-auth-active .mars-mobile-overlay,
+body.mars-auth-active .mars-mobile-drawer,
+body.mars-auth-active .mars-skip-link{display:none!important}
+
+/* Mars — SMS/password hybrid authentication */
+.mars-sms-auth-logo{margin-bottom:22px}
+.mars-sms-login-tabs{
+	display:grid;
+	grid-template-columns:repeat(2,minmax(0,1fr));
+	gap:5px;
+	margin:0 0 28px;
+	padding:5px;
+	border:1px solid var(--mars-auth-border,#e5e7eb);
+	border-radius:13px;
+	background:color-mix(in srgb,var(--mars-auth-border,#e5e7eb) 36%,transparent);
+}
+.mars-sms-login-tabs button{
+	min-height:42px;
+	padding:7px 10px;
+	border:0;
+	border-radius:9px;
+	background:transparent;
+	color:var(--mars-auth-muted,#7c8798);
+	font-family:inherit;
+	font-size:13px;
+	font-weight:900;
+	cursor:pointer;
+	transition:background .18s ease,color .18s ease,box-shadow .18s ease;
+}
+.mars-sms-login-tabs button.is-active{
+	background:var(--mars-auth-card-bg,#fff);
+	color:var(--mars-auth-primary,#ef4056);
+	box-shadow:0 2px 10px rgba(15,23,42,.07);
+}
+.mars-sms-password-fields{
+	display:grid;
+	gap:12px;
+	margin-top:14px;
+}
+.mars-sms-password-fields[hidden]{display:none!important}
+.mars-sms-password-fields .mars-sms-field{margin:0}
+.mars-sms-secondary{
+	width:100%;
+	min-height:50px;
+	padding:9px 16px;
+	border:1px solid var(--mars-auth-primary,#ef4056);
+	border-radius:10px;
+	background:transparent;
+	color:var(--mars-auth-primary,#ef4056);
+	font-family:inherit;
+	font-size:14px;
+	font-weight:950;
+	cursor:pointer;
+}
+.mars-sms-secondary:hover{
+	background:color-mix(in srgb,var(--mars-auth-primary,#ef4056) 8%,transparent);
+}
+.mars-sms-secondary[disabled]{opacity:.65;cursor:not-allowed}
+.mars-sms-auth-step[data-mars-sms-step="password"] .mars-sms-field input[readonly]{
+	background:color-mix(in srgb,var(--mars-auth-input-bg,#fff) 78%,var(--mars-auth-border,#e5e7eb));
+	cursor:default;
+}
+@media(max-width:600px){
+	.mars-sms-login-tabs{margin-bottom:24px}
+	.mars-sms-login-tabs button{font-size:12px;padding-inline:6px}
+}
+
+/* Safari fallback after a successfully authenticated SMS login. */
+.mars-sms-auth-message a{color:inherit;text-decoration:underline;font-weight:700;margin-inline-start:4px}
+
+/* Registration identity fields: shown only for mobile numbers without an account. */
+.mars-sms-register-label{display:block;margin:0 3px 7px;text-align:right;color:var(--mars-auth-text,#1f2937);font-size:13px;font-weight:850}
+.mars-sms-auth-step[data-mars-sms-step="register"] .mars-sms-field{margin-bottom:16px}
+.mars-sms-auth-step[data-mars-sms-step="register"] .mars-sms-field input{text-align:right!important;padding:0 15px!important}
+.mars-sms-auth-step .mars-sms-register-hint{margin:0 0 20px!important;font-size:12px!important;line-height:1.9!important}
+.mars-sms-register-edit{margin:17px auto 0!important}

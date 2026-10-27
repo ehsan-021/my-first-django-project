@@ -1,0 +1,15 @@
+.mars-offer-countdown{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:26px;width:100%;margin:0 0 22px;padding:18px 22px;border:1px solid color-mix(in srgb,var(--mars-accent) 25%,var(--mars-line));border-radius:17px;background:linear-gradient(135deg,color-mix(in srgb,var(--mars-accent) 8%,var(--mars-surface)),var(--mars-surface));color:var(--mars-text)}.mars-offer-countdown[hidden]{display:none!important}.mars-offer-countdown__copy{display:flex;flex-direction:column;gap:5px;min-width:0}.mars-offer-countdown__badge{align-self:flex-start;padding:5px 9px;border-radius:999px;background:var(--mars-accent);color:#fff;font-size:10px;font-weight:900}.mars-offer-countdown__copy strong{font-size:16px;font-weight:900}.mars-offer-countdown__copy small{color:var(--mars-muted);font-size:11px;line-height:1.8}.mars-offer-countdown__clock{display:flex;align-items:center;gap:8px;direction:ltr}.mars-offer-countdown__clock>div{display:grid;place-items:center;min-width:58px;height:62px;padding:6px 8px;border:1px solid var(--mars-line);border-radius:12px;background:var(--mars-surface);box-shadow:0 5px 15px rgba(15,23,42,.04)}.mars-offer-countdown__clock b{color:var(--mars-accent);font-size:20px;font-weight:950;line-height:1}.mars-offer-countdown__clock span{color:var(--mars-muted);font-size:9px}.mars-offer-countdown__clock i{color:var(--mars-muted);font-style:normal;font-weight:900}.mars-offer-countdown.is-upcoming .mars-offer-countdown__badge{background:#f59e0b}@media(max-width:700px){.mars-offer-countdown{align-items:stretch;flex-direction:column;padding:16px}.mars-offer-countdown__clock{justify-content:space-between;gap:4px}.mars-offer-countdown__clock>div{min-width:0;flex:1;height:58px}.mars-offer-countdown__clock i{align-self:center}}
+
+/* on phones the offer block is timer-only. */
+@media(max-width:700px){
+  .mars-offer-countdown{display:block!important;margin-bottom:14px!important;padding:10px!important}
+  .mars-offer-countdown__copy{display:none!important}
+  .mars-offer-countdown__clock{width:100%;justify-content:space-between!important;gap:4px!important}
+  .mars-offer-countdown__clock>div{min-width:0!important;height:52px!important;flex:1!important;padding:5px 4px!important}
+  .mars-offer-countdown__clock b{font-size:17px!important}
+  .mars-offer-countdown__clock span{font-size:8px!important}
+}
+
+/* Product Page theme variables take precedence after countdown script/theme refreshes. */
+.mars-service-product-page .mars-offer-countdown__badge{background:var(--mars-product-badge-bg,var(--mars-accent))!important;color:var(--mars-product-badge-text,#fff)!important}
+.mars-service-product-page .mars-offer-countdown__clock b{color:var(--mars-service-blue,var(--mars-accent))!important}

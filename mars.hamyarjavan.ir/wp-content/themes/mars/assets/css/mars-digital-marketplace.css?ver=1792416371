@@ -1,0 +1,126 @@
+.mars-digital-plans,.mars-digital-products,.mars-digital-categories{box-sizing:border-box;direction:rtl}.mars-digital-plans *,.mars-digital-products *,.mars-digital-categories *{box-sizing:border-box}
+.mars-digital-plans{--rdp-cols:4;--rdp-heading:#282018;--rdp-muted:#84756c;--rdp-card:#fff;--rdp-border:#e8e5e2;--rdp-text:#57473c;--rdp-price:#18e1b5;--rdp-button:#18e1b5;--rdp-button-text:#fff}.mars-digital-plans__head{text-align:center;margin:0 0 28px}.mars-digital-plans__head h2{margin:0 0 8px;color:var(--rdp-heading);font-size:26px;font-weight:950}.mars-digital-plans__head p{margin:0;color:var(--rdp-muted);font-size:14px;line-height:2}.mars-digital-plans__grid{display:grid;grid-template-columns:repeat(var(--rdp-cols),minmax(0,1fr));gap:14px}.mars-digital-plan{min-width:0;padding:28px 22px;background:var(--rdp-card);border:1px solid var(--rdp-border);border-radius:14px;text-align:center;color:var(--rdp-text);box-shadow:0 10px 30px rgba(15,23,42,.035);transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}.mars-digital-plan:hover{transform:translateY(-4px);box-shadow:0 18px 45px rgba(15,23,42,.09)}.mars-digital-plan__badge{display:block;width:86px;height:86px;object-fit:contain;margin:0 auto 7px}.mars-digital-plan h3{margin:0 0 12px;color:var(--rdp-text);font-size:16px;font-weight:800}.mars-digital-plan__price{display:flex;align-items:flex-end;justify-content:center;gap:6px;margin-bottom:21px;color:var(--rdp-price)}.mars-digital-plan__price strong{font-size:38px;line-height:1;font-weight:950}.mars-digital-plan__price span{font-size:13px;color:var(--rdp-muted);padding-bottom:3px}.mars-digital-plan ul{list-style:none;margin:0;padding:0;display:grid;gap:10px;font-size:13px;line-height:1.75}.mars-digital-plan__button{display:inline-flex;align-items:center;justify-content:center;min-width:112px;min-height:38px;margin-top:25px;padding:0 20px;border-radius:999px;background:var(--rdp-button);color:var(--rdp-button-text)!important;text-decoration:none!important;font-size:13px;font-weight:900;transition:transform .2s ease,filter .2s ease}.mars-digital-plan__button:hover{transform:translateY(-2px);filter:brightness(.96)}
+.mars-digital-products{--rdg-cols:4;--rdg-card:#fff;--rdg-border:#eef0f4;--rdg-title:#2f2c2a;--rdg-attr-bg:#f8f8f8;--rdg-attr-label:#aaa3a0;--rdg-attr-text:#554a45;--rdg-price:#18e1b5;--rdg-old:#aaa7a4;--rdg-button:#18e1b5;--rdg-button-text:#fff;--rdg-badge:#f9b500;--rdg-badge-text:#fff}.mars-digital-products__grid{display:grid;grid-template-columns:repeat(var(--rdg-cols),minmax(0,1fr));gap:20px}.mars-digital-product{min-width:0;padding:16px 16px 19px;background:var(--rdg-card);border:1px solid var(--rdg-border);border-radius:22px;box-shadow:0 13px 38px rgba(15,23,42,.08);transition:transform .22s ease,box-shadow .22s ease}.mars-digital-product:hover{transform:translateY(-4px);box-shadow:0 21px 50px rgba(15,23,42,.13)}.mars-digital-product__media{display:block;height:205px;border-radius:17px;overflow:hidden;background:#f2f4f7}.mars-digital-product__media img{display:block;width:100%!important;height:100%!important;object-fit:contain!important}.mars-digital-product h3{position:relative;margin:17px 0 12px;padding-right:12px;font-size:17px;font-weight:850;line-height:1.7;min-height:3.4em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;white-space:normal;overflow:hidden;text-overflow:ellipsis}.mars-digital-product h3:before{content:"";position:absolute;right:0;top:5px;bottom:5px;width:4px;border-radius:8px;background:var(--rdg-badge)}.mars-digital-product h3 a{color:var(--rdg-title)!important;text-decoration:none!important}.mars-digital-product__attrs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));min-height:60px;background:var(--rdg-attr-bg);border-radius:12px;overflow:hidden}.mars-digital-product__attrs>div{display:grid;align-content:center;justify-items:center;gap:4px;padding:8px;border-left:1px solid color-mix(in srgb,var(--rdg-border) 85%,transparent);min-width:0}.mars-digital-product__attrs>div:last-child{border-left:0}.mars-digital-product__attrs span{color:var(--rdg-attr-label);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.mars-digital-product__attrs strong{color:var(--rdg-attr-text);font-size:12px;font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.mars-digital-product__foot{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-top:15px}.mars-digital-product__price-wrap{display:grid;grid-template-columns:auto auto;align-items:center;gap:4px 7px;min-width:0}.mars-digital-product__badge{display:inline-flex;align-items:center;justify-content:center;min-height:22px;padding:0 5px;border-radius:5px;background:var(--rdg-badge);color:var(--rdg-badge-text);font-size:11px;font-weight:900}.mars-digital-product__price-wrap del{color:var(--rdg-old);font-size:11px}.mars-digital-product__price{grid-column:1/-1;display:flex;align-items:center;gap:4px;color:var(--rdg-price);white-space:nowrap}.mars-digital-product__price strong{font-size:16px;font-weight:950}.mars-digital-product__price img{width:auto!important;height:17px!important;object-fit:contain!important;display:block}.mars-digital-product__button{display:inline-flex;align-items:center;justify-content:center;min-width:126px;min-height:41px;padding:0 17px;border-radius:10px;background:var(--rdg-button);color:var(--rdg-button-text)!important;text-decoration:none!important;font-size:14px;font-weight:950;white-space:nowrap;transition:transform .2s ease,filter .2s ease}.mars-digital-product__button:hover{transform:translateY(-2px);filter:brightness(.96)}
+.mars-digital-categories{--rdc-cols:4;--rdc-heading:#121212;--rdc-highlight:#18e1b5;--rdc-muted:#77808b;--rdc-card:#f7f8fa;--rdc-card-text:#111827;--rdc-count:#18e1b5;--rdc-active:#18e1b5;--rdc-active-text:#063d32;--rdc-arrow:#18e1b5;--rdc-arrow-text:#063d32;--rdc-border:#e1e5eb}.mars-digital-categories__head{text-align:center;border-bottom:1px solid var(--rdc-border);padding-bottom:10px;margin-bottom:36px}.mars-digital-categories__head h2{margin:0 0 8px;color:var(--rdc-heading);font-size:24px;font-weight:950}.mars-digital-categories__head h2 span{color:var(--rdc-highlight)}.mars-digital-categories__head p{margin:0;color:var(--rdc-muted);font-size:13px;line-height:1.9}.mars-digital-categories__grid{display:grid;grid-template-columns:repeat(var(--rdc-cols),minmax(0,1fr));gap:22px 24px}.mars-digital-category{position:relative;min-height:88px;display:flex;align-items:center;gap:13px;padding:12px 18px 12px 45px;border-radius:17px;background:var(--rdc-card);color:var(--rdc-card-text)!important;text-decoration:none!important;overflow:visible;transition:background .22s ease,color .22s ease,transform .22s ease,box-shadow .22s ease}.mars-digital-category img{width:58px;height:58px;object-fit:contain;flex:0 0 58px;filter:drop-shadow(0 8px 10px rgba(15,23,42,.08));transition:transform .22s ease}.mars-digital-category__text{display:grid;gap:6px;min-width:0}.mars-digital-category__text strong{font-size:15px;font-weight:900;color:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mars-digital-category__text small{font-size:12px;font-weight:800;color:var(--rdc-count)}.mars-digital-category>i{position:absolute;left:-1px;bottom:0;width:37px;height:37px;border-radius:0 18px 0 17px;background:var(--rdc-arrow);color:var(--rdc-arrow-text);font-style:normal;font-size:31px;line-height:32px;text-align:center}.mars-digital-category:hover,.mars-digital-category.is-active{background:var(--rdc-active);color:var(--rdc-active-text)!important;transform:translateY(-2px);box-shadow:0 15px 34px color-mix(in srgb,var(--rdc-active) 24%,transparent)}.mars-digital-category:hover .mars-digital-category__text small,.mars-digital-category.is-active .mars-digital-category__text small{color:var(--rdc-active-text)}.mars-digital-category:hover img,.mars-digital-category.is-active img{transform:scale(1.08) rotate(-3deg)}
+@media(max-width:900px){.mars-digital-products__media{height:185px}.mars-digital-product__foot{align-items:center}.mars-digital-product__button{min-width:116px}.mars-digital-categories__grid{gap:15px}.mars-digital-category{min-height:82px}}
+@media(max-width:600px){.mars-digital-plans__grid,.mars-digital-products__grid,.mars-digital-categories__grid{grid-template-columns:1fr!important}.mars-digital-product__media{height:230px}.mars-digital-categories__head{margin-bottom:24px}.mars-digital-category{min-height:84px}.mars-digital-plan{padding:24px 18px}}
+
+/* Mars digital marketplace refinements */
+.mars-digital-plans,.mars-digital-categories,.mars-digital-products{width:100%;max-width:100%}.mars-digital-plan,.mars-digital-category,.mars-digital-product{isolation:isolate}.mars-digital-product__button.is-free-download{background:var(--rdg-badge)!important;color:var(--rdg-badge-text)!important}.mars-digital-category img{pointer-events:none}.mars-digital-plans__grid,.mars-digital-categories__grid{align-items:stretch}.mars-digital-plan{height:100%}.mars-digital-category{height:100%}
+
+/* Mars 1.3.0 digital categories refinement */
+.mars-digital-categories.is-divider-hidden .mars-digital-categories__head{border-bottom:0;padding-bottom:0}
+.mars-digital-category{padding-left:52px}
+.mars-digital-category__arrow{position:absolute;left:-7px;bottom:10px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:var(--rdc-arrow);color:var(--rdc-arrow-text);box-shadow:0 8px 18px color-mix(in srgb,var(--rdc-arrow) 28%,transparent);transition:transform .22s ease,box-shadow .22s ease,filter .22s ease}
+.mars-digital-category__arrow svg{display:block;width:19px;height:19px;overflow:visible}
+.mars-digital-category:hover .mars-digital-category__arrow,.mars-digital-category.is-active .mars-digital-category__arrow{transform:translateX(-2px);box-shadow:0 10px 24px color-mix(in srgb,var(--rdc-arrow) 36%,transparent);filter:saturate(1.05)}
+.mars-digital-category:hover,.mars-digital-category.is-active{background:var(--rdc-active);color:var(--rdc-active-text)!important}
+.mars-digital-category:not(.is-active){box-shadow:none}
+.mars-digital-category:not(.is-active):not(:hover){transform:none}
+.mars-digital-product__downloads{grid-column:1/-1;color:var(--rdg-old);font-size:10px;font-weight:750;white-space:nowrap}
+
+/* Mars 1.3.0 - Toman PNG placement */
+.mars-digital-product__price{direction:rtl;flex-direction:row}
+.mars-digital-product__price strong{order:1}
+.mars-digital-product__price img{order:2;filter:none;opacity:.9}
+.mars-digital-plan__price{direction:rtl;align-items:flex-end}
+.mars-digital-plan__price strong{order:1}
+.mars-digital-plan__price .mars-digital-plan__toman{order:3;width:auto!important;height:23px!important;object-fit:contain!important;display:block!important;margin-bottom:1px;filter:none;opacity:.9}
+.mars-digital-plan__price span{order:2}
+html.dark .mars-digital-product__price img,html[data-theme="dark"] .mars-digital-product__price img,html.dark .mars-digital-plan__toman,html[data-theme="dark"] .mars-digital-plan__toman{filter:invert(1) brightness(1.18);opacity:.9}
+
+/* Mars 1.3.0 - digital product cards are navigation-only */
+.mars-digital-product__card-link{display:block;color:inherit!important;text-decoration:none!important}
+.mars-digital-product__card-link:hover{color:inherit!important;text-decoration:none!important}
+.mars-digital-product__card-link .mars-digital-product__button{pointer-events:none}
+
+/* Mars 1.3.0 - visual product showcase */
+.mars-digital-image-showcase{--rdi-cols:4;--rdi-bg:#fff;--rdi-eyebrow:#242424;--rdi-title:#0b1323;--rdi-button-border:#18e1b5;--rdi-button-text:#075c4a;--rdi-product-title:#27314f;--rdi-image-bg:#f4f6fa;--rdi-mobile-card:82vw;direction:rtl;width:100%;max-width:100%;box-sizing:border-box;background:var(--rdi-bg);padding:10px 0 4px}
+.mars-digital-image-showcase *{box-sizing:border-box}
+.mars-digital-image-showcase__head{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:28px}
+.mars-digital-image-showcase__heading{min-width:0;text-align:var(--rdi-intro-align,right)!important}
+.mars-digital-image-showcase__heading p{margin:0 0 7px;color:var(--rdi-eyebrow);font-size:14px;line-height:1.9;font-weight:500;text-align:inherit!important}
+.mars-digital-image-showcase__heading h2{margin:0;color:var(--rdi-title);font-size:34px;line-height:1.35;font-weight:950;letter-spacing:-.5px;text-align:inherit!important}
+.mars-digital-image-showcase__more{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;gap:13px;min-width:154px;min-height:54px;padding:0 24px;border:2px solid var(--rdi-button-border);border-radius:999px;color:var(--rdi-button-text)!important;text-decoration:none!important;font-size:14px;font-weight:750;background:transparent;transition:border-color .2s ease,transform .2s ease,background .2s ease}
+.mars-digital-image-showcase__more:hover{transform:translateY(-2px);background:color-mix(in srgb,var(--rdi-button-border) 18%,transparent);color:var(--rdi-button-text)!important}
+.mars-digital-image-showcase__more svg{display:block;width:18px;height:18px;flex:0 0 18px}
+.mars-digital-image-showcase__rail{display:grid;grid-template-columns:repeat(var(--rdi-cols),minmax(0,1fr));gap:28px 38px;align-items:start}
+.mars-digital-image-showcase__item{display:block;min-width:0;color:var(--rdi-product-title)!important;text-decoration:none!important;text-align:center}
+.mars-digital-image-showcase__media{display:block;width:100%;aspect-ratio:var(--rdi-aspect,16 / 10);overflow:hidden;border-radius:24px;background:var(--rdi-image-bg);box-shadow:0 9px 22px rgba(15,23,42,.035)}
+.mars-digital-image-showcase__media img{display:block;width:100%!important;height:100%!important;object-fit:var(--rdi-fit,cover)!important;object-position:center!important;transition:transform .3s ease}
+.mars-digital-image-showcase__item:hover .mars-digital-image-showcase__media img{transform:scale(1.025)}
+.mars-digital-image-showcase__name{display:block;margin-top:16px;padding:0 5px;color:var(--rdi-product-title);font-size:var(--rdi-product-title-size,15px)!important;font-weight:650;line-height:1.65;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:var(--rdi-product-align,center)!important}
+
+@media(max-width:767px){
+  .mars-digital-products__grid{display:flex!important;flex-wrap:nowrap!important;direction:rtl;overflow-x:auto;overflow-y:hidden;gap:14px;padding:2px 2px 15px;scroll-snap-type:x proximity;overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch;touch-action:auto;scrollbar-width:none}
+  .mars-digital-products__grid::-webkit-scrollbar{display:none;width:0;height:0}
+  .mars-digital-product{flex:0 0 var(--rdg-mobile-card-width,82%);width:var(--rdg-mobile-card-width,82%);max-width:none;scroll-snap-align:start}
+  .mars-digital-product__media{height:205px}
+  .mars-digital-product__foot{align-items:center}
+  .mars-digital-product__button{min-width:116px}
+
+  .mars-digital-image-showcase{overflow:visible;padding-top:4px}
+  .mars-digital-image-showcase__head{align-items:center;gap:14px;margin-bottom:20px}
+  .mars-digital-image-showcase__heading p{font-size:12px;margin-bottom:4px}
+  .mars-digital-image-showcase__heading h2{font-size:23px}
+  .mars-digital-image-showcase__more{min-width:auto;min-height:44px;padding:0 15px;gap:8px;font-size:12px;border-width:1.5px}
+  .mars-digital-image-showcase__more svg{width:16px;height:16px;flex-basis:16px}
+  .mars-digital-image-showcase__rail{display:flex!important;flex-wrap:nowrap!important;direction:rtl;overflow-x:auto;overflow-y:hidden;gap:15px;padding:2px 1px 14px;scroll-snap-type:x proximity;overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch;touch-action:auto;scrollbar-width:none}
+  .mars-digital-image-showcase__rail::-webkit-scrollbar{display:none;width:0;height:0}
+  .mars-digital-image-showcase__item{flex:0 0 min(var(--rdi-mobile-card),340px);width:min(var(--rdi-mobile-card),340px);scroll-snap-align:start}
+  .mars-digital-image-showcase__media{border-radius:18px}
+  .mars-digital-image-showcase__name{margin-top:11px;font-size:13px}
+}
+
+@media(max-width:420px){
+  .mars-digital-image-showcase__head{align-items:flex-start}
+  .mars-digital-image-showcase__heading h2{font-size:20px}
+  .mars-digital-image-showcase__more{min-height:40px;padding:0 12px}
+}
+
+
+/* Mars 1.3.0 - mobile rail density + showcase header refinements */
+@media(max-width:767px){
+  .mars-digital-products--mobile-1{--rdg-mobile-card-width:100%}
+  .mars-digital-products--mobile-1-1{--rdg-mobile-card-width:89%}
+  .mars-digital-products--mobile-1-2{--rdg-mobile-card-width:82%}
+  .mars-digital-products--mobile-1-3{--rdg-mobile-card-width:75%}
+  .mars-digital-products--mobile-1-5{--rdg-mobile-card-width:65%}
+  .mars-digital-products--mobile-2{--rdg-mobile-card-width:48%}
+  .mars-digital-image-showcase__heading{flex:1 1 auto;min-width:0;overflow:hidden}
+  .mars-digital-image-showcase__heading p,
+  .mars-digital-image-showcase__heading h2{display:block;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mars-digital-image-showcase__more{width:42px!important;min-width:42px!important;height:42px!important;min-height:42px!important;padding:0!important;border-radius:50%!important;flex:0 0 42px!important}
+  .mars-digital-image-showcase__more span{display:none!important}
+  .mars-digital-image-showcase__more svg{width:17px!important;height:17px!important;flex:0 0 17px!important}
+}
+
+
+/* Mars 2.0.0 - mobile rails must not capture vertical page scrolling */
+@media(max-width:767px){
+  .mars-digital-products__grid,
+  .mars-digital-image-showcase__rail{
+    touch-action:auto!important;
+    overscroll-behavior-inline:auto!important;
+    overscroll-behavior-block:auto!important;
+    -ms-scroll-chaining:chained;
+  }
+}
+
+
+/* Mars — reliable Light/Dark defaults even before Elementor post CSS is regenerated. */
+html.dark .mars-digital-plans,html[data-theme="dark"] .mars-digital-plans,body.dark .mars-digital-plans,body[data-theme="dark"] .mars-digital-plans{--rdp-heading:#f8fafc;--rdp-muted:#aab5c4;--rdp-card:#172033;--rdp-border:#334155;--rdp-text:#e5e7eb;--rdp-price:#18e1b5;--rdp-button:#18e1b5;--rdp-button-text:#fff}
+html.dark .mars-digital-categories,html[data-theme="dark"] .mars-digital-categories,body.dark .mars-digital-categories,body[data-theme="dark"] .mars-digital-categories{--rdc-heading:#f8fafc;--rdc-highlight:#18e1b5;--rdc-muted:#94a3b8;--rdc-card:#172033;--rdc-card-text:#f8fafc;--rdc-count:#18e1b5;--rdc-active:#18e1b5;--rdc-active-text:#063d32;--rdc-arrow:#18e1b5;--rdc-arrow-text:#063d32;--rdc-border:#334155}
+html.dark .mars-digital-products,html[data-theme="dark"] .mars-digital-products,body.dark .mars-digital-products,body[data-theme="dark"] .mars-digital-products{--rdg-card:#172033;--rdg-border:#334155;--rdg-title:#f8fafc;--rdg-attr-bg:#202c3d;--rdg-attr-label:#94a3b8;--rdg-attr-text:#e2e8f0;--rdg-price:#18e1b5;--rdg-old:#94a3b8;--rdg-button:#18e1b5;--rdg-button-text:#fff;--rdg-badge:#fbbf24;--rdg-badge-text:#111827}
+html.dark .mars-digital-image-showcase,html[data-theme="dark"] .mars-digital-image-showcase,body.dark .mars-digital-image-showcase,body[data-theme="dark"] .mars-digital-image-showcase{--rdi-bg:#111827;--rdi-eyebrow:#cbd5e1;--rdi-title:#fff;--rdi-button-border:#18e1b5;--rdi-button-text:#18e1b5;--rdi-product-title:#e5e7eb;--rdi-image-bg:#1f2937}
+
+/* Out-of-stock cards in the Elementor product grid. */
+.mars-digital-product.is-out-of-stock .mars-digital-product__media img{filter:grayscale(1);opacity:.68}
+
+/* Mars — rectangular artwork controls for Digital Products. */
+.mars-digital-products{--rdg-title-align:right}
+.mars-digital-products .mars-digital-product__media{height:auto!important;aspect-ratio:16 / 9;overflow:hidden}
+.mars-digital-products .mars-digital-product__media img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center center!important}
+.mars-digital-products .mars-digital-product h3{text-align:var(--rdg-title-align,right)!important}
+.mars-digital-products .mars-digital-product h3:before{display:none!important}
+@media(max-width:600px){.mars-digital-products .mars-digital-product__media{height:auto!important}}

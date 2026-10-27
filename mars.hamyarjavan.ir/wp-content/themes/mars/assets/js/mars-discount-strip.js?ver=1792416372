@@ -1,0 +1,224 @@
+(function () {
+  'use strict';
+
+  function init(root) {
+    if (!root || root.dataset.marsDiscountReady === '1') return;
+
+    var viewport = root.querySelector('.mars-discount-strip__viewport');
+    var items = Array.prototype.slice.call(root.querySelectorAll('.mars-discount-strip__item'));
+    var dots = Array.prototype.slice.call(root.querySelectorAll('.mars-discount-strip__dots span'));
+    if (!viewport || !items.length) return;
+
+    root.dataset.marsDiscountReady = '1';
+
+    var index = 0;
+    var timer = 0;
+    var visible = true;
+    var pointerDown = false;
+    var pointerId = null;
+    var startX = 0;
+    var startScroll = 0;
+    var dragged = false;
+    var captureActive = false;
+    var suppressNextClick = false;
+    var autoplay = root.dataset.autoplay === '1' && items.length > 1;
+    var delay = Math.max(1500, parseInt(root.dataset.delay || '3500', 10));
+
+    function positionPopover(item) {
+      var popover = item ? item.querySelector('.mars-discount-strip__popover') : null;
+      if (!popover || window.matchMedia('(max-width: 767px)').matches) return;
+      var rect = item.getBoundingClientRect();
+      window.requestAnimationFrame(function () {
+        var height = popover.offsetHeight || 90;
+        var left = Math.max(150, Math.min(window.innerWidth - 150, rect.left + (rect.width / 2)));
+        var top = Math.max(12, rect.top - height - 18);
+        popover.style.left = left + 'px';
+        popover.style.top = top + 'px';
+      });
+    }
+
+    items.forEach(function (item) {
+      item.addEventListener('mouseenter', function () { positionPopover(item); });
+      item.addEventListener('focusin', function () { positionPopover(item); });
+
+      // Use the exact WooCommerce product permalink for a normal click.
+      item.addEventListener('click', function (event) {
+        if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        var url = item.getAttribute('data-product-url') || item.getAttribute('href');
+        if (!url) return;
+        event.preventDefault();
+        window.location.assign(url);
+      });
+    });
+
+    function nearestIndex() {
+      var edge = viewport.getBoundingClientRect().right;
+      var best = 0;
+      var distance = Infinity;
+      items.forEach(function (item, itemIndex) {
+        var nextDistance = Math.abs(item.getBoundingClientRect().right - edge);
+        if (nextDistance < distance) {
+          best = itemIndex;
+          distance = nextDistance;
+        }
+      });
+      return best;
+    }
+
+    function updateDots(nextIndex) {
+      if (!dots.length) return;
+      dots.forEach(function (dot, dotIndex) {
+        dot.classList.toggle('is-active', dotIndex === (nextIndex % dots.length));
+      });
+    }
+
+    function goTo(nextIndex, smooth) {
+      if (nextIndex >= items.length) nextIndex = 0;
+      if (nextIndex < 0) nextIndex = items.length - 1;
+      index = nextIndex;
+      updateDots(index);
+
+      var viewportRect = viewport.getBoundingClientRect();
+      var itemRect = items[index].getBoundingClientRect();
+      var delta = itemRect.right - viewportRect.right;
+      if (Math.abs(delta) < 1) return;
+      viewport.scrollBy({ left: delta, top: 0, behavior: smooth === false ? 'auto' : 'smooth' });
+    }
+
+    function stop() {
+      if (timer) window.clearTimeout(timer);
+      timer = 0;
+    }
+
+    function schedule() {
+      stop();
+      if (!autoplay || !visible || document.hidden || pointerDown) return;
+      timer = window.setTimeout(function () {
+        goTo(index + 1, true);
+        schedule();
+      }, delay);
+    }
+
+    viewport.addEventListener('scroll', function () {
+      window.clearTimeout(viewport._marsDiscountScrollTimer);
+      viewport._marsDiscountScrollTimer = window.setTimeout(function () {
+        index = nearestIndex();
+        updateDots(index);
+      }, 80);
+    }, { passive: true });
+
+    viewport.addEventListener('pointerdown', function (event) {
+      if (event.pointerType === 'touch') return;
+      if (event.button !== undefined && event.button !== 0) return;
+      pointerDown = true;
+      pointerId = event.pointerId;
+      startX = event.clientX;
+      startScroll = viewport.scrollLeft;
+      dragged = false;
+      captureActive = false;
+      suppressNextClick = false;
+      stop();
+    });
+
+    viewport.addEventListener('pointermove', function (event) {
+      if (!pointerDown || event.pointerId !== pointerId) return;
+      var delta = event.clientX - startX;
+
+      if (!dragged && Math.abs(delta) > 14) {
+        dragged = true;
+        root.classList.add('is-dragging');
+        try {
+          viewport.setPointerCapture(pointerId);
+          captureActive = true;
+        } catch (error) {}
+      }
+
+      if (dragged) {
+        event.preventDefault();
+        viewport.scrollLeft = startScroll - delta;
+      }
+    });
+
+    function finish(event) {
+      if (!pointerDown || event.pointerId !== pointerId) return;
+      pointerDown = false;
+      root.classList.remove('is-dragging');
+
+      if (captureActive) {
+        try { viewport.releasePointerCapture(pointerId); } catch (error) {}
+      }
+      pointerId = null;
+      captureActive = false;
+
+      if (dragged) {
+        suppressNextClick = true;
+        goTo(nearestIndex(), true);
+      }
+      schedule();
+    }
+
+    viewport.addEventListener('pointerup', finish);
+    viewport.addEventListener('pointercancel', finish);
+    viewport.addEventListener('touchstart', stop, { passive: true });
+    viewport.addEventListener('touchend', function () {
+      window.setTimeout(function () {
+        index = nearestIndex();
+        updateDots(index);
+        schedule();
+      }, 100);
+    }, { passive: true });
+    viewport.addEventListener('dragstart', function (event) { event.preventDefault(); });
+
+    // Suppress only the synthetic click generated after a real drag.
+    viewport.addEventListener('click', function (event) {
+      if (!suppressNextClick) return;
+      event.preventDefault();
+      event.stopPropagation();
+      suppressNextClick = false;
+      dragged = false;
+    }, true);
+
+    root.addEventListener('mouseenter', stop);
+    root.addEventListener('mouseleave', schedule);
+    document.addEventListener('visibilitychange', schedule);
+
+    if ('IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.target !== root) return;
+          visible = entry.isIntersecting && entry.intersectionRatio > 0.08;
+          schedule();
+        });
+      }, { threshold: [0, 0.08] });
+      observer.observe(root);
+    }
+
+    window.requestAnimationFrame(function () {
+      updateDots(0);
+      schedule();
+    });
+  }
+
+  function boot(scope) {
+    var base = scope && scope.querySelectorAll ? scope : document;
+    if (base.matches && base.matches('[data-mars-discount-strip]')) init(base);
+    base.querySelectorAll('[data-mars-discount-strip]').forEach(init);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { boot(document); }, { once: true });
+  } else {
+    boot(document);
+  }
+
+  document.addEventListener('mars:content-updated', function (event) {
+    boot(event.detail && event.detail.scope ? event.detail.scope : document);
+  });
+
+  window.addEventListener('elementor/frontend/init', function () {
+    if (!window.elementorFrontend || !window.elementorFrontend.hooks) return;
+    window.elementorFrontend.hooks.addAction('frontend/element_ready/mars_discount_strip.default', function ($scope) {
+      boot($scope[0] || document);
+    });
+  });
+})();

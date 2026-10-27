@@ -1,0 +1,365 @@
+.elementor-widget-mars_discount_strip .elementor-widget-container { overflow: visible; }
+
+.mars-discount-strip {
+  overflow-anchor: none;
+  --mars-discount-bg: #e8f2f7;
+  --mars-discount-title: #ef0047;
+  --mars-discount-badge-bg: #ef0047;
+  --mars-discount-badge-text: #fff;
+  --mars-discount-item-bg: #fff;
+  --mars-discount-card-bg: #fff;
+  --mars-discount-card-title: #0f2c65;
+  --mars-discount-price: #0f2c65;
+  --mars-discount-old-price: #a3afc0;
+  --mars-discount-dot: #bac7d2;
+  --mars-discount-per-view: 5;
+  --mars-discount-gap: 12px;
+  position: relative;
+  width: 100%;
+  padding-block: 74px 10px;
+  direction: rtl;
+}
+
+.mars-discount-strip__placeholder {
+  padding: 22px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 18px;
+  text-align: center;
+  color: #64748b;
+}
+
+.mars-discount-strip__shell {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(180px, 230px) minmax(0, 1fr) minmax(220px, 300px);
+  grid-template-areas: "lead slider brand";
+  align-items: center;
+  gap: 18px;
+  min-height: 112px;
+  padding: 14px 24px;
+  border-radius: 28px;
+  background: var(--mars-discount-bg);
+  direction: ltr;
+  overflow: visible;
+}
+
+.mars-discount-strip__brand {
+  grid-area: brand;
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  direction: rtl;
+  text-align: center;
+}
+.mars-discount-strip__brand-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 0 14px;
+  border-radius: 9px;
+  background: var(--mars-discount-badge-bg);
+  color: var(--mars-discount-badge-text);
+  font-size: 13px;
+  font-weight: 850;
+  transform: rotate(-2deg);
+}
+.mars-discount-strip__brand h2 {
+  margin: 0;
+  color: var(--mars-discount-title);
+  font-size: clamp(23px, 2.1vw, 36px);
+  line-height: 1.1;
+  font-weight: 950;
+}
+
+.mars-discount-strip__lead {
+  grid-area: lead;
+  position: relative;
+  display: grid;
+  place-items: center;
+  align-self: stretch;
+  min-height: 104px;
+  pointer-events: none;
+}
+.mars-discount-strip__lead img {
+  position: static;
+  display: block;
+  width: min(290px, 25vw);
+  max-width: none;
+  height: 150px;
+  max-height: 150px;
+  margin: 0 auto;
+  object-fit: contain;
+  object-position: center center;
+  filter: drop-shadow(0 11px 16px rgba(15,23,42,.11));
+}
+.mars-discount-strip--no-lead .mars-discount-strip__shell {
+  grid-template-columns: 1fr minmax(220px, 300px);
+  grid-template-areas: "slider brand";
+}
+
+.mars-discount-strip__viewport {
+  overflow-anchor: none;
+  grid-area: slider;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: visible;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  overscroll-behavior-inline: contain;
+  touch-action: pan-x pan-y pinch-zoom;
+  direction: rtl;
+}
+.mars-discount-strip__viewport::-webkit-scrollbar { display: none; }
+
+.mars-discount-strip.is-dragging .mars-discount-strip__viewport {
+  cursor: grabbing;
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+  user-select: none;
+}
+.mars-discount-strip__track {
+  display: flex;
+  gap: var(--mars-discount-gap);
+  min-width: 100%;
+  direction: rtl;
+}
+.mars-discount-strip__item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  flex: 0 0 calc((100% - (var(--mars-discount-gap) * (var(--mars-discount-per-view) - 1))) / var(--mars-discount-per-view));
+  min-width: 58px;
+  color: inherit;
+  text-decoration: none !important;
+  scroll-snap-align: start;
+  cursor: pointer;
+}
+.mars-discount-strip__thumb {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  padding: 10px;
+  border-radius: 17px;
+  background: var(--mars-discount-item-bg);
+  overflow: hidden;
+  box-shadow: 0 5px 14px rgba(15,23,42,.06);
+}
+.mars-discount-strip__thumb img,
+.mars-discount-strip__image {
+  display: block;
+  width: 88%;
+  height: 88%;
+  max-width: 88%;
+  max-height: 88%;
+  margin: auto;
+  object-fit: contain;
+  object-position: center center;
+  border-radius: 12px;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+.mars-discount-strip__discount-slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 34px;
+  margin: 0 0 7px;
+}
+.mars-discount-strip__discount-slot.is-empty {
+  visibility: hidden;
+}
+.mars-discount-strip--no-badges .mars-discount-strip__discount-slot {
+  display: none;
+}
+.mars-discount-strip__discount {
+  position: relative;
+  z-index: 3;
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 46px;
+  min-height: 27px;
+  margin: 0;
+  padding: 3px 10px 2px;
+  border: 1px solid rgba(255,255,255,.38);
+  border-radius: 999px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--mars-discount-badge-bg), color-mix(in srgb, var(--mars-discount-badge-bg) 68%, #ff6c8c));
+  box-shadow: 0 7px 14px color-mix(in srgb, var(--mars-discount-badge-bg) 24%, transparent);
+  font-size: 12px;
+  font-weight: 850;
+  line-height: 1;
+  white-space: nowrap;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+.mars-discount-strip__discount strong {
+  font-size: 12px;
+  font-weight: 850;
+  line-height: 1;
+}
+.mars-discount-strip__discount span {
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+}
+.mars-discount-strip__popover {
+  position: fixed;
+  z-index: 2147482000;
+  left: 0;
+  top: 0;
+  width: 280px;
+  max-width: 44vw;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: var(--mars-discount-card-bg);
+  color: var(--mars-discount-card-title);
+  box-shadow: 0 12px 34px rgba(15,23,42,.14);
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, 10px);
+  transition: opacity .18s ease, transform .18s ease, visibility .18s ease;
+  pointer-events: none;
+  direction: rtl;
+}
+.mars-discount-strip__popover::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  background: var(--mars-discount-card-bg);
+  transform: translate(-50%, -8px) rotate(45deg);
+}
+.mars-discount-strip__popover strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  line-height: 1.7;
+  font-weight: 750;
+}
+.mars-discount-strip__popover-prices {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.mars-discount-strip__popover-prices del {
+  color: var(--mars-discount-old-price);
+  font-size: 10px;
+}
+.mars-discount-strip__current-price {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  direction: ltr;
+  color: var(--mars-discount-price);
+  white-space: nowrap;
+}
+.mars-discount-strip__currency {
+  order: 0;
+  font-size: 10px;
+  font-weight: 650;
+}
+.mars-discount-strip__amount {
+  order: 1;
+  font-size: 13px;
+  font-weight: 850;
+}
+.mars-discount-strip__item:hover .mars-discount-strip__popover,
+.mars-discount-strip__item:focus-within .mars-discount-strip__popover {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+}
+.mars-discount-strip--no-hover-card .mars-discount-strip__popover { display: none; }
+.mars-discount-strip__dots {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 12px;
+  direction: rtl;
+  flex-direction: row;
+}
+.mars-discount-strip__dots span {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--mars-discount-dot);
+  transition: width .2s ease, background .2s ease;
+}
+.mars-discount-strip__dots span.is-active {
+  width: 20px;
+  background: var(--mars-discount-badge-bg);
+}
+
+html.dark .mars-discount-strip {
+  --mars-discount-bg: #202a38;
+  --mars-discount-title: #ff477a;
+  --mars-discount-badge-bg: #ff2b68;
+  --mars-discount-card-bg: #182334;
+  --mars-discount-card-title: #f8fafc;
+  --mars-discount-price: #fff;
+  --mars-discount-old-price: #8391a7;
+}
+
+@media (max-width: 900px) {
+  .mars-discount-strip { padding-top: 38px; }
+  .mars-discount-strip__shell {
+    grid-template-columns: minmax(130px, 180px) minmax(0, 1fr) minmax(180px, 230px);
+    padding-inline: 18px;
+  }
+  .mars-discount-strip__lead img { width: min(225px, 24vw); height: 128px; max-height: 128px; }
+}
+
+@media (max-width: 767px) {
+  .mars-discount-strip {
+    --mars-discount-per-view: 4.2;
+    padding: 0;
+  }
+  .mars-discount-strip__shell {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+    min-height: 0;
+    padding: 20px 18px 16px;
+    border-radius: 28px;
+  }
+  .mars-discount-strip__lead { display: none; }
+  .mars-discount-strip__brand { order: 1; }
+  .mars-discount-strip__brand h2 { font-size: 25px; }
+  .mars-discount-strip__viewport {
+    order: 2;
+    width: 100%;
+    overflow-y: hidden;
+  }
+  .mars-discount-strip__track { gap: 10px; }
+  .mars-discount-strip__item { min-width: 72px; }
+  .mars-discount-strip__popover { display: none; }
+  .mars-discount-strip__dots { display: flex; }
+  .mars-discount-strip--no-dots .mars-discount-strip__dots { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mars-discount-strip__viewport { scroll-behavior: auto; }
+  .mars-discount-strip * { transition-duration: .01ms !important; }
+}
+
+/* percent sign is visually before the number in RTL interfaces. */
+.mars-discount-strip__discount {
+  direction: ltr;
+  flex-direction: row;
+}

@@ -1,0 +1,77 @@
+(function($){'use strict';
+  /* WooCommerce's edit-account form does not always declare multipart encoding.
+     Force it when Mars' avatar field is present so the file reaches PHP. */
+  function fixAvatarForm(){
+    var input=document.getElementById('mars_avatar_upload');
+    if(!input)return;
+    var form=input.closest('form');
+    if(form){form.setAttribute('enctype','multipart/form-data');form.setAttribute('encoding','multipart/form-data');}
+  }
+
+  function humanSize(bytes){
+    bytes=parseInt(bytes||0,10);if(!bytes)return '0 B';
+    var u=['B','KB','MB','GB'],i=Math.min(Math.floor(Math.log(bytes)/Math.log(1024)),u.length-1);
+    return (bytes/Math.pow(1024,i)).toFixed(i?1:0)+' '+u[i];
+  }
+  function ticketUploadUi($form){return $form.find('.mars-ticket-upload-status').first();}
+  function renderMergedFiles(input){
+    var files=input&&input.files?input.files:[],$form=$(input).closest('form'),$ui=ticketUploadUi($form);
+    if(!$ui.length)return;
+    var $list=$ui.find('.mars-ticket-upload-files').empty();
+    if(!files.length){
+      $ui.find('.mars-ticket-upload-progress').attr('aria-valuenow',0).find('i').css('width','0%');
+      $ui.find('.mars-ticket-upload-progress-text').text('');$ui.prop('hidden',true);return;
+    }
+    Array.prototype.forEach.call(files,function(file){
+      $list.append($('<span/>').append($('<b/>').text('📎 '+file.name)).append($('<small/>').text(humanSize(file.size))));
+    });
+    $ui.prop('hidden',false).find('.mars-ticket-upload-progress-text').text(files.length+' فایل آماده ارسال است.');
+  }
+
+  /* Keep files selected across repeated picker opens. Native <input multiple> only
+     keeps the latest dialog selection; DataTransfer lets the customer build a list. */
+  function mergeFiles(input){
+    if(!input||!input.files||!window.DataTransfer){renderMergedFiles(input);return;}
+    var prior=$(input).data('marsOrderFiles')||[],incoming=Array.prototype.slice.call(input.files),all=prior.slice();
+    incoming.forEach(function(file){
+      var key=[file.name,file.size,file.lastModified].join('|');
+      if(!all.some(function(x){return [x.name,x.size,x.lastModified].join('|')===key;}))all.push(file);
+    });
+    var dt=new DataTransfer();all.forEach(function(file){dt.items.add(file);});
+    try{input.files=dt.files;$(input).data('marsOrderFiles',all);}catch(e){}
+    renderMergedFiles(input);
+  }
+
+  $(fixAvatarForm);
+  $(document).on('change','.mars-ticket-upload-field input[type=file][multiple]',function(){mergeFiles(this);});
+
+  /* Progress belongs to real file uploads only. Text-only ticket submissions keep
+     the attachment bar hidden instead of showing a fake spinner/progress state. */
+  window.marsTicketUploadXhr=function($form){
+    var hasFile=false;
+    $form.find('input[type=file]').each(function(){if(this.files&&this.files.length)hasFile=true;});
+    var xhr=$.ajaxSettings.xhr();
+    if(!hasFile||!xhr||!xhr.upload)return xhr;
+    xhr.upload.addEventListener('progress',function(e){
+      if(!e.lengthComputable)return;
+      var pct=Math.max(0,Math.min(100,Math.round((e.loaded/e.total)*100))),$ui=ticketUploadUi($form);
+      if(!$ui.length)return;
+      $ui.prop('hidden',false).find('.mars-ticket-upload-progress').attr('aria-valuenow',pct).find('i').css('width',pct+'%');
+      $ui.find('.mars-ticket-upload-progress-text').text('در حال بارگذاری… '+pct+'٪');
+    });
+    xhr.upload.addEventListener('load',function(){
+      var $ui=ticketUploadUi($form);if($ui.length)$ui.find('.mars-ticket-upload-progress-text').text('فایل‌ها بارگذاری شدند؛ در حال ثبت…');
+    });
+    return xhr;
+  };
+
+  /* Extend the older reset helper so the persistent multi-file cache is cleared too. */
+  var previousReset=window.marsTicketUploadReset;
+  window.marsTicketUploadReset=function($form){
+    if(typeof previousReset==='function')previousReset($form);
+    $form.find('input[type=file]').each(function(){$(this).removeData('marsOrderFiles');});
+  };
+  $(document).on('reset','[data-mars-ticket-new-form],[data-mars-ticket-reply-form]',function(){
+    var $form=$(this);setTimeout(function(){window.marsTicketUploadReset($form);},0);
+  });
+})(jQuery);

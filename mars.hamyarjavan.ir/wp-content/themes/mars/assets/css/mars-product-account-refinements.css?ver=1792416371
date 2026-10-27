@@ -1,0 +1,150 @@
+/* Mars — focused frontend refinements. */
+
+/* Product boolean choices: switch + label share one clean row; description sits below the label. */
+body.mars-service-product-page .mars-account-toggle,
+body.mars-service-product-page .mars-urgent-order-toggle{
+  display:flex!important;
+  flex-flow:row nowrap!important;
+  align-items:flex-start!important;
+  justify-content:flex-start!important;
+  gap:10px!important;
+  width:100%!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:7px 0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  direction:rtl!important;
+  text-align:right!important;
+}
+body.mars-service-product-page .mars-account-toggle__control,
+body.mars-service-product-page .mars-urgent-order-toggle__control{
+  position:relative!important;
+  display:inline-flex!important;
+  flex:0 0 48px!important;
+  width:48px!important;
+  height:28px!important;
+  margin:1px 0 0!important;
+  grid-column:auto!important;
+  grid-row:auto!important;
+}
+body.mars-service-product-page .mars-account-toggle__copy,
+body.mars-service-product-page .mars-urgent-order-toggle__copy{
+  display:flex!important;
+  flex:1 1 auto!important;
+  min-width:0!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  gap:3px!important;
+  direction:rtl!important;
+  text-align:right!important;
+}
+body.mars-service-product-page .mars-account-toggle__copy strong,
+body.mars-service-product-page .mars-urgent-order-toggle__copy strong{
+  display:block!important;
+  width:100%!important;
+  margin:0!important;
+  padding:0!important;
+  grid-column:auto!important;
+  grid-row:auto!important;
+  color:var(--mars-text)!important;
+  font-size:14px!important;
+  font-weight:900!important;
+  line-height:1.65!important;
+  text-align:right!important;
+}
+body.mars-service-product-page .mars-account-toggle__copy small,
+body.mars-service-product-page .mars-urgent-order-toggle__copy small{
+  display:block!important;
+  width:100%!important;
+  margin:0!important;
+  padding:0!important;
+  grid-column:auto!important;
+  grid-row:auto!important;
+  color:var(--mars-muted)!important;
+  font-size:11.5px!important;
+  font-weight:650!important;
+  line-height:1.85!important;
+  text-align:right!important;
+}
+@media(max-width:600px){
+  body.mars-service-product-page .mars-account-toggle,
+  body.mars-service-product-page .mars-urgent-order-toggle{gap:9px!important;padding:6px 0!important}
+  body.mars-service-product-page .mars-account-toggle__control,
+  body.mars-service-product-page .mars-urgent-order-toggle__control{flex-basis:46px!important;width:46px!important}
+}
+
+/* Guest order success notices must not leak onto the standalone Mars login/register screen. */
+body.mars-auth-active .woocommerce-message{display:none!important}
+
+/* Compact, readable order item summary inside My Account. */
+body.woocommerce-account .mars-pro-order-detail-item__copy{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  gap:5px!important;
+  min-width:0!important;
+  text-align:right!important;
+}
+body.woocommerce-account .mars-pro-order-detail-item__copy>strong{
+  display:block!important;
+  max-width:100%!important;
+  margin:0!important;
+  color:var(--mup-text,var(--mars-text))!important;
+  font-size:14px!important;
+  font-weight:950!important;
+  line-height:1.75!important;
+  overflow-wrap:anywhere!important;
+}
+body.woocommerce-account .mars-pro-order-detail-item__copy>small{
+  display:inline-flex!important;
+  width:auto!important;
+  margin:0!important;
+  padding:3px 8px!important;
+  border:1px solid var(--mup-border,var(--mars-line))!important;
+  border-radius:999px!important;
+  background:var(--mup-soft,var(--mars-surface-2))!important;
+  color:var(--mup-muted,var(--mars-muted))!important;
+  font-size:10px!important;
+  font-weight:850!important;
+  line-height:1.45!important;
+}
+body.woocommerce-account .mars-pro-order-detail-item__copy .wc-item-meta{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:5px 7px!important;
+  width:100%!important;
+  margin:2px 0 0!important;
+  padding:0!important;
+  list-style:none!important;
+}
+body.woocommerce-account .mars-pro-order-detail-item__copy .wc-item-meta li{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:3px!important;
+  max-width:100%!important;
+  margin:0!important;
+  padding:4px 8px!important;
+  border-radius:8px!important;
+  background:var(--mup-soft,var(--mars-surface-2))!important;
+  color:var(--mup-muted,var(--mars-muted))!important;
+  font-size:10.5px!important;
+  font-weight:750!important;
+  line-height:1.55!important;
+}
+body.woocommerce-account .mars-pro-order-detail-item__copy .wc-item-meta li p{
+  display:inline!important;
+  margin:0!important;
+  padding:0!important;
+  color:var(--mup-text,var(--mars-text))!important;
+  font:inherit!important;
+  font-weight:850!important;
+  overflow-wrap:anywhere!important;
+}
+@media(max-width:680px){
+  body.woocommerce-account .mars-pro-order-detail-item{grid-template-columns:58px minmax(0,1fr)!important;align-items:start!important}
+  body.woocommerce-account .mars-pro-order-detail-item img{width:58px!important;height:52px!important}
+  body.woocommerce-account .mars-pro-order-detail-item__price{grid-column:1/-1!important;justify-self:start!important;margin-top:2px!important}
+}

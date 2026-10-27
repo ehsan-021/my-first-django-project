@@ -1,0 +1,111 @@
+(function(){
+  'use strict';
+
+  function uniqueEndpoints(values){
+    var seen={},out=[];
+    values.forEach(function(value){
+      value=String(value||'').trim();
+      if(!value||seen[value])return;seen[value]=1;out.push(value);
+    });
+    return out;
+  }
+
+  function postForm(form,endpoint){
+    return fetch(endpoint,{
+      method:'POST',
+      credentials:'same-origin',
+      cache:'no-store',
+      redirect:'follow',
+      body:new FormData(form),
+      headers:{'X-Requested-With':'XMLHttpRequest','Accept':'application/json','Cache-Control':'no-cache, no-store, max-age=0','Pragma':'no-cache'}
+    }).then(function(r){
+      return r.text().then(function(text){
+        var json=null;
+        try{json=JSON.parse(text);}catch(err){
+          var failure=new Error('پاسخ فرم تماس از سرور معتبر نبود. لطفاً دوباره تلاش کنید.');
+          failure.marsNonJson=true;failure.status=r.status;throw failure;
+        }
+        return json;
+      });
+    });
+  }
+
+  function ensureSubmissionToken(form){
+    var input=form.querySelector('input[name="mars_submission_token"]');
+    if(!input){input=document.createElement('input');input.type='hidden';input.name='mars_submission_token';form.appendChild(input);}
+    if(!input.value){
+      if(window.crypto&&typeof window.crypto.randomUUID==='function')input.value=window.crypto.randomUUID();
+      else input.value=Date.now().toString(36)+'-'+Math.random().toString(36).slice(2)+'-'+Math.random().toString(36).slice(2);
+    }
+    return input.value;
+  }
+
+  function fetchForm(form){
+    ensureSubmissionToken(form);
+    var cfg=window.MarsProductWidgets||{};
+    var endpoints=uniqueEndpoints([cfg.contactEndpoint,form.dataset.endpoint,form.action,form.dataset.fallbackEndpoint,cfg.contactFallback]);
+    var index=0,lastError=null;
+    function attempt(){
+      if(index>=endpoints.length)return Promise.reject(lastError||new Error('مسیر ارسال فرم تماس در دسترس نیست.'));
+      var endpoint=endpoints[index++];
+      return postForm(form,endpoint).catch(function(err){lastError=err;return attempt();});
+    }
+    return attempt();
+  }
+
+  function initSearch(root){
+    if(root.dataset.marsReady==='1') return; root.dataset.marsReady='1';
+    var input=root.querySelector('input[type="search"]'), results=root.querySelector('.mars-ajax-search__results'), submit=root.querySelector('.mars-ajax-search__submit'); if(!input||!results) return;
+    var timer=0, controller=null, requestTerm='';
+    function renderEmpty(){results.innerHTML='<div class="mars-ajax-search__empty">'+(root.dataset.empty||'محصولی پیدا نشد.')+'</div>';}
+    function clearResults(){results.innerHTML='';root.classList.remove('is-loading');}
+    function runSearch(immediate){
+      clearTimeout(timer);
+      var term=input.value.trim();
+      if(!term){ if(controller&&controller.abort) controller.abort(); clearResults(); return; }
+      var execute=function(){
+        requestTerm=term;
+        root.classList.add('is-loading');
+        if(controller&&controller.abort) controller.abort(); controller=typeof AbortController!=='undefined'?new AbortController():null;
+        var data={action:'mars_product_search',nonce:root.dataset.nonce||'',term:term,category:root.dataset.category||0,limit:root.dataset.limit||4};
+        fetch(root.dataset.endpoint,{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8','Cache-Control':'no-cache, no-store, max-age=0','Pragma':'no-cache'},body:new URLSearchParams(data).toString(),signal:controller?controller.signal:undefined})
+          .then(function(r){return r.json();})
+          .then(function(json){
+            if(input.value.trim()!==requestTerm) return;
+            if(json&&json.success&&json.data){results.innerHTML=json.data.html||'';if(!json.data.count)renderEmpty();}else renderEmpty();
+          })
+          .catch(function(e){if(e&&e.name==='AbortError')return;if(input.value.trim())renderEmpty();})
+          .finally(function(){if(input.value.trim()===requestTerm)root.classList.remove('is-loading');});
+      };
+      if(immediate) execute(); else timer=setTimeout(execute,220);
+    }
+    input.addEventListener('input',function(){runSearch(false);});
+    input.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();runSearch(true);}});
+    if(submit) submit.addEventListener('click',function(e){e.preventDefault();if(!input.value.trim()){input.focus();clearResults();return;}runSearch(true);});
+  }
+
+  function initContact(root){
+    if(root.dataset.marsReady==='1') return; root.dataset.marsReady='1';
+    var form=root.querySelector('.mars-contact-us__form'), status=root.querySelector('.mars-contact-us__status'), button=form&&form.querySelector('button[type="submit"]'); if(!form) return;
+    form.addEventListener('submit',function(e){
+      e.preventDefault();status.className='mars-contact-us__status';status.textContent='';
+      if(!form.reportValidity())return;
+      button.disabled=true;root.classList.add('is-sending');
+      fetchForm(form).then(function(json){
+        if(json&&json.success){status.classList.add('is-success');status.textContent=(json.data&&json.data.message)||'پیام شما ثبت شد.';form.reset();}
+        else{status.classList.add('is-error');status.textContent=(json&&json.data&&json.data.message)||'ثبت پیام انجام نشد.';}
+      }).catch(function(err){status.classList.add('is-error');status.textContent=(err&&err.message)||'ثبت پیام انجام نشد.';}).finally(function(){button.disabled=false;root.classList.remove('is-sending');});
+    });
+  }
+
+  function boot(scope){
+    (scope||document).querySelectorAll('.mars-ajax-search').forEach(initSearch);
+    (scope||document).querySelectorAll('.mars-contact-us').forEach(initContact);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){boot(document);}); else boot(document);
+  if(window.elementorFrontend&&window.elementorFrontend.hooks){
+    window.elementorFrontend.hooks.addAction('frontend/element_ready/mars_ajax_product_search.default',function($scope){boot($scope[0]);});
+    window.elementorFrontend.hooks.addAction('frontend/element_ready/mars_ajax_product_search_hero.default',function($scope){boot($scope[0]);});
+    window.elementorFrontend.hooks.addAction('frontend/element_ready/mars_contact_us.default',function($scope){boot($scope[0]);});
+  }
+})();

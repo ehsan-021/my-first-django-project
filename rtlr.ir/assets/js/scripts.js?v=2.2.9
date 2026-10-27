@@ -1,0 +1,155 @@
+jQuery(document).ready(function ($) {
+    "use strict";
+
+    function getProductId() {
+        return String($("input[name='_index']").val() || "");
+    }
+
+    function kExp(pid) { return `sandbox_expiration_${pid}`; }
+    function kUrl(pid) { return `sandbox_url_${pid}`; }
+
+    function setCookie(name, value, seconds) {
+        let expires = "";
+        if (seconds) {
+            const date = new Date();
+            date.setTime(date.getTime() + (seconds * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + encodeURIComponent(value) + expires + "; path=/";
+    }
+
+    function getCookie(name) {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
+        }
+        return null;
+    }
+
+    function eraseCookie(name) {
+        document.cookie = name + "=; Max-Age=-99999999; path=/";
+    }
+
+    function nowSec() {
+        return Math.floor(Date.now() / 1000);
+    }
+
+    (function initForProduct() {
+        const pid = getProductId();
+        if (!pid) return;
+
+        const expiration = parseInt(getCookie(kExp(pid)) || '0', 10);
+        const sandboxUrl = getCookie(kUrl(pid)) || '';
+
+        if (expiration && expiration > nowSec()) {
+            $(".btn-sandBox").hide();
+            $(".timer-sandBox").css('display', 'flex');
+            updateCountdown(expiration, pid);
+        } else {
+            eraseCookie(kExp(pid));
+            eraseCookie(kUrl(pid));
+            $(".btn-sandBox").css('display', 'flex');
+            $(".timer-sandBox").hide();
+        }
+    })();
+
+    $(document).on('click', '.devices .icon', function () {
+        var type = $(this).attr('class').replace('icon ', '');
+        $('.preview').attr('class', 'preview ' + type);
+    });
+
+    $(document).on('click', '.close', function (e) {
+        e.preventDefault();
+        if ( !$('body').hasClass('minimized') ) {
+            $('body').addClass('minimized');
+        }
+        return false;
+    });
+
+    $(document).on('click', '.showTopBar', function (e) {
+        e.preventDefault();
+        if ( $('body').hasClass('minimized') ) {
+            $('body').removeClass('minimized');
+        }
+        return false;
+    });
+
+    $(document).on('click', 'a#request_sandbox_mode', function (e) {
+        e.preventDefault();
+        const pid = getProductId();
+        if (!pid) return;
+
+        const btn = $(this);
+        const url = btn.attr('data-action');
+        if (!url) return;
+
+        btn.addClass('loading').prop('disabled', true);
+
+        $.ajax({
+            url,
+            type: 'GET',
+            success: function (response) {
+                if (response && response.success === true) {
+                    const exp = parseInt(response.data.data.expiration_time, 10);
+                    const sandboxUrl = response.data.data.url;
+
+                    const secondsUntilExpire = exp - nowSec();
+
+                    setCookie(kExp(pid), exp, secondsUntilExpire);
+                    setCookie(kUrl(pid), sandboxUrl, secondsUntilExpire);
+
+                    $(".btn-sandBox").hide();
+                    $(".timer-sandBox").css('display', 'flex');
+                    updateCountdown(exp, pid);
+
+                    window.location.href = sandboxUrl;
+                }
+            },
+            error: function () {
+                alert("هنگام ایجاد محیط سندباکس خطایی رخ داده است. لطفاً بعداً دوباره امتحان کنید.");
+            },
+            complete: function () {
+                btn.removeClass('loading').prop('disabled', false);
+            }
+        });
+    });
+
+    $(document).on('click', ".timer-sandBox", function (e) {
+        e.preventDefault();
+        const pid = getProductId();
+        if (!pid) return;
+
+        const expiration = parseInt(getCookie(kExp(pid)) || '0', 10);
+        const sandboxUrl = getCookie(kUrl(pid)) || '';
+        if (expiration && expiration > nowSec() && sandboxUrl.length > 0) {
+            window.location.href = sandboxUrl;
+        }
+    });
+
+    function updateCountdown(expirationTimestamp, pid) {
+        const $timer = $(".timer-sandBox .timer-sandBox__content-time");
+
+        function tick() {
+            const remaining = expirationTimestamp - nowSec();
+            if (remaining <= 0) {
+                $timer.text("00:00");
+                $(".timer-sandBox").hide();
+
+                eraseCookie(kExp(pid));
+                eraseCookie(kUrl(pid));
+                $(".btn-sandBox").show();
+                return;
+            }
+
+            const minutes = String(Math.floor(remaining / 60)).padStart(2, '0');
+            const seconds = String(remaining % 60).padStart(2, '0');
+            $timer.text(`${minutes}:${seconds}`);
+            setTimeout(tick, 1000);
+        }
+
+        tick();
+    }
+});

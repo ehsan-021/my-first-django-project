@@ -1,0 +1,10 @@
+.mars-gv-customer{margin:22px 0;padding:20px;border:1px solid #dce7e5;background:var(--mars-surface,#fff);color:inherit;border-radius:14px;box-sizing:border-box}
+.mars-gv-customer h3{margin:0 0 9px;font-size:19px}.mars-gv-customer p{font-size:13px;opacity:.78;margin:0 0 15px}
+.mars-gv-customer-group{padding:12px 0;border-top:1px solid #e7eeed}.mars-gv-customer-group>strong{display:block;margin-bottom:12px}
+.mars-gv-customer-code{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:9px 0}.mars-gv-customer-code code{max-width:100%;overflow-wrap:anywhere;font:600 14px/1.7 monospace;background:rgba(120,130,140,.09);border-radius:8px;padding:8px 12px;user-select:all;text-align:left}
+.mars-gv-customer-code button{border-radius:7px;cursor:pointer}
+.mars-gv-customer-record{padding:12px 14px;margin:10px 0;border-radius:10px;background:rgba(130,155,160,.06);border:1px solid rgba(130,155,160,.13)}
+.mars-gv-customer-title{font-size:13px;font-weight:750;margin-bottom:8px}
+.mars-gv-customer-code code{white-space:pre-wrap;direction:auto;min-width:160px;flex:1}
+.mars-gv-file-link{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;margin:8px 0 0;background:#e6f6f1;color:#086f62!important;border:1px solid #bee9d9;border-radius:8px;text-decoration:none!important;font-size:13px;max-width:100%;overflow-wrap:anywhere}
+.mars-gv-file-link:hover{background:#c9eee4}

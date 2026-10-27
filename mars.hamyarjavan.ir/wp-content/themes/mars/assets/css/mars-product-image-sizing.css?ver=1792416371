@@ -1,0 +1,224 @@
+/* Shared product-image fitting and reliable Small / Medium / Large / Large+ presets. */
+
+/* Keep every product photo inside its frame, including rectangular uploads. */
+.mars-amazing-products__image-link img,
+.mars-amazing-products__image,
+.mars-category-products-browser__media img,
+.mars-category-products-browser__media .wp-post-image,
+.mars-compact-products__image,
+.mars-discount-strip__thumb img,
+.mars-discount-strip__image,
+.mars-featured-category-products__product-image img,
+.mars-featured-category-products__image,
+.mars-product-carousel__image-link img,
+.mars-product-carousel__image,
+.mars-product-ranking__image-wrap img,
+.mars-product-ranking__image,
+.mars-vpb__product-image img,
+.mars-vpb__product-image .wp-post-image {
+	display: block !important;
+	object-fit: contain !important;
+	object-position: center center !important;
+}
+
+/* Amazing products: Small is the original appearance. */
+.mars-amazing-products.mars-product-image-size--small .mars-amazing-products__image-link { padding: 14px !important; }
+.mars-amazing-products.mars-product-image-size--medium .mars-amazing-products__image-link { padding: 7px !important; }
+.mars-amazing-products.mars-product-image-size--large .mars-amazing-products__image-link { padding: 0 !important; }
+.mars-amazing-products.mars-product-image-size--large-plus .mars-amazing-products__image-link { padding: 0 !important; overflow: hidden !important; }
+.mars-amazing-products.mars-product-image-size--large-plus .mars-amazing-products__image-link img,
+.mars-amazing-products.mars-product-image-size--large-plus .mars-amazing-products__image { transform: scale(1.12) !important; }
+
+/* Tabbed category products. !important also beats the older responsive slider output. */
+.mars-category-products-browser.mars-product-image-size--small { --mcpb-image-size: 96px !important; }
+.mars-category-products-browser.mars-product-image-size--medium { --mcpb-image-size: 116px !important; }
+.mars-category-products-browser.mars-product-image-size--large { --mcpb-image-size: 136px !important; }
+.mars-category-products-browser.mars-product-image-size--large-plus { --mcpb-image-size: 156px !important; }
+.mars-category-products-browser.mars-product-image-size--small .mars-category-products-browser__media,
+.mars-category-products-browser.mars-product-image-size--medium .mars-category-products-browser__media,
+.mars-category-products-browser.mars-product-image-size--large .mars-category-products-browser__media,
+.mars-category-products-browser.mars-product-image-size--large-plus .mars-category-products-browser__media {
+	width: var(--mcpb-image-size) !important;
+	height: var(--mcpb-image-size) !important;
+	flex-basis: var(--mcpb-image-size) !important;
+}
+.mars-category-products-browser.mars-product-image-size--small .mars-category-products-browser__card,
+.mars-category-products-browser.mars-product-image-size--medium .mars-category-products-browser__card,
+.mars-category-products-browser.mars-product-image-size--large .mars-category-products-browser__card,
+.mars-category-products-browser.mars-product-image-size--large-plus .mars-category-products-browser__card {
+	grid-template-columns: var(--mcpb-image-size) minmax(0, 1fr) !important;
+}
+
+/* Compact products. */
+.mars-compact-products.mars-product-image-size--small { --mars-compact-image-width: 78px !important; --mars-compact-image-height: 86px !important; }
+.mars-compact-products.mars-product-image-size--medium { --mars-compact-image-width: 96px !important; --mars-compact-image-height: 104px !important; }
+.mars-compact-products.mars-product-image-size--large { --mars-compact-image-width: 114px !important; --mars-compact-image-height: 122px !important; }
+.mars-compact-products.mars-product-image-size--large-plus { --mars-compact-image-width: 132px !important; --mars-compact-image-height: 140px !important; }
+.mars-compact-products.mars-product-image-size--small .mars-compact-products__card,
+.mars-compact-products.mars-product-image-size--medium .mars-compact-products__card,
+.mars-compact-products.mars-product-image-size--large .mars-compact-products__card,
+.mars-compact-products.mars-product-image-size--large-plus .mars-compact-products__card {
+	grid-template-columns: var(--mars-compact-image-width) minmax(0, 1fr) !important;
+	min-height: calc(var(--mars-compact-image-height) + 30px) !important;
+}
+.mars-compact-products.mars-product-image-size--small .mars-compact-products__media,
+.mars-compact-products.mars-product-image-size--medium .mars-compact-products__media,
+.mars-compact-products.mars-product-image-size--large .mars-compact-products__media,
+.mars-compact-products.mars-product-image-size--large-plus .mars-compact-products__media {
+	width: var(--mars-compact-image-width) !important;
+	height: var(--mars-compact-image-height) !important;
+}
+
+/* Discount strip. */
+.mars-discount-strip.mars-product-image-size--small .mars-discount-strip__thumb { padding: 10px !important; }
+.mars-discount-strip.mars-product-image-size--medium .mars-discount-strip__thumb { padding: 5px !important; }
+.mars-discount-strip.mars-product-image-size--large .mars-discount-strip__thumb { padding: 0 !important; }
+.mars-discount-strip.mars-product-image-size--large-plus .mars-discount-strip__thumb { padding: 0 !important; overflow: hidden !important; }
+.mars-discount-strip.mars-product-image-size--small .mars-discount-strip__thumb img,
+.mars-discount-strip.mars-product-image-size--small .mars-discount-strip__image { width: 88% !important; height: 88% !important; max-width: 88% !important; max-height: 88% !important; }
+.mars-discount-strip.mars-product-image-size--medium .mars-discount-strip__thumb img,
+.mars-discount-strip.mars-product-image-size--medium .mars-discount-strip__image { width: 96% !important; height: 96% !important; max-width: 96% !important; max-height: 96% !important; }
+.mars-discount-strip.mars-product-image-size--large .mars-discount-strip__thumb img,
+.mars-discount-strip.mars-product-image-size--large .mars-discount-strip__image { width: 100% !important; height: 100% !important; max-width: 100% !important; max-height: 100% !important; }
+.mars-discount-strip.mars-product-image-size--large-plus .mars-discount-strip__thumb img,
+.mars-discount-strip.mars-product-image-size--large-plus .mars-discount-strip__image { width: 112% !important; height: 112% !important; max-width: none !important; max-height: none !important; transform: scale(1.06) !important; }
+
+/* Featured category products. */
+.mars-featured-category-products .mars-featured-category-products__product-image img,
+.mars-featured-category-products .mars-featured-category-products__image {
+	transition: transform .25s ease;
+	transform-origin: center center;
+}
+.mars-featured-category-products.mars-product-image-size--small .mars-featured-category-products__product-image img,
+.mars-featured-category-products.mars-product-image-size--small .mars-featured-category-products__image { transform: scale(1) !important; }
+.mars-featured-category-products.mars-product-image-size--medium .mars-featured-category-products__product-image img,
+.mars-featured-category-products.mars-product-image-size--medium .mars-featured-category-products__image { transform: scale(1.10) !important; }
+.mars-featured-category-products.mars-product-image-size--large .mars-featured-category-products__product-image img,
+.mars-featured-category-products.mars-product-image-size--large .mars-featured-category-products__image { transform: scale(1.20) !important; }
+.mars-featured-category-products.mars-product-image-size--large-plus .mars-featured-category-products__product-image img,
+.mars-featured-category-products.mars-product-image-size--large-plus .mars-featured-category-products__image { transform: scale(1.32) !important; }
+
+/* Product carousel. The percentage cap used by the original widget also changes per preset. */
+.mars-product-carousel.mars-product-image-size--small { --mars-product-image-size: 150px !important; }
+.mars-product-carousel.mars-product-image-size--medium { --mars-product-image-size: 180px !important; }
+.mars-product-carousel.mars-product-image-size--large { --mars-product-image-size: 210px !important; }
+.mars-product-carousel.mars-product-image-size--large-plus { --mars-product-image-size: 240px !important; }
+.mars-product-carousel.mars-product-image-size--small .mars-product-carousel__image-link { width: min(82%, var(--mars-product-image-size)) !important; }
+.mars-product-carousel.mars-product-image-size--medium .mars-product-carousel__image-link { width: min(92%, var(--mars-product-image-size)) !important; }
+.mars-product-carousel.mars-product-image-size--large .mars-product-carousel__image-link { width: min(100%, var(--mars-product-image-size)) !important; }
+.mars-product-carousel.mars-product-image-size--large-plus .mars-product-carousel__image-link { width: min(100%, var(--mars-product-image-size)) !important; }
+
+/* Product ranking. */
+.mars-product-ranking.mars-product-image-size--small { --mars-ranking-image-width: 64px !important; --mars-ranking-image-height: 88px !important; }
+.mars-product-ranking.mars-product-image-size--medium { --mars-ranking-image-width: 80px !important; --mars-ranking-image-height: 104px !important; }
+.mars-product-ranking.mars-product-image-size--large { --mars-ranking-image-width: 96px !important; --mars-ranking-image-height: 120px !important; }
+.mars-product-ranking.mars-product-image-size--large-plus { --mars-ranking-image-width: 112px !important; --mars-ranking-image-height: 136px !important; }
+.mars-product-ranking.mars-product-image-size--small .mars-product-ranking__card,
+.mars-product-ranking.mars-product-image-size--medium .mars-product-ranking__card,
+.mars-product-ranking.mars-product-image-size--large .mars-product-ranking__card,
+.mars-product-ranking.mars-product-image-size--large-plus .mars-product-ranking__card {
+	grid-template-columns: var(--mars-ranking-image-width) minmax(0, 1fr) 54px !important;
+	min-height: calc(var(--mars-ranking-image-height) + 34px) !important;
+}
+.mars-product-ranking.mars-product-image-size--small .mars-product-ranking__image-wrap,
+.mars-product-ranking.mars-product-image-size--medium .mars-product-ranking__image-wrap,
+.mars-product-ranking.mars-product-image-size--large .mars-product-ranking__image-wrap,
+.mars-product-ranking.mars-product-image-size--large-plus .mars-product-ranking__image-wrap {
+	width: var(--mars-ranking-image-width) !important;
+	height: var(--mars-ranking-image-height) !important;
+}
+
+/* Vertical product banners. !important also beats the old responsive image-size slider. */
+.mars-vpb.mars-product-image-size--small { --mvpb-layout-image-size: 148px !important; }
+.mars-vpb.mars-product-image-size--medium { --mvpb-layout-image-size: 176px !important; }
+.mars-vpb.mars-product-image-size--large { --mvpb-layout-image-size: 204px !important; }
+.mars-vpb.mars-product-image-size--large-plus { --mvpb-layout-image-size: 232px !important; }
+.mars-vpb.mars-product-image-size--small .mars-vpb__product-image,
+.mars-vpb.mars-product-image-size--medium .mars-vpb__product-image,
+.mars-vpb.mars-product-image-size--large .mars-vpb__product-image,
+.mars-vpb.mars-product-image-size--large-plus .mars-vpb__product-image {
+	width: var(--mvpb-layout-image-size) !important;
+	height: var(--mvpb-layout-image-size) !important;
+	flex-basis: var(--mvpb-layout-image-size) !important;
+}
+
+@media (max-width: 1024px) {
+	.mars-category-products-browser.mars-product-image-size--small { --mcpb-image-size: 84px !important; }
+	.mars-category-products-browser.mars-product-image-size--medium { --mcpb-image-size: 100px !important; }
+	.mars-category-products-browser.mars-product-image-size--large { --mcpb-image-size: 116px !important; }
+	.mars-category-products-browser.mars-product-image-size--large-plus { --mcpb-image-size: 132px !important; }
+
+	.mars-product-carousel.mars-product-image-size--small { --mars-product-image-size: 140px !important; }
+	.mars-product-carousel.mars-product-image-size--medium { --mars-product-image-size: 164px !important; }
+	.mars-product-carousel.mars-product-image-size--large { --mars-product-image-size: 188px !important; }
+	.mars-product-carousel.mars-product-image-size--large-plus { --mars-product-image-size: 212px !important; }
+
+	.mars-vpb.mars-product-image-size--small { --mvpb-layout-image-size: 126px !important; }
+	.mars-vpb.mars-product-image-size--medium { --mvpb-layout-image-size: 146px !important; }
+	.mars-vpb.mars-product-image-size--large { --mvpb-layout-image-size: 166px !important; }
+	.mars-vpb.mars-product-image-size--large-plus { --mvpb-layout-image-size: 186px !important; }
+}
+
+@media (max-width: 767px) {
+	.mars-category-products-browser.mars-product-image-size--small { --mcpb-image-size: 72px !important; }
+	.mars-category-products-browser.mars-product-image-size--medium { --mcpb-image-size: 84px !important; }
+	.mars-category-products-browser.mars-product-image-size--large { --mcpb-image-size: 96px !important; }
+	.mars-category-products-browser.mars-product-image-size--large-plus { --mcpb-image-size: 108px !important; }
+
+	.mars-compact-products.mars-product-image-size--small { --mars-compact-image-width: 72px !important; --mars-compact-image-height: 80px !important; }
+	.mars-compact-products.mars-product-image-size--medium { --mars-compact-image-width: 86px !important; --mars-compact-image-height: 94px !important; }
+	.mars-compact-products.mars-product-image-size--large { --mars-compact-image-width: 100px !important; --mars-compact-image-height: 108px !important; }
+	.mars-compact-products.mars-product-image-size--large-plus { --mars-compact-image-width: 114px !important; --mars-compact-image-height: 122px !important; }
+
+	.mars-product-carousel.mars-product-image-size--small { --mars-product-image-size: 126px !important; }
+	.mars-product-carousel.mars-product-image-size--medium { --mars-product-image-size: 148px !important; }
+	.mars-product-carousel.mars-product-image-size--large { --mars-product-image-size: 170px !important; }
+	.mars-product-carousel.mars-product-image-size--large-plus { --mars-product-image-size: 192px !important; }
+
+	.mars-product-ranking.mars-product-image-size--small { --mars-ranking-image-width: 54px !important; --mars-ranking-image-height: 66px !important; }
+	.mars-product-ranking.mars-product-image-size--medium { --mars-ranking-image-width: 66px !important; --mars-ranking-image-height: 80px !important; }
+	.mars-product-ranking.mars-product-image-size--large { --mars-ranking-image-width: 78px !important; --mars-ranking-image-height: 94px !important; }
+	.mars-product-ranking.mars-product-image-size--large-plus { --mars-ranking-image-width: 90px !important; --mars-ranking-image-height: 108px !important; }
+
+	.mars-vpb.mars-product-image-size--small { --mvpb-layout-image-size: 92px !important; }
+	.mars-vpb.mars-product-image-size--medium { --mvpb-layout-image-size: 108px !important; }
+	.mars-vpb.mars-product-image-size--large { --mvpb-layout-image-size: 124px !important; }
+	.mars-vpb.mars-product-image-size--large-plus { --mvpb-layout-image-size: 140px !important; }
+}
+
+@media (max-width: 420px) {
+	.mars-vpb.mars-product-image-size--small { --mvpb-layout-image-size: 56px !important; }
+	.mars-vpb.mars-product-image-size--medium { --mvpb-layout-image-size: 68px !important; }
+	.mars-vpb.mars-product-image-size--large { --mvpb-layout-image-size: 80px !important; }
+	.mars-vpb.mars-product-image-size--large-plus { --mvpb-layout-image-size: 92px !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.mars-featured-category-products .mars-featured-category-products__product-image img,
+	.mars-featured-category-products .mars-featured-category-products__image { transition: none; }
+}
+
+
+/* Prevent older portrait presets from overriding rectangular product-ranking cards. */
+.mars-product-ranking.mars-ranking-rectangular .mars-product-ranking__card{grid-template-columns:var(--mars-ranking-image-width) minmax(0,1fr) 54px!important;min-height:calc((var(--mars-ranking-image-width) / 16 * 9) + 30px)!important}
+.mars-product-ranking.mars-ranking-rectangular .mars-product-ranking__image-wrap{width:var(--mars-ranking-image-width)!important;height:auto!important;aspect-ratio:var(--mars-ranking-image-ratio)!important}
+.mars-product-ranking.mars-ranking-rectangular .mars-product-ranking__image-wrap img,.mars-product-ranking.mars-ranking-rectangular .mars-product-ranking__image{width:100%!important;height:100%!important;object-fit:var(--mars-ranking-image-fit)!important;object-position:var(--mars-ranking-image-position)!important}
+@media(max-width:767px){.mars-product-ranking.mars-ranking-rectangular .mars-product-ranking__card{grid-template-columns:var(--mars-ranking-image-width) minmax(0,1fr) 46px!important;min-height:78px!important}}
+
+/* Mars — rectangular product-image controls for Discount/Amazing widgets. */
+.mars-discount-strip__thumb{
+	aspect-ratio:var(--mars-discount-image-ratio,16/9)!important;
+}
+.mars-discount-strip__thumb img,
+.mars-discount-strip__image{
+	object-fit:var(--mars-discount-image-fit,contain)!important;
+	object-position:var(--mars-discount-image-position,center center)!important;
+}
+.mars-amazing-products__image-link{
+	aspect-ratio:var(--mars-amazing-image-ratio,16/9)!important;
+}
+.mars-amazing-products__image-link img,
+.mars-amazing-products__image{
+	object-fit:var(--mars-amazing-image-fit,contain)!important;
+	object-position:var(--mars-amazing-image-position,center center)!important;
+}
